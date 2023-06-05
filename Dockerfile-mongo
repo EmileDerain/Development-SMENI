@@ -1,0 +1,13 @@
+# Partir de l'image officielle de MongoDB
+FROM mongo:6.0.6
+
+# Exposer le port 27017 du conteneur
+EXPOSE 27017
+
+## Définir les variables d'environnement pour la base de données
+#ENV MONGO_INITDB_ROOT_USERNAME root
+#ENV MONGO_INITDB_ROOT_PASSWORD password
+#
+## Définir le répertoire de données de la base de données comme un volume Docker
+#VOLUME /data/db
+#

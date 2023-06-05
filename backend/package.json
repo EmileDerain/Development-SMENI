@@ -1,0 +1,27 @@
+{
+  "name": "development-smeni",
+  "version": "1.0.0",
+  "description": "Back",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EmileDerain/Development-SMENI.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EmileDerain/Development-SMENI/issues"
+  },
+  "homepage": "https://github.com/EmileDerain/Development-SMENI#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.3",
+    "express": "^4.18.2",
+    "mongoose": "^7.2.2"
+  }
+}
