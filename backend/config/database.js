@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 // Set up default mongoose connection
 const mongoDB = process.env.MONGO_URL || null;
 
-mongoose.connect('mongodb://root3:example4@localhost:27017/testEmile', {
+mongoose.connect('mongodb://root:example@mongo:27017/', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     authSource: 'admin',
