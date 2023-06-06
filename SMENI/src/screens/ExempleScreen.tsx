@@ -1,12 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import {
-    Image,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
-} from 'react-native';
-
+import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import ExempleCompo from "../components/ExempleCompo";
 import { useSelector, useDispatch } from 'react-redux';
 import {exempleSlice} from "../store/exempleSlice";
