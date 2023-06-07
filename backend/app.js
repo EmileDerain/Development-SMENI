@@ -5,7 +5,11 @@ const path = require('path');
 
 const audioRoutes = require("./routes/audio")
 
-mongoose.connect('mongodb://root:example@localhost:27017',
+MONGO_URL = 'mongodb://' + process.env.USERNAME_MONGO + ':' + process.env.PASSWORD_MONGO + process.env.MONGO_URL
+
+console.log('MONGO_URL: ', MONGO_URL)
+
+mongoose.connect(MONGO_URL,
     {
         useNewUrlParser: true,
         useUnifiedTopology: true
@@ -22,6 +26,5 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use('/audioFiles', express.static(path.join(__dirname, 'audioFiles')))
 
 app.use("/api/audio", audioRoutes)
-
 
 module.exports = app;

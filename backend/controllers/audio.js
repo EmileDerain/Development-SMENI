@@ -1,12 +1,12 @@
 const Audio = require('../models/audio');
 
 exports.saveAudio = (req, res) => {
-    console.log('testestsetes')
     console.log("req.file: ", req.file);
-    const bp = new Audio({
-        audioUrl: `${req.protocol}://${req.get('host')}/audioFiles/${req.file.originalname}`  //UTILITER ??
+    const audioFile = new Audio({
+        audioUrl: `${req.protocol}://${req.get('host')}/audioFiles/${req.file.originalname}`,
+        date : new Date().toDateString(),
     });
-    bp.save()
+    audioFile.save()
         .then(() => res.status(201).json({message: 'Audio enregistré !'}))
-        .catch(error => res.status(400).json({error, test:"rte"}));
+        .catch(error => res.status(400).json({error}));
 };

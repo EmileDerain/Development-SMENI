@@ -13,11 +13,13 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, callback) => {
         console.log('test: ', file)
-        const name = file.originalname.split(' ').join('_');
+        const name = file.originalname.split('.')[0];
+        // const name = file.originalname.split(' ').join('_');
         console.log("TYPE FILES: " + file.mimetype);
         const extension = MIME_TYPES[file.mimetype];
-        // callback(null, name + Date.now() + '.' + extension);
-        callback(null, file.originalname);    }
+        callback(null, name + "_" + Date.now() + '.' + extension);
+        // callback(null, file.originalname);
+    }
 });
 
 module.exports = multer({storage: storage}).single('audio');

@@ -14,19 +14,6 @@ services:
       - "27017:27017"
     volumes:
       - data:/data/db
-  node:
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile-node
-    ports:
-      - "80:80"
-    env_file:
-      - ./env/backend.env
-      - ./env/mongo.env
-    depends_on:
-      - mongo
-    volumes:
-      - ./backend:/app/:ro
 
 volumes:
   data:
