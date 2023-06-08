@@ -1,14 +1,14 @@
 import {useNavigation} from '@react-navigation/native';
-import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Pressable, SafeAreaView, StyleSheet, TouchableOpacity, Text, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import SoundReader from '../components/SoundReader';
-import {useDispatch, useSelector} from 'react-redux';
-import {exempleSlice} from '../store/exempleSlice';
+import { useSelector } from 'react-redux';
 import colors from '../assets/colors/colors';
+import { useGetShare } from '../useGetShare';
 
 const DiagnoHelpScreen = () => {
-    const dispatch = useDispatch();
+    const sharedFile = useGetShare();
     const navigation = useNavigation();
     //TODO regarde ca: JE DETESTE TS !!!
     const counterValue = useSelector(state => state.exemple.value) as number; // Accéder à la valeur de la propriété 'c' dans la tranche 'exemple34'
@@ -17,21 +17,37 @@ const DiagnoHelpScreen = () => {
             {/* header */}
             <SafeAreaView style={styles.headerWrapper}>
                 <Text style={[styles.text, styles.title]}>Diagnostic Page</Text>
-                <MaterialCommunityIcons
-                    name="dots-horizontal"
-                    size={24}
-                    color={colors.icons}
-                />
+                <TouchableOpacity
+                onPress={() =>
+                    navigation.canGoBack() ? navigation.goBack() : null
+                  }>
+                    <MaterialCommunityIcons
+                        name="dots-horizontal"
+                        size={24}
+                        color={colors.icons}
+                    />
+                </TouchableOpacity>
             </SafeAreaView>
 
             {/* Audio reader component */}
             <SoundReader transfertInfo={'info'}/>
 
             {/* IA prediction*/}
+
+
+            {/* Labelisation */}
+            <SafeAreaView style={styles.button}>
+                <TouchableOpacity
+                onPress={saveLabeledRecoding()}>
+                    <Text style={[styles.text, styles.title]}>Save</Text>
+                </TouchableOpacity>
+            </SafeAreaView>
         </View>
     );
 };
-
+const saveLabeledRecoding = () => {
+    console.log("saveLabeledRecoding");
+};
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -66,6 +82,17 @@ const styles = StyleSheet.create({
     image: {
         width: '50%',
         aspectRatio: 1,
+    },
+    button: {
+        borderColor: colors.default,
+        borderWidth: 1,
+        borderRadius: 30,
+        alignContent: 'center',
+        alignItems: 'center',
+        width: '40%',
+        padding: 10,
+        alignSelf: 'center', 
+        marginBottom: 20,
     },
 });
 
