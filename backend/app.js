@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 
 const audioRoutes = require("./routes/audio")
+const cnnRoutes = require("./routes/cnn")
 
 MONGO_URL = 'mongodb://' + process.env.USERNAME_MONGO + ':' + process.env.PASSWORD_MONGO + process.env.MONGO_URL
 
@@ -26,5 +27,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use('/audioFiles', express.static(path.join(__dirname, 'audioFiles')))
 
 app.use("/api/audio", audioRoutes)
+
+app.use("/api/cnn", cnnRoutes)
 
 module.exports = app;

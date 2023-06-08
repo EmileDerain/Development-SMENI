@@ -146,3 +146,6 @@ package-lock.json
 .metro-health-check*
 
 /audioFiles
+
+/CNN/data
+/CNN/dataStemoscope

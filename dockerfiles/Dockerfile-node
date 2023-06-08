@@ -1,18 +1,29 @@
-# Partir de l'image node:latest
-FROM node:18-slim
+FROM node:18-slim AS back
 
-# Exposer le port 8000 du conteneur
 EXPOSE 80
 
-# Définir le répertoire de travail
-WORKDIR /app
+WORKDIR /app/back
 
-# Copier le dossier PS8 et tout son contenu vers le conteneur
 COPY ../backend .
 
-# Installer les dépendances
 RUN npm install
 
 # Démarrer l'application
 CMD ["npm", "run", "dev"]
+
+FROM python:3.11 AS ml
+
+WORKDIR /app/CNN
+
+COPY ../backend/CNN .
+
+ENV VIRTUAL_ENV=/opt/venv
+RUN python -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+RUN echo $PATH
+
+RUN pip install -r requirements.txt
+
+WORKDIR /app
 

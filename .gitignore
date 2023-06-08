@@ -78,8 +78,6 @@ env/mongo.env
 .env.test.local
 .env.production.local
 .env.local
-env/
-/env
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
