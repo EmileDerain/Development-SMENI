@@ -47,7 +47,9 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: string }) => {
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={styles.soundWrapper} />
+      <SafeAreaView style={styles.soundWrapper}>
+
+        </SafeAreaView>
       <SafeAreaView style={styles.editWrapper}>
         <SafeAreaView style={styles.audioEdit}>
           <TouchableOpacity onPress={playAudio}>
@@ -99,6 +101,10 @@ const styles = StyleSheet.create({
   },
   soundWrapper: {
     flexDirection: 'column',
+    marginTop: 15,
+    height: 150,
+    borderColor: colors.default,
+    borderWidth: 1,
   },
   editWrapper: {
     flexDirection: 'row',

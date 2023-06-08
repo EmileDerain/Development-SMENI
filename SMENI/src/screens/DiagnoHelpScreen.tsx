@@ -6,12 +6,53 @@ import SoundReader from '../components/SoundReader';
 import { useSelector } from 'react-redux';
 import colors from '../assets/colors/colors';
 import { useGetShare } from '../useGetShare';
+import React, { useState } from 'react';
+import Autocomplete from 'react-native-autocomplete-input';
+
+
 
 const DiagnoHelpScreen = () => {
     const sharedFile = useGetShare();
     const navigation = useNavigation();
-    //TODO regarde ca: JE DETESTE TS !!!
-    const counterValue = useSelector(state => state.exemple.value) as number; // Accéder à la valeur de la propriété 'c' dans la tranche 'exemple34'
+    const counterValue = useSelector((state) => state.exemple.value) as number;
+    const [selectedValue, setSelectedValue] = useState('');
+    const [suggestions, setSuggestions] = useState([
+      'Choice 1',
+      'Choice 2',
+      'Choice 3',
+    ]);
+  
+    const handleTextChange = (text) => {
+      setSelectedValue(text);
+    };
+  
+    const findSuggestions = (query) => {
+      if (query === '') {
+        return [];
+      }
+  
+      const regex = new RegExp(`${query.trim()}`, 'i');
+      return suggestions.filter((item) => item.search(regex) >= 0);
+    };
+  
+    const renderSuggestions = (suggestions) => (
+      <View>
+        {suggestions.map((item) => (
+          <TouchableOpacity
+            key={item}
+            onPress={() => handleTextChange(item)}
+          >
+            <Text>{item}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  
+    const saveLabeledRecording = () => {
+      console.log('saveLabeledRecording');
+    };
+  
+    const filteredSuggestions = findSuggestions(selectedValue);
     return (
         <View style={styles.container}>
             {/* header */}
@@ -36,6 +77,17 @@ const DiagnoHelpScreen = () => {
 
 
             {/* Labelisation */}
+            <SafeAreaView style={styles.labelWrapper}>
+                <Text style={[styles.text, styles.subtitle]}>Label :</Text>
+                <Autocomplete
+                value={selectedValue}
+                onChangeText={handleTextChange}
+                placeholder="Type here..."
+                data={filteredSuggestions}
+                renderItem={({ item }) => <Text>{item}</Text>}
+                renderSuggestions={renderSuggestions}
+            />
+            </SafeAreaView>
             <SafeAreaView style={styles.button}>
                 <TouchableOpacity
                 onPress={saveLabeledRecoding()}>
@@ -61,6 +113,13 @@ const styles = StyleSheet.create({
         marginLeft: 25,
         marginRight: 20,
     },
+    labelWrapper: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 15,
+        marginLeft: 30,
+    },
     text: {
         color: '#0E1012',
         fontFamily: 'Nunito Sans',
@@ -75,7 +134,7 @@ const styles = StyleSheet.create({
         fontSize: 27,
     },
     subtitle: {
-        fontWeight: '600',
+        fontWeight: '700',
         fontSize: 17,
     },
 
