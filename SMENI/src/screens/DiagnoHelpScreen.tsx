@@ -21,6 +21,7 @@ const DiagnoHelpScreen = () => {
   const navigation = useNavigation();
   const [selectedValue, setSelectedValue] = useState('');
   const [suggestions, setSuggestions] = useState([
+    '',
     'murmur',
     'unknown',
     'normal',
@@ -29,10 +30,12 @@ const DiagnoHelpScreen = () => {
     'extrahls',
   ]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isInputValid, setIsInputValid] = useState(true);
 
   const handleTextChange = (text) => {
     setSelectedValue(text);
     setShowSuggestions(text.length > 0);
+    setIsInputValid(suggestions.includes(text));
   };
 
   const findSuggestions = (query) => {
@@ -41,11 +44,16 @@ const DiagnoHelpScreen = () => {
     }
 
     const regex = new RegExp(`^${query.trim()}`, 'i');
-    return suggestions.filter((item) => regex.test(item));
+    const finds = suggestions.filter((item) => regex.test(item));
+    if (query === finds[0]) {
+      return [];
+    }
+    return finds;
   };
 
-  const saveLabeledRecording = () => {
-    console.log('saveLabeledRecording');
+  const saveLabeledRecording = (value) => {
+    console.log('saveLabeledRecording:', value);
+    console.log('sharedFile:', sharedFile);
   };
 
   const filteredSuggestions = findSuggestions(selectedValue);
@@ -66,17 +74,18 @@ const DiagnoHelpScreen = () => {
       </SafeAreaView>
 
       {/* Audio reader component */}
-      <SoundReader transfertInfo={'info'} />
+      <SoundReader transfertInfo={'sound'} />
 
       {/* Labelisation */}
       <SafeAreaView style={styles.labelWrapper}>
         <Text style={[styles.text, styles.subtitle]}>Label :</Text>
         <TextInput
           value={selectedValue}
-          style={styles.input}
+          style={[styles.input, !isInputValid && styles.invalidInput]}
           onChangeText={handleTextChange}
           placeholder="Select a label..."
           placeholderTextColor={colors.textLight}
+          onBlur={() => setIsInputValid(suggestions.includes(selectedValue))}
         />
       </SafeAreaView>
 
@@ -94,8 +103,12 @@ const DiagnoHelpScreen = () => {
         </View>
       )}
 
-      <SafeAreaView style={styles.button}>
-        <TouchableOpacity onPress={saveLabeledRecording}>
+      <SafeAreaView >
+        <TouchableOpacity
+          onPress={() => saveLabeledRecording(selectedValue)}
+          disabled={!isInputValid || selectedValue === ''}
+          style={[styles.buttonContent, styles.button, (!isInputValid || selectedValue === '') && styles.disabledButton]}
+        >
           <Text style={[styles.text, styles.title]}>Save</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -127,7 +140,7 @@ const styles = StyleSheet.create({
     width: '40%',
     alignSelf: 'center',
     marginTop: -20,
-    marginLeft:-30,
+    marginLeft: -30,
   },
   suggestionItem: {
     width: '100%',
@@ -137,7 +150,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 25,
     borderBottomColor: '#0E1012',
-    },
+  },
   suggestionText: {
     color: '#0E1012',
     fontFamily: 'Nunito Sans',
@@ -167,11 +180,16 @@ const styles = StyleSheet.create({
   input: {
     borderRadius: 30,
     backgroundColor: colors.inputBackground,
+    borderWidth: 1,
+    borderColor: colors.inputBackground,
     color: colors.default,
     paddingHorizontal: 15,
     paddingVertical: 10,
     width: '50%',
     marginLeft: 10,
+  },
+  invalidInput: {
+    borderColor: 'red', // Couleur de la bordure en cas d'input invalide
   },
   button: {
     borderColor: colors.default,
@@ -183,6 +201,13 @@ const styles = StyleSheet.create({
     padding: 10,
     alignSelf: 'center',
     marginVertical: 20,
+  },
+  buttonContent: {
+    flex: 1,
+    opacity: 1, // Default opacity when the button is enabled
+  },
+  disabledButton: {
+    opacity: 0.5, // Opacity when the button is disabled
   },
 });
 
