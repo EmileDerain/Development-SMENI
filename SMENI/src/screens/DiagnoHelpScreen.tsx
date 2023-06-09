@@ -51,9 +51,40 @@ const DiagnoHelpScreen = () => {
     return finds;
   };
 
-  const saveLabeledRecording = (value) => {
+  const saveLabeledRecording = async (value) => {
     console.log('saveLabeledRecording:', value);
     console.log('sharedFile:', sharedFile);
+
+    const url = 'http://172.16.6.115:80/api/audio';
+
+    // @ts-ignore
+    const fichierWaveUri = sharedFile[0].contentUri;
+
+    console.log("L'uri du fichier à envoyer: ", fichierWaveUri)
+
+    const formData = new FormData();
+    formData.append('audio', {
+      uri: fichierWaveUri,
+      type: 'audio/x-wav',
+      name: '1683880817754.wav',
+    });
+
+    formData.append('label', "normal");
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        console.log('Le fichier a été envoyé avec succès.');
+      } else {
+        console.error('Erreur lors de l\'envoi du fichier :', response.statusText);
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi du fichier :', error);
+    }
   };
 
   const filteredSuggestions = findSuggestions(selectedValue);
