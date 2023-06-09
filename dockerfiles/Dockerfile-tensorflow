@@ -1,0 +1,7 @@
+FROM tensorflow/tensorflow:nightly-gpu-jupyter
+
+RUN nvidia-ctk runtime configure
+
+WORKDIR /app
+
+COPY ../backend/CNN .
