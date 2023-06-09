@@ -27,6 +27,8 @@ services:
       - mongo
     volumes:
       - ./backend:/app/:ro
+      - ./backend/CNN:/app/CNN:rw
+      - ./backend/audioFiles:/app/audioFiles:rw
 
 volumes:
   data:

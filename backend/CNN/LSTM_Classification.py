@@ -9,11 +9,13 @@ from tensorflow.keras.layers import Dense, Dropout, Activation, LSTM, Bidirectio
 from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler, EarlyStopping
 from keras.layers import Input, Conv1D, MaxPool1D, BatchNormalization, MaxPooling1D
 
+print('Test')
+
 ###############
 ### Folders ###
 ###############
 
-data_path = "./data/Test"
+data_path = "CNN/data/Test"
 print(os.listdir(data_path))
 
 tarin_data = data_path
@@ -106,6 +108,9 @@ print(int_to_label)
 SAMPLE_RATE = 22050
 # seconds
 MAX_SOUND_CLIP_DURATION = 10
+
+print("rest")
+print(os.path.dirname(__file__))
 
 artifact_files = fnmatch.filter(os.listdir(artifact_data), 'artifact*.wav')
 artifact_sounds = load_file_data(folder=artifact_data, file_names=artifact_files, duration=MAX_SOUND_CLIP_DURATION,
@@ -287,7 +292,7 @@ weight_saver = ModelCheckpoint('set_a_weights.h5',
                                verbose=1)
 
 callback = tf.keras.callbacks.EarlyStopping(patience=50,monitor='val_accuracy',mode='max',restore_best_weights=True),\
-    ModelCheckpoint("Heart_LSTM_CNN_1.h5",
+    ModelCheckpoint("./models/Heart_LSTM_CNN_1.h5",
                     save_best_only=True)
 
 
@@ -297,6 +302,6 @@ history = lstm_model.fit(x_train_lstm, y_train_lstm,
                          class_weight=class_weight,
                          callbacks=callback)
 
-lstm_model.save('my_model.h5')
+lstm_model.save('./models/my_model.h5')
 
 lstm_model.evaluate(x_test_lstm, y_test_lstm)
