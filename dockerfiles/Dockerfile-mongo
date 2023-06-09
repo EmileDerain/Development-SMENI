@@ -1,0 +1,14 @@
+# Utilise l'image de base officielle de MongoDB
+FROM mongo:7.0.0-rc2
+
+# Copie des fichiers de configuration personnalisés, si nécessaire
+# COPY mongod.conf /etc/mongod.conf
+
+# Définit le répertoire de travail
+WORKDIR /data
+
+# Expose le port par défaut de MongoDB
+EXPOSE 27017
+
+# Démarre le serveur MongoDB
+CMD ["mongod"]
