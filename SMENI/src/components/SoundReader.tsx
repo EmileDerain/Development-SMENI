@@ -4,8 +4,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import colors from '../assets/colors/colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Sound from 'react-native-sound';
+import { ShareFile } from '../useGetShare';
 
-const SoundReader = ({ transfertInfo }: { transfertInfo: string }) => {
+const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
+    const transferedFile = transfertInfo;
     const [playerState, setPlayerState] = useState({
       isPlaying: false,
       isPaused: false,
@@ -17,7 +19,7 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: string }) => {
         sound.play(); // Utilisation de la variable sound avec l'opérateur de navigation optionnelle
         setPlayerState({ ...playerState, isPlaying: true, isPaused: false });
       } else {
-        const newSound = new Sound('beep.wav', Sound.MAIN_BUNDLE, (error) => {
+        const newSound = new Sound(transferedFile.filePath, Sound.MAIN_BUNDLE, (error) => {
           if (error) {
             console.log('Erreur lors de la lecture audio', error);
             setPlayerState({ ...playerState, isPlaying: false, isPaused: false });

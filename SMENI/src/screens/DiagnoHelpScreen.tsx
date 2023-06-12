@@ -105,10 +105,11 @@ const DiagnoHelpScreen = () => {
       </SafeAreaView>
 
       {/* Audio reader component */}
-      <SoundReader transfertInfo={'sound'} />
+      {sharedFile !== undefined && <SoundReader transfertInfo={sharedFile[0]} />}
+
 
       {/* Labelisation */}
-      <SafeAreaView style={styles.labelWrapper}>
+      <SafeAreaView style={[styles.labelWrapper, (sharedFile === undefined) && styles.disabledButton]}>
         <Text style={[styles.text, styles.subtitle]}>Label :</Text>
         <TextInput
           value={selectedValue}
@@ -117,6 +118,7 @@ const DiagnoHelpScreen = () => {
           placeholder="Select a label..."
           placeholderTextColor={colors.textLight}
           onBlur={() => setIsInputValid(suggestions.includes(selectedValue))}
+          editable={sharedFile !== undefined}
         />
       </SafeAreaView>
 
