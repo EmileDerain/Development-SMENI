@@ -55,7 +55,7 @@ const DiagnoHelpScreen = () => {
     console.log('saveLabeledRecording:', value);
     console.log('sharedFile:', sharedFile);
 
-    const url = 'http://172.16.6.115:80/api/audio';
+    const url = 'http://172.16.20.252:2834/api/audio'; //TODO : ipconfig et mettre son addresse IP locale
 
     // @ts-ignore
     const fichierWaveUri = sharedFile[0].contentUri;
