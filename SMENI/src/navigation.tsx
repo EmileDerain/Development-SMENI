@@ -2,6 +2,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import DiagnoHelpScreen from "./screens/DiagnoHelpScreen";
 import ExempleScreen2 from "./screens/ExempleScreen2";
+import SignUp from "./screens/SignUp";
+import SignIn from "./screens/SignIn";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +17,8 @@ const Navigation = () => {
                     headerShown: false
                 }}/>
                 <Stack.Screen name="Exemple2" component={ExempleScreen2} />
+                <Stack.Screen name="SignUp" component={SignUp} />
+                <Stack.Screen name="SignIn" component={SignIn} />
             </Stack.Navigator>
         </NavigationContainer>
     );
