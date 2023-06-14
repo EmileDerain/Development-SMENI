@@ -33,7 +33,11 @@ exports.login = (req, res, next) => {
                     }
                     res.status(200).json({
                         userId: user._id,
-                        token: 'TOKEN'
+                        token: jwt.sign(
+                            { userId: user._id },
+                            'RANDOM_TOKEN_SECRET', //TODO : change this token to a more secure one later and the one in ../middleware/auth.js
+                            { expiresIn: '24h' } //TODO : maybe more longer validity
+                        )
                     });
                 })
                 .catch(error => res.status(500).json({ error , message: 'The credentials are incorrect'}));
