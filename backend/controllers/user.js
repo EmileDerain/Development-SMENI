@@ -3,18 +3,22 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 exports.signup = (req, res, next) => {
+    console.log("req:", req);
+    console.log("req.body:", req.body);
     bcrypt.hash(req.body.password, 10)
         .then(
             hash => {
+                console.log("hash:", hash);
                 const user = new User({
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
                     mail: req.body.mail,
                     password: hash,
                 });
+                console.log("user:", user);
                 user.save()
                     .then(() => res.status(201).json({message: 'User created !'}))
-                    .catch(error => res.status(400).json({error, message: 'User already exist !'}));
+                    .catch(error => res.status(400).json({error, message: 'Email already used !'}));
             }
         )
         .catch(error => res.status(500).json({error, message: 'Error while hashing password !'}));

@@ -18,19 +18,33 @@ const SignUp = () => {
         const url = 'http://172.16.20.252:2834/api/user/signup'; //TODO : ipconfig et mettre son addresse IP locale
 
         const formData = new FormData();
-        formData.append('doctor', {
+        /*formData.append('doctor', {
             firstName: firstName,
             lastName: lastName,
             mail: mail,
             password: password
-        });
+        });*/
+
+        formData.append('firstName', firstName);
+        formData.append('lastName', lastName);
+        formData.append('mail', mail);
+        formData.append('password', password);
+
+        const values = {
+            firstName: firstName,
+            lastName: lastName,
+            mail: mail,
+            password: password
+        };
 
         try{
+            console.log('1 formData:', JSON.stringify(values));
             const response = await fetch(url, {
                 method: 'POST',
                 body: formData,
             });
 
+            console.log('response:');
             if (response.ok) {
                 console.log('response ok');
                 navigation.navigate('SignIn');
@@ -38,7 +52,7 @@ const SignUp = () => {
                 console.error('mail is already used');
             }
         } catch (error) {
-            console.error('error:', error);
+            console.error('2 error:', error);
         }
     };
 
