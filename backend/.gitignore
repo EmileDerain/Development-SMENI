@@ -161,3 +161,5 @@ CNN/data/Test/normal/*.wav
 CNN/data/Test/unlabel/*.wav
 
 /CNN/venv
+
+/CNN/models/*.h5
