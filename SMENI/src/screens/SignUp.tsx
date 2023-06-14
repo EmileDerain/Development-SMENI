@@ -11,6 +11,38 @@ const SignUp = () => {
     const [lastName, setLastName] = useState('');
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
+
+
+    const registerAccount = async () => {
+        console.log('registerAccount:', firstName, lastName, mail, password);
+        const url = 'http://172.16.20.252:2834/api/user/signup'; //TODO : ipconfig et mettre son addresse IP locale
+
+        const formData = new FormData();
+        formData.append('doctor', {
+            firstName: firstName,
+            lastName: lastName,
+            mail: mail,
+            password: password
+        });
+
+        try{
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                console.log('response ok');
+                navigation.navigate('SignIn');
+            } else{
+                console.error('mail is already used');
+            }
+        } catch (error) {
+            console.error('error:', error);
+        }
+    };
+
+
     return (
         // KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.
         <KeyboardAwareScrollView style={styles.container}>
@@ -66,6 +98,7 @@ const SignUp = () => {
                     <SafeAreaView>
                         <TouchableOpacity
                             onPress={() => {
+                                registerAccount();
                                 navigation.navigate('SignIn'); //TODO : créer la méthode pour envoyer le compte au back
                             }}
                             disabled={firstName === '' || lastName === '' || mail === '' || password === ''}
