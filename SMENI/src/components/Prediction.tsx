@@ -17,7 +17,7 @@ const Prediction = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   }, []);
 
   const askPrediction = async () => {
-    const url = 'http://172.16.6.115:2834/api/cnn/predict'; // URL de l'API
+    const url = 'http://172.16.21.65:2834/api/cnn/predict'; // URL de l'API
 
     // @ts-ignore
     const fichierWaveUri = transfertInfo.contentUri;
@@ -30,8 +30,6 @@ const Prediction = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
       type: 'audio/x-wav',
       name: '1683880817754.wav',
     });
-
-    formData.append('label', "normal");
 
     try {
       const response = await fetch(url, {
