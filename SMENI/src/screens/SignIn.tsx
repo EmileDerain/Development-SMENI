@@ -11,7 +11,7 @@ const SignIn = () => {
     const [password, setPassword] = useState('');
 
 
-    const registerAccount = async () => {
+    const login = async () => {
         const url = 'http://172.16.20.252:2834/api/user/login'; //TODO : ipconfig et mettre son addresse IP locale
 
         const params = {
@@ -36,7 +36,7 @@ const SignIn = () => {
 
             if (response.ok) {
                 console.log('response ok');
-                navigation.navigate('DiagnoHelpScreen');
+                navigation.navigate('DiagnoHelp');
             } else{
                 console.error('The credentials are not correct');
                 //TODO : create a popup to say that the mail is already used
@@ -54,6 +54,7 @@ const SignIn = () => {
             {/*header*/}
             <SafeAreaView style={styles.headerWrapper}>
                 <Text style={[styles.text, styles.title]}>Sign In</Text>
+
             </SafeAreaView>
             {/*form*/}
             <SafeAreaView>
@@ -83,7 +84,7 @@ const SignIn = () => {
                     <SafeAreaView>
                         <TouchableOpacity
                             onPress={() => {
-                                registerAccount();
+                                login();
                                 //TODO : créer la méthode pour envoyer le compte au back
                             }}
                             disabled={mail === '' || password === ''}
@@ -93,10 +94,18 @@ const SignIn = () => {
 
                         </TouchableOpacity>
                     </SafeAreaView>
-
                 </SafeAreaView>
             </SafeAreaView>
 
+            <SafeAreaView style={styles.labelWrapper}>
+                <Text style={[styles.text, styles.subtitle]}>No account ?</Text>
+                <TouchableOpacity
+                    onPress={() => {
+                        navigation.navigate('SignUp');
+                    }}>
+                    <Text style={[styles.text, styles.subtitle, styles.navigate]}>Create One !</Text>
+                </TouchableOpacity>
+            </SafeAreaView>
         </KeyboardAwareScrollView>
     );
 }
@@ -138,6 +147,10 @@ const styles = StyleSheet.create({
     subtitle: {
         fontWeight: '700',
         fontSize: 17,
+    },
+    navigate:{
+        textDecorationLine: 'underline',
+        marginLeft: 10,
     },
     input: {
         borderRadius: 30,

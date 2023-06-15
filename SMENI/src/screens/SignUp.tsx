@@ -119,6 +119,17 @@ const SignUp = () => {
                     </SafeAreaView>
 
                 </SafeAreaView>
+
+            </SafeAreaView>
+
+            <SafeAreaView style={styles.labelWrapper}>
+                <Text style={[styles.text, styles.subtitle]}>Already have an account ?</Text>
+                <TouchableOpacity
+                    onPress={() => {
+                        navigation.navigate('SignIn');
+                    }}>
+                    <Text style={[styles.text, styles.subtitle, styles.navigate]}>Sign In</Text>
+                </TouchableOpacity>
             </SafeAreaView>
 
         </KeyboardAwareScrollView>
@@ -162,6 +173,10 @@ const styles = StyleSheet.create({
     subtitle: {
         fontWeight: '700',
         fontSize: 17,
+    },
+    navigate:{
+        textDecorationLine: 'underline',
+        marginLeft: 10,
     },
     input: {
         borderRadius: 30,
