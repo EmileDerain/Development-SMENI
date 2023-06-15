@@ -14,8 +14,7 @@ const SignUp = () => {
 
 
     const registerAccount = async () => {
-        console.log('registerAccount:', firstName, lastName, mail, password);
-        const url = 'http://192.168.1.22:2834/api/user/signup'; //TODO : ipconfig et mettre son addresse IP locale
+        const url = 'http://172.16.20.252:2834/api/user/signup'; //TODO : ipconfig et mettre son addresse IP locale
 
         const params = {
             firstName: firstName,
@@ -30,13 +29,6 @@ const SignUp = () => {
             formData.append(key, params[key]);
         }
 
-        const values = {
-            firstName: firstName,
-            lastName: lastName,
-            mail: mail,
-            password: password
-        };
-
         try{
             const response = await fetch(url, {
                 method: 'POST',
@@ -46,15 +38,16 @@ const SignUp = () => {
                 body: formData.toString(),
             });
 
-            console.log('response:');
             if (response.ok) {
                 console.log('response ok');
                 navigation.navigate('SignIn');
             } else{
                 console.error('mail is already used');
+                //TODO : create a popup to say that the mail is already used
+
             }
         } catch (error) {
-            console.error('2 error:', error);
+            console.error('error:', error);
         }
     };
 
@@ -115,7 +108,7 @@ const SignUp = () => {
                         <TouchableOpacity
                             onPress={() => {
                                 registerAccount();
-                                navigation.navigate('SignIn'); //TODO : créer la méthode pour envoyer le compte au back
+                                //TODO : créer la méthode pour envoyer le compte au back
                             }}
                             disabled={firstName === '' || lastName === '' || mail === '' || password === ''}
                             style={[styles.buttonContent, styles.button, (firstName === '' || lastName === '' || mail === '' || password === '') && styles.disabledButton]}

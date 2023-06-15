@@ -3,19 +3,15 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 exports.signup = (req, res, next) => {
-    console.log("req:", req);
-    console.log("req.body:", req.body);
     bcrypt.hash(req.body.password, 10)
         .then(
             hash => {
-                console.log("hash:", hash);
                 const user = new User({
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
                     mail: req.body.mail,
                     password: hash,
                 });
-                console.log("user:", user);
                 user.save()
                     .then(() => res.status(201).json({message: 'User created !'}))
                     .catch(error => res.status(400).json({error, message: 'Email already used !'}));
@@ -25,10 +21,11 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-    User.findOne({ email: req.body.email })
+    console.log("req.body:", req.body);
+    User.findOne({ mail: req.body.mail })
         .then(user => {
             if (!user) {
-                return res.status(401).json({ message: 'The email is incorrect' });
+                return res.status(401).json({ message: 'The mail is incorrect' });
             }
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {

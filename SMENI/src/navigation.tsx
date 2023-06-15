@@ -19,11 +19,12 @@ const Navigation = () => {
                     headerShown: false
                 }}
                 />
+                <Stack.Screen name="SignIn" component={SignIn} />
+
                 <Stack.Screen name="DiagnoHelp" component={DiagnoHelpScreen} options={{
                     headerShown: false
                 }}/>
                 <Stack.Screen name="Exemple2" component={ExempleScreen2} />
-                <Stack.Screen name="SignIn" component={SignIn} />
             </Stack.Navigator>
         </NavigationContainer>
     );
