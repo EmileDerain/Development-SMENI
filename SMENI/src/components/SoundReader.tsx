@@ -1,57 +1,105 @@
-import React, { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TouchableOpacity, StyleSheet, Image, PermissionsAndroid, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import colors from '../assets/colors/colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Sound from 'react-native-sound';
 import { ShareFile } from '../useGetShare';
+import { NativeModules } from 'react-native';
+
+const WaveformGenerator = NativeModules.WaveformGenerator;
 
 const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
-    const transferedFile = transfertInfo;
-    const [playerState, setPlayerState] = useState({
-      isPlaying: false,
-      isPaused: false,
-    });
-    const [sound, setSound] = useState<Sound | null>(null); // Déclaration de la variable sound
-  
-    const playAudio = () => {
-      if (playerState.isPaused) {
-        sound.play(); // Utilisation de la variable sound avec l'opérateur de navigation optionnelle
-        setPlayerState({ ...playerState, isPlaying: true, isPaused: false });
+  const transferedFile = transfertInfo;
+  const [playerState, setPlayerState] = useState({
+    isPlaying: false,
+    isPaused: false,
+  });
+  const [sound, setSound] = useState<Sound | null>(null);
+  const [waveformBitmap, setWaveformBitmap] = useState<Uint8Array | null>(null);
+
+  useEffect(() => {
+    requestPermissions();
+  }, []);
+
+  const requestPermissions = async () => {
+    try {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      ]);
+
+      if (
+        granted['android.permission.READ_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED &&
+        granted['android.permission.RECORD_AUDIO'] === PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        console.log('Autorisations accordées');
       } else {
-        const newSound = new Sound(transferedFile.filePath, Sound.MAIN_BUNDLE, (error) => {
-          if (error) {
-            console.log('Erreur lors de la lecture audio', error);
-            setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
-          } else {
-            newSound.play((success) => {
-              if (success) {
-                console.log('Lecture audio terminée avec succès');
-                setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
-              } else {
-                console.log('Erreur lors de la lecture audio');
-                setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
-              }
-              newSound.release();
-            });
-          }
-        });
-  
-        setSound(newSound); // Affectation de la variable sound avec la nouvelle instance de Sound
-        setPlayerState({ ...playerState, isPlaying: true, isPaused: false });
+        console.log('Autorisations refusées');
       }
-    };
+    } catch (error) {
+      console.log('Erreur lors de la demande des autorisations', error);
+    }
+  };
+
+  const playAudio = () => {
+    generateWaveform();
+    if (playerState.isPaused) {
+      sound?.play();
+      setPlayerState({ ...playerState, isPlaying: true, isPaused: false });
+    } else {
+      const newSound = new Sound(transferedFile.filePath, Sound.MAIN_BUNDLE, (error) => {
+        if (error) {
+          console.log('Erreur lors de la lecture audio', error);
+          setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
+        } else {
+          newSound.play((success) => {
+            if (success) {
+              console.log('Lecture audio terminée avec succès');
+              setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
+            } else {
+              console.log('Erreur lors de la lecture audio');
+              setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
+            }
+            newSound.release();
+          });
+        }
+      });
+
+      setSound(newSound);
+      setPlayerState({ ...playerState, isPlaying: true, isPaused: false });
+    }
+  };
+
+  const pauseAudio = () => {
+    sound?.pause();
+    setPlayerState({ ...playerState, isPlaying: false, isPaused: true });
+  };
   
-    const pauseAudio = () => {
-      sound?.pause(); // Utilisation de la variable sound avec l'opérateur de navigation optionnelle
-      setPlayerState({ ...playerState, isPlaying: false, isPaused: true });
-    };
+  
+  
+  
+  const generateWaveform = async () => {
+    try {
+      console.log('Génération de la waveform en cours...');
+      const waveformString = await WaveformGenerator.generateWaveform(transferedFile.filePath);
+      setWaveformBitmap(waveformString);
+      console.log('Waveform générée avec succès');
+      console.log(waveformString);
+    } catch (error) {
+      console.log('Erreur lors de la génération de la waveform', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.soundWrapper}>
-
-        </SafeAreaView>
+        {waveformBitmap && 
+        <Image
+          source={{ uri: `data:image/png;base64,${waveformBitmap}` }}
+          style={styles.waveformImage}
+        />}
+      </SafeAreaView>
       <SafeAreaView style={styles.editWrapper}>
         <SafeAreaView style={styles.audioEdit}>
           <TouchableOpacity onPress={playAudio}>
@@ -106,7 +154,14 @@ const styles = StyleSheet.create({
     marginTop: 15,
     height: 150,
     borderColor: colors.default,
+    borderWidth: 0,
+  },
+  waveformImage: {
     borderWidth: 1,
+    width: '100%',
+    height: '100%',
+    backgroundColor: colors.default,
+    borderColor: colors.default,
   },
   editWrapper: {
     flexDirection: 'row',

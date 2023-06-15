@@ -8,6 +8,7 @@ import {
   View,
   TextInput,
   Keyboard,
+  Image,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -15,6 +16,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import SoundReader from '../components/SoundReader';
 import colors from '../assets/colors/colors';
 import { useGetShare } from '../useGetShare';
+import heartBeat from '../assets/images/heartBeat.png';
+
 
 const DiagnoHelpScreen = () => {
   const sharedFile = useGetShare();
@@ -106,6 +109,9 @@ const DiagnoHelpScreen = () => {
 
       {/* Audio reader component */}
       {sharedFile !== undefined && <SoundReader transfertInfo={sharedFile[0]} />}
+      {sharedFile === undefined && <Image 
+      style={styles.image}
+      source={heartBeat}/> }
 
 
       {/* Labelisation */}
@@ -161,6 +167,10 @@ const styles = StyleSheet.create({
     marginTop: 65,
     marginLeft: 25,
     marginRight: 20,
+  },
+  image: {
+    alignSelf: 'center',
+    marginTop: 20,
   },
   labelWrapper: {
     flexDirection: 'row',
