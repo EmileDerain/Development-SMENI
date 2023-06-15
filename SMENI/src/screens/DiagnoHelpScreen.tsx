@@ -14,6 +14,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import SoundReader from '../components/SoundReader';
+import Prediction from '../components/Prediction';
 import colors from '../assets/colors/colors';
 import { useGetShare } from '../useGetShare';
 import heartBeat from '../assets/images/heartBeat.png';
@@ -112,7 +113,10 @@ const DiagnoHelpScreen = () => {
       {sharedFile === undefined && <Image 
       style={styles.image}
       source={heartBeat}/> }
-
+      {/* Prediction */}
+        <SafeAreaView style={[styles.labelWrapper, (sharedFile === undefined) && styles.disabledButton]}>
+        {sharedFile !== undefined && <Prediction transfertInfo={sharedFile[0]}/>}
+        </SafeAreaView>
 
       {/* Labelisation */}
       <SafeAreaView style={[styles.labelWrapper, (sharedFile === undefined) && styles.disabledButton]}>
