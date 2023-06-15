@@ -5,6 +5,10 @@ const audioCtrl = require('../controllers/audio');
 const multer = require('../middleware/multer-config')
 
 
-router.post('/', multer, audioCtrl.saveAudio);
+router.post('/', multer, audioCtrl.renameFile, audioCtrl.saveAudio);
+router.get('/', audioCtrl.getAllAudio);
+
+router.get('/stream/:id', audioCtrl.streamAudio);
+
 
 module.exports = router;

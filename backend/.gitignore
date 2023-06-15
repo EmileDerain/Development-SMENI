@@ -145,8 +145,21 @@ package-lock.json
 # Temporary files created by Metro to check the health of the file watcher
 .metro-health-check*
 
-/audioFiles
+audioFiles/*.wav
 
-/CNN/data
-/CNN/dataStemoscope
+CNN/dataStemoscope/Test/artifact/*.wav
+CNN/dataStemoscope/Test/extrahls/*.wav
+CNN/dataStemoscope/Test/extrastole/*.wav
+CNN/dataStemoscope/Test/murmur/*.wav
+CNN/dataStemoscope/Test/normal/*.wav
+
+CNN/data/Test/artifact/*.wav
+CNN/data/Test/extrahls/*.wav
+CNN/data/Test/extrastole/*.wav
+CNN/data/Test/murmur/*.wav
+CNN/data/Test/normal/*.wav
+CNN/data/Test/unlabel/*.wav
+
 /CNN/venv
+
+/CNN/models/*.h5

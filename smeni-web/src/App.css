@@ -1,0 +1,28 @@
+.App {
+    text-align: center;
+}
+
+.iconeMenu {
+    width: 5rem;
+    padding: 1rem;
+}
+
+.rtl-section {
+    direction: rtl;
+}
+
+.buttonMenu{
+    background: #eeeeee;
+    width: 10rem;
+    padding: 1rem;
+    margin: 2rem auto;
+    transition: all 0.3s linear;
+    border-radius: 0.3rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+.listButtonMenu{
+    display: flex;
+    flex-direction: row;
+}
