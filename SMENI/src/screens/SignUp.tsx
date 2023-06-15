@@ -15,20 +15,20 @@ const SignUp = () => {
 
     const registerAccount = async () => {
         console.log('registerAccount:', firstName, lastName, mail, password);
-        const url = 'http://172.16.20.252:2834/api/user/signup'; //TODO : ipconfig et mettre son addresse IP locale
+        const url = 'http://192.168.1.22:2834/api/user/signup'; //TODO : ipconfig et mettre son addresse IP locale
 
-        const formData = new FormData();
-        /*formData.append('doctor', {
+        const params = {
             firstName: firstName,
             lastName: lastName,
             mail: mail,
             password: password
-        });*/
+        };
 
-        formData.append('firstName', firstName);
-        formData.append('lastName', lastName);
-        formData.append('mail', mail);
-        formData.append('password', password);
+        const formData = new URLSearchParams();
+        for (const key in params) {
+            // @ts-ignore
+            formData.append(key, params[key]);
+        }
 
         const values = {
             firstName: firstName,
@@ -38,10 +38,12 @@ const SignUp = () => {
         };
 
         try{
-            console.log('1 formData:', JSON.stringify(values));
             const response = await fetch(url, {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData.toString(),
             });
 
             console.log('response:');
