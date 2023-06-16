@@ -1,5 +1,7 @@
 const http = require('http');
 const app = require('./app');
+const {Server} = require("socket.io");
+const serverConf = require("./global/server");
 
 const normalizePort = val => {
     const port = parseInt(val, 10);
@@ -13,7 +15,10 @@ const normalizePort = val => {
     return false;
 };
 
-const port = normalizePort(process.env.PORT ||'8000');
+//TODO a changer :
+// const port = normalizePort(process.env.PORT ||'8000');
+const port = normalizePort(2834 || '8000');
+
 app.set('port', port);
 
 const errorHandler = error => {
@@ -38,6 +43,11 @@ const errorHandler = error => {
 
 const server = http.createServer(app);
 
+
+// const io = new Server();
+
+
+
 server.on('error', errorHandler);
 server.on('listening', () => {
     const address = server.address();
@@ -46,3 +56,11 @@ server.on('listening', () => {
 });
 
 server.listen(port);
+
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+    },
+});
+console.log("Socket init")
+serverConf.IO = io;

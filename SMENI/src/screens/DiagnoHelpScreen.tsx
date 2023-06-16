@@ -8,13 +8,17 @@ import {
   View,
   TextInput,
   Keyboard,
+  Image,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import SoundReader from '../components/SoundReader';
+import Prediction from '../components/Prediction';
 import colors from '../assets/colors/colors';
 import { useGetShare } from '../useGetShare';
+import heartBeat from '../assets/images/heartBeat.png';
+
 
 const DiagnoHelpScreen = () => {
   const sharedFile = useGetShare();
@@ -55,7 +59,7 @@ const DiagnoHelpScreen = () => {
     console.log('saveLabeledRecording:', value);
     console.log('sharedFile:', sharedFile);
 
-    const url = 'http://172.16.6.115:80/api/audio';
+    const url = 'http://172.16.6.111:80/api/audio';
 
     // @ts-ignore
     const fichierWaveUri = sharedFile[0].contentUri;
@@ -105,10 +109,17 @@ const DiagnoHelpScreen = () => {
       </SafeAreaView>
 
       {/* Audio reader component */}
-      <SoundReader transfertInfo={'sound'} />
+      {sharedFile !== undefined && <SoundReader transfertInfo={sharedFile[0]} />}
+      {sharedFile === undefined && <Image 
+      style={styles.image}
+      source={heartBeat}/> }
+      {/* Prediction */}
+        <SafeAreaView style={[styles.labelWrapper, (sharedFile === undefined) && styles.disabledButton]}>
+        {sharedFile !== undefined && <Prediction transfertInfo={sharedFile[0]}/>}
+        </SafeAreaView>
 
       {/* Labelisation */}
-      <SafeAreaView style={styles.labelWrapper}>
+      <SafeAreaView style={[styles.labelWrapper, (sharedFile === undefined) && styles.disabledButton]}>
         <Text style={[styles.text, styles.subtitle]}>Label :</Text>
         <TextInput
           value={selectedValue}
@@ -117,6 +128,7 @@ const DiagnoHelpScreen = () => {
           placeholder="Select a label..."
           placeholderTextColor={colors.textLight}
           onBlur={() => setIsInputValid(suggestions.includes(selectedValue))}
+          editable={sharedFile !== undefined}
         />
       </SafeAreaView>
 
@@ -159,6 +171,10 @@ const styles = StyleSheet.create({
     marginTop: 65,
     marginLeft: 25,
     marginRight: 20,
+  },
+  image: {
+    alignSelf: 'center',
+    marginTop: 20,
   },
   labelWrapper: {
     flexDirection: 'row',

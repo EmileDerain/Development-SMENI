@@ -1,5 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Ajoutez cette ligne pour l'autorisation d'accès au stockage externe -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- Ajoutez cette ligne pour l'autorisation de lecture des fichiers audio -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
