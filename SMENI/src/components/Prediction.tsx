@@ -17,7 +17,7 @@ const Prediction = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   }, []);
 
   const askPrediction = async () => {
-    const url = 'http://172.16.21.65:2834/api/cnn/predict'; // URL de l'API
+    const url = 'http://172.16.6.111:2834/api/cnn/predict'; // URL de l'API
 
     // @ts-ignore
     const fichierWaveUri = transfertInfo.contentUri;
@@ -64,10 +64,10 @@ const Prediction = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
       </SafeAreaView>
       <SafeAreaView style={styles.predictionWrapper}>
         <Text style={[styles.text]}>{predictionLabel1}</Text>
-        <Text style={[styles.text]}>{predictionAccuracy1}</Text>
+        <Text style={[styles.text]}>{predictionLabel2}</Text>
       </SafeAreaView>
       <SafeAreaView style={styles.predictionWrapper}>
-        <Text style={[styles.text]}>{predictionLabel2}</Text>
+        <Text style={[styles.text]}>{predictionAccuracy1}</Text>
         <Text style={[styles.text]}>{predictionAccuracy2}</Text>
       </SafeAreaView>
     </View>

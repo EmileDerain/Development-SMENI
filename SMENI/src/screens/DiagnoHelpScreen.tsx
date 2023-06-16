@@ -59,7 +59,7 @@ const DiagnoHelpScreen = () => {
     console.log('saveLabeledRecording:', value);
     console.log('sharedFile:', sharedFile);
 
-    const url = 'http://172.16.21.65:80/api/audio';
+    const url = 'http://172.16.6.111:80/api/audio';
 
     // @ts-ignore
     const fichierWaveUri = sharedFile[0].contentUri;
