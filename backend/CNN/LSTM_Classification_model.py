@@ -96,7 +96,6 @@ def main():
     parser.add_argument('modelFile', type=str, help='Path to the model.')
     args = parser.parse_args()
 
-    # print(predict('./CNN/temp/Aunlabelledtest__2011040239.wav', './CNN/models/Heart_LSTM_CNN_1.h5'))
     print(predict(args.inputFile, args.modelFile))
 
 

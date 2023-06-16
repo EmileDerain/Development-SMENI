@@ -16,37 +16,41 @@ print('Test')
 ###############
 
 data_path = "CNN/data/Test"
-print(os.listdir(data_path))
+data_path2 = "CNN/dataStemoscope/Test"
 
-tarin_data = data_path
-unlabel_data = data_path + "/unlabel/"
+# Kaggel dataet
+normal_data = data_path + '/normal/'
+murmur_data = data_path + '/murmur/'
+extrastole_data = data_path + '/extrastole/'
+artifact_data = data_path + '/artifact/'
+extrahls_data = data_path + '/extrahls/'
 
-normal_data = tarin_data + '/normal/'
-murmur_data = tarin_data + '/murmur/'
-extrastole_data = tarin_data + '/extrastole/'
-artifact_data = tarin_data + '/artifact/'
-extrahls_data = tarin_data + "/extrahls/"
+# Stemoscope dataet
+normal_dataS = data_path2 + '/normal/'
+murmur_dataS = data_path2 + '/murmur/'
+extrastole_dataS = data_path2 + '/extrastole/'
+artifact_dataS = data_path2 + '/artifact/'
+extrahls_dataS = data_path2 + '/extrahls/'
 
-print("Normal files:", len(os.listdir(normal_data)))  # length of normal training sounds
-print("Murmur files:", len(os.listdir(murmur_data)))  # length of murmur training sounds
-print("Extrastole files", len(os.listdir(extrastole_data)))  # length of extrastole training sounds
-print("Artifact files:", len(os.listdir(artifact_data)))  # length of artifact training sounds
-print("Extrahls files:", len(os.listdir(extrahls_data)))  # length of extrahls training sounds
+TRAIN_IMG_COUNT = len(os.listdir(normal_data) + os.listdir(normal_dataS)) + len(
+    os.listdir(murmur_data) + os.listdir(murmur_dataS)) + len(
+    os.listdir(extrastole_data) + os.listdir(extrastole_dataS)) + len(
+    os.listdir(artifact_data) + os.listdir(artifact_dataS)) + len(
+    os.listdir(extrahls_data) + os.listdir(extrahls_dataS))
 
-print('TOTAL TRAIN SOUNDS:', len(os.listdir(normal_data))
-      + len(os.listdir(murmur_data))
-      + len(os.listdir(extrastole_data))
-      + len(os.listdir(artifact_data))
-      + len(os.listdir(extrahls_data)))
+COUNT_0 = len(os.listdir(artifact_data) + os.listdir(artifact_dataS))  # artifact
+COUNT_1 = len(os.listdir(murmur_data) + os.listdir(murmur_dataS))  # murmur
+COUNT_2 = len(os.listdir(normal_data) + os.listdir(normal_dataS))  # normal
+COUNT_3 = len(os.listdir(extrahls_data) + os.listdir(extrahls_dataS))  # extrahls
+COUNT_4 = len(os.listdir(extrastole_data) + os.listdir(extrastole_dataS))  # extrastole
 
-print("Test sounds: ", len(os.listdir(unlabel_data)))
+print("Normal files:", COUNT_2)  # length of normal training sounds
+print("Murmur files:", COUNT_1)  # length of murmur training sounds
+print("Extrastole files", COUNT_4)  # length of extrastole training sounds
+print("Artifact files:", COUNT_0)  # length of artifact training sounds
+print("Extrahls files:", COUNT_3)  # length of extrahls training sounds
 
-x = np.array([len(os.listdir(normal_data)),
-              len(os.listdir(murmur_data)),
-              len(os.listdir(extrastole_data)),
-              len(os.listdir(artifact_data)),
-              len(os.listdir(extrahls_data))])
-
+print("Total files:", TRAIN_IMG_COUNT)  # length of extrahls training sounds
 
 def stretch(data, rate):
     data = librosa.effects.time_stretch(data, rate=rate)
@@ -115,46 +119,56 @@ print(os.path.dirname(__file__))
 artifact_files = fnmatch.filter(os.listdir(artifact_data), 'artifact*.wav')
 artifact_sounds = load_file_data(folder=artifact_data, file_names=artifact_files, duration=MAX_SOUND_CLIP_DURATION,
                                  sr=SAMPLE_RATE)
-artifact_labels = [0 for _ in artifact_sounds]
+# artifact_labels = [0 for _ in artifact_sounds]
 
 normal_files = fnmatch.filter(os.listdir(normal_data), 'normal*.wav')
 normal_sounds = load_file_data(folder=normal_data, file_names=normal_files, duration=MAX_SOUND_CLIP_DURATION,
                                sr=SAMPLE_RATE)
-normal_labels = [2 for _ in normal_sounds]
+# normal_labels = [2 for _ in normal_sounds]
 
 extrahls_files = fnmatch.filter(os.listdir(extrahls_data), 'extrahls*.wav')
 extrahls_sounds = load_file_data(folder=extrahls_data, file_names=extrahls_files, duration=MAX_SOUND_CLIP_DURATION,
                                  sr=SAMPLE_RATE)
-extrahls_labels = [3 for _ in extrahls_sounds]
+# extrahls_labels = [3 for _ in extrahls_sounds]
 
 murmur_files = fnmatch.filter(os.listdir(murmur_data), 'murmur*.wav')
 murmur_sounds = load_file_data(folder=murmur_data, file_names=murmur_files, duration=MAX_SOUND_CLIP_DURATION,
                                sr=SAMPLE_RATE)
-murmur_labels = [1 for _ in murmur_sounds]
+# murmur_labels = [1 for _ in murmur_sounds]
 
 extrastole_files = fnmatch.filter(os.listdir(extrastole_data), 'extrastole*.wav')
 extrastole_sounds = load_file_data(folder=extrastole_data, file_names=extrastole_files,
                                    duration=MAX_SOUND_CLIP_DURATION, sr=SAMPLE_RATE)
+# extrastole_labels = [4 for _ in extrastole_sounds]
+
+print("Loading 0 Done")
+
+artifact_files = fnmatch.filter(os.listdir(artifact_dataS), 'artifact*.wav')
+artifact_sounds += load_file_data(folder=artifact_data, file_names=artifact_files, duration=MAX_SOUND_CLIP_DURATION,
+                                  sr=SAMPLE_RATE)
+artifact_labels = [0 for _ in artifact_sounds]
+
+normal_files = fnmatch.filter(os.listdir(normal_dataS), 'normal*.wav')
+normal_sounds += load_file_data(folder=normal_data, file_names=normal_files, duration=MAX_SOUND_CLIP_DURATION,
+                                sr=SAMPLE_RATE)
+normal_labels = [2 for _ in normal_sounds]
+
+extrahls_files = fnmatch.filter(os.listdir(extrahls_dataS), 'extrahls*.wav')
+extrahls_sounds += load_file_data(folder=extrahls_data, file_names=extrahls_files, duration=MAX_SOUND_CLIP_DURATION,
+                                  sr=SAMPLE_RATE)
+extrahls_labels = [3 for _ in extrahls_sounds]
+
+murmur_files = fnmatch.filter(os.listdir(murmur_dataS), 'murmur*.wav')
+murmur_sounds += load_file_data(folder=murmur_data, file_names=murmur_files, duration=MAX_SOUND_CLIP_DURATION,
+                                sr=SAMPLE_RATE)
+murmur_labels = [1 for _ in murmur_sounds]
+
+extrastole_files = fnmatch.filter(os.listdir(extrastole_dataS), 'extrastole*.wav')
+extrastole_sounds += load_file_data(folder=extrastole_data, file_names=extrastole_files,
+                                    duration=MAX_SOUND_CLIP_DURATION, sr=SAMPLE_RATE)
 extrastole_labels = [4 for _ in extrastole_sounds]
 
-print("Loading Done")
-
-##########################
-### Load unlabel files ###
-##########################
-
-# unlabel_datala files
-Bunlabelledtest_files = fnmatch.filter(os.listdir(unlabel_data), 'Bunlabelledtest*.wav')
-Bunlabelledtest_sounds = load_file_data(folder=unlabel_data, file_names=Bunlabelledtest_files,
-                                        duration=MAX_SOUND_CLIP_DURATION)
-Bunlabelledtest_labels = [-1 for _ in Bunlabelledtest_sounds]
-
-Aunlabelledtest_files = fnmatch.filter(os.listdir(unlabel_data), 'Aunlabelledtest*.wav')
-Aunlabelledtest_sounds = load_file_data(folder=unlabel_data, file_names=Aunlabelledtest_files,
-                                        duration=MAX_SOUND_CLIP_DURATION)
-Aunlabelledtest_labels = [-1 for _ in Aunlabelledtest_sounds]
-
-print("Loading of unlabel data done")
+print("Loading (Stemoscope) 1 Done")
 
 ###################
 ### Split files ###
@@ -204,9 +218,6 @@ x_test = np.concatenate((artifact_test, normal_test, extrahls_test, murmur_test,
 y_test = np.concatenate(
     (artifact_test_labels, normal_test_labels, extrahls_test_labels, murmur_test_labels, extrastole_test_labels))
 
-test_x = np.concatenate((Aunlabelledtest_sounds, Bunlabelledtest_sounds))
-test_y = np.concatenate((Aunlabelledtest_labels, Bunlabelledtest_labels))
-
 ############################
 ### Encoding for classes ###
 ############################
@@ -215,18 +226,10 @@ test_y = np.concatenate((Aunlabelledtest_labels, Bunlabelledtest_labels))
 y_train = np.array(tf.keras.utils.to_categorical(y_train, len(CLASSES)))
 y_test = np.array(tf.keras.utils.to_categorical(y_test, len(CLASSES)))
 y_val = np.array(tf.keras.utils.to_categorical(y_val, len(CLASSES)))
-test_y = np.array(tf.keras.utils.to_categorical(test_y, len(CLASSES)))
 
 ##############
 ### Weight ###
 ##############
-
-TRAIN_IMG_COUNT = 585
-COUNT_0 = 40  # artifact
-COUNT_1 = 129  # murmur
-COUNT_2 = 351  # normal
-COUNT_3 = 19  # extrahls
-COUNT_4 = 46  # extrastole
 
 weight_for_0 = TRAIN_IMG_COUNT / (3 * COUNT_0)
 weight_for_1 = TRAIN_IMG_COUNT / (3 * COUNT_1)
@@ -285,16 +288,15 @@ lstm_model.compile(optimizer=optimiser,
                    loss='categorical_crossentropy',
                    metrics=['accuracy'])
 
-weight_saver = ModelCheckpoint('set_a_weights.h5',
+weight_saver = ModelCheckpoint('./CNN/models/my_model_weight_saver.h5',
                                monitor='val_loss',
                                save_best_only=True,
                                save_weights_only=True,
                                verbose=1)
 
-callback = tf.keras.callbacks.EarlyStopping(patience=50,monitor='val_accuracy',mode='max',restore_best_weights=True),\
-    ModelCheckpoint("./models/Heart_LSTM_CNN_1.h5",
+callback = tf.keras.callbacks.EarlyStopping(patience=50, monitor='val_accuracy', mode='max', restore_best_weights=True), \
+    ModelCheckpoint("./CNN/models/my_model_EarlyStopping.h5",
                     save_best_only=True)
-
 
 history = lstm_model.fit(x_train_lstm, y_train_lstm,
                          validation_data=(x_val_lstm, y_val_lstm),
@@ -302,6 +304,6 @@ history = lstm_model.fit(x_train_lstm, y_train_lstm,
                          class_weight=class_weight,
                          callbacks=callback)
 
-lstm_model.save('./models/my_model.h5')
+lstm_model.save('./CNN/models/my_model_save.h5')
 
 lstm_model.evaluate(x_test_lstm, y_test_lstm)

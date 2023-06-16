@@ -8,17 +8,26 @@ const path = require("path");
 const fs = require("fs");
 
 exports.renameFile = (req, res, next) => {
-    fs.rename(req.file.path, "./CNN/temp/" + req.file.filename, (err) => {
+    const sourcePath = "./" + req.file.path;
+    const destinationPath = "./CNN/temp/" + req.file.filename;
+
+    fs.copyFile(sourcePath, destinationPath, (err) => {
         if (err) throw err;
-        console.log("File renamed and moved!");
+        console.log("File copied to the new location!");
+
+        fs.unlink(sourcePath, (err) => {
+            if (err) throw err;
+            console.log("Old file removed!");
+        });
+
+        req.file.path = destinationPath;
+        next();
     });
-    req.file.path = "./CNN/temp/" + req.file.filename;
-    next();
-}
+};
 
 
 exports.getModel = () => {
-    express.static(path.join(__dirname, 'CNN/my_model.h5'))
+    express.static(path.join(__dirname, './CNN/models/my_model_save.h5'))
 };
 
 exports.train = (req, res) => {
@@ -47,7 +56,8 @@ exports.train = (req, res) => {
 
 
 exports.predict = async (req, res) => {
-    const python = spawn('python', ['CNN/LSTM_Classification_model.py', req.file.path, './CNN/models/Heart_LSTM_CNN_1.h5']);
+    console.log("req.file.path: ", req.file.path);
+    const python = spawn('python', ['./CNN/LSTM_Classification_model.py', req.file.path, './CNN/models/my_model_save.h5']);
 
     python.stdout.on('data', function (data) {
         console.log('Pipe data from python script ...');
