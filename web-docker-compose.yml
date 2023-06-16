@@ -10,8 +10,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${USERNAME_MONGO}
       MONGO_INITDB_ROOT_PASSWORD: ${PASSWORD_MONGO}
-    ports:
-      - "27017:27017"
     volumes:
       - data:/data/db
   node-backend:
@@ -31,6 +29,19 @@ services:
       - ./backend:/app/:ro
       - ./backend/CNN:/app/CNN:rw
       - ./backend/audioFiles:/app/audioFiles:rw
+  node-smeniweb:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile-smeniweb
+    restart: always
+    container_name: web-SMENI
+    ports:
+      - "80:80"
+    depends_on:
+      - node-backend
+    volumes:
+      - ./smeni-web:/app/:ro
+
 volumes:
   data:
     driver: local
