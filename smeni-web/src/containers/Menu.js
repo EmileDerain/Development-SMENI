@@ -4,6 +4,7 @@ import Icon from '@mdi/react';
 import './Menu.css';
 
 import {mdiExitToApp, mdiCog, mdiReload, mdiContentSave, mdiFolderPlayOutline, mdiDoctor} from '@mdi/js';
+import ReactLogo from './../ressource/Vector.svg';
 
 // import {Link} from "react-router-dom";
 
@@ -46,7 +47,7 @@ const menu = [
 const Menu = () => {
     return (
         <div className={"screen"}>
-            <div className={"circleArt"}>
+            <div className={"circleArt1"}>
                 <div className="circle"></div>
                 <div className="circle1"></div>
                 <div className="circle2"></div>
@@ -56,7 +57,7 @@ const Menu = () => {
                 <div className="circle6 "></div>
             </div>
 
-            <div className={"circleArtBis"}>
+            <div className={"circleArt2"}>
                 <div className="circle"></div>
                 <div className="circle1"></div>
                 <div className="circle2"></div>
@@ -65,6 +66,21 @@ const Menu = () => {
                 <div className="circle5"></div>
                 <div className="circle6 "></div>
             </div>
+
+            <div className={"circleArt3"}>
+                <div className="circle"></div>
+                <div className="circle1"></div>
+                <div className="circle2"></div>
+                <div className="circle3"></div>
+                <div className="circle4"></div>
+                <div className="circle5"></div>
+                <div className="circle6 "></div>
+            </div>
+
+            {/*<div className={"circleArtImg"}>*/}
+            {/*    <img src={ReactLogo}/>*/}
+            {/*</div>*/}
+
 
             <div className={"header"}>
                 <div className={"title"}>
@@ -91,6 +107,7 @@ function ButtonMenuHeader(info) {
     return (
         <div className={"iconMenuHeader"}>
             <Icon path={info.button.mdi} size={3}/>
+            <div className={"iconMenuHeaderInv"}></div>
         </div>
     );
 }
@@ -100,6 +117,7 @@ function ButtonMenu(info) {
         <div className={"iconMenu"}>
             <Icon path={info.button.mdi} size={10}/>
             <h1>{info.button.name}</h1>
+            <div className={"iconMenuInv"}></div>
         </div>
     );
 }
