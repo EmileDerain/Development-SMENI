@@ -13,6 +13,7 @@
     "@react-native-async-storage/async-storage": "^1.18.2",
     "@react-navigation/native-stack": "^6.9.12",
     "@reduxjs/toolkit": "^1.9.5",
+    "base-64": "^1.0.0",
     "expo-status-bar": "^1.4.4",
     "react": "18.2.0",
     "react-native": "0.71.8",

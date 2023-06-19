@@ -1,14 +1,25 @@
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {URL_LOGIN} from "../utils/path";
+import {getTokenFromStorage, isTokenValid} from "../utils/jwtCheck";
 
+
+const checkToken = async (navigation: { navigate: (arg0: string) => void; }) => {
+    const tokenFromStorage = await AsyncStorage.getItem('token');
+    if(isTokenValid(tokenFromStorage)){
+        console.log("token is valid")
+        navigation.navigate('DiagnoHelp');
+    }
+}
 
 const SignIn = () => {
     const navigation = useNavigation();
+    checkToken(navigation);
+
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -27,7 +38,7 @@ const SignIn = () => {
             formData.append(key, params[key]);
         }
 
-        try{
+        try {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -36,7 +47,7 @@ const SignIn = () => {
                 body: formData.toString(),
             })
                 .then(response => {
-                    if(response.ok){
+                    if (response.ok) {
                         return response.json();
                     }
                     throw new Error('The credentials are not correct');
@@ -160,7 +171,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 17,
     },
-    navigate:{
+    navigate: {
         textDecorationLine: 'underline',
         marginLeft: 10,
     },

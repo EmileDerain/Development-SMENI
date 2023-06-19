@@ -19,6 +19,7 @@ import colors from '../assets/colors/colors';
 import { useGetShare } from '../useGetShare';
 import heartBeat from '../assets/images/heartBeat.png';
 import {URL_AUDIO} from "../utils/path";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const DiagnoHelpScreen = () => {
@@ -105,7 +106,14 @@ const DiagnoHelpScreen = () => {
       {/* header */}
       <SafeAreaView style={styles.headerWrapper}>
         <Text style={[styles.text, styles.title]}>Diagnostic Page</Text>
-        <TouchableOpacity onPress={() => (navigation.canGoBack() ? navigation.goBack() : null)}>
+        <TouchableOpacity onPress={() => {
+          if (navigation.canGoBack()) {
+            AsyncStorage.clear()
+                .then(() => navigation.goBack())
+                .catch(error => console.error('Failed to clear AsyncStorage:', error));
+          }
+        }}
+        >
           <MaterialCommunityIcons name="dots-horizontal" size={24} color={colors.icons} />
         </TouchableOpacity>
       </SafeAreaView>
