@@ -8,7 +8,7 @@ import {URL_LOGIN} from "../utils/path";
 import {getTokenFromStorage, isTokenValid} from "../utils/jwtCheck";
 
 
-const checkToken = async () => {
+const CheckToken = async () => {
     const navigation = useNavigation();
     const tokenFromStorage = await AsyncStorage.getItem('token');
     if(isTokenValid(tokenFromStorage)){
@@ -19,7 +19,7 @@ const checkToken = async () => {
 
 const SignIn = () => {
     const navigation = useNavigation();
-    checkToken();
+    CheckToken();
 
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');

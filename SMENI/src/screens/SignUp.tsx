@@ -7,7 +7,7 @@ import {URL_SIGNUP} from "../utils/path";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {isTokenValid} from "../utils/jwtCheck";
 
-const checkToken = async ()=> {
+const CheckToken = async ()=> {
     const navigation = useNavigation();
 
     const tokenFromStorage = await AsyncStorage.getItem('token');
@@ -20,7 +20,7 @@ const checkToken = async ()=> {
 const SignUp = () => {
     const navigation = useNavigation();
 
-    checkToken();
+    CheckToken();
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');

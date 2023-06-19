@@ -23,7 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {isTokenValid} from "../utils/jwtCheck";
 
 
-const checkToken = async () => {
+const CheckToken = async () => {
   const navigation = useNavigation();
 
   const tokenFromStorage = await AsyncStorage.getItem('token');
@@ -36,7 +36,7 @@ const DiagnoHelpScreen = () => {
   const sharedFile = useGetShare();
   const navigation = useNavigation();
 
-  checkToken(navigation);
+  CheckToken(navigation);
 
   const [selectedValue, setSelectedValue] = useState('');
   const [suggestions, setSuggestions] = useState([

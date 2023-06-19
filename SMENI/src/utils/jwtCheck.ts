@@ -1,7 +1,7 @@
 import {decode as base64Decode} from 'base-64';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-function parseJwt(token: string | null | undefined) {
+function parseJwt(token: string | null) {
     if (token === null || token.indexOf('.') === -1) {
         return null;
     }
@@ -20,7 +20,7 @@ function parseJwt(token: string | null | undefined) {
     }
 }
 
-function isTokenValid(token: string | null | undefined) {
+function isTokenValid(token: string | null) {
     let parsedJwt = parseJwt(token);
     if (parsedJwt === null || parsedJwt.exp === undefined) return false;
     let expirationTime = parsedJwt.exp;
