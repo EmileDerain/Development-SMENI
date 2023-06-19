@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
+import {URL_SIGNUP} from "../utils/path";
 
 
 const SignUp = () => {
@@ -14,7 +15,7 @@ const SignUp = () => {
 
 
     const registerAccount = async () => {
-        const url = 'http://172.16.20.252:2834/api/user/signup'; //TODO : ipconfig et mettre son addresse IP locale
+        const url = URL_SIGNUP; //TODO : ipconfig et mettre son addresse IP locale
 
         const params = {
             firstName: firstName,

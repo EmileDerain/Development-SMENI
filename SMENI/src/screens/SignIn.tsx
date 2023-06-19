@@ -3,6 +3,8 @@ import React, {useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {URL_LOGIN} from "../utils/path";
 
 
 const SignIn = () => {
@@ -12,7 +14,7 @@ const SignIn = () => {
 
 
     const login = async () => {
-        const url = 'http://172.16.20.252:2834/api/user/login'; //TODO : ipconfig et mettre son addresse IP locale
+        const url = URL_LOGIN; //TODO : ipconfig et mettre son addresse IP locale
 
         const params = {
             mail: mail,
@@ -36,6 +38,14 @@ const SignIn = () => {
 
             if (response.ok) {
                 console.log('response ok');
+                console.log('token', response);
+                console.log('header', response.headers);
+
+                const token = response.headers.get('Authorization');
+                console.log('token', token);
+                if (token != null) {
+                    await AsyncStorage.setItem('token', token);
+                }
                 navigation.navigate('DiagnoHelp');
             } else{
                 console.error('The credentials are not correct');

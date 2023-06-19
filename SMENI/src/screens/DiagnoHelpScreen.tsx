@@ -18,6 +18,7 @@ import Prediction from '../components/Prediction';
 import colors from '../assets/colors/colors';
 import { useGetShare } from '../useGetShare';
 import heartBeat from '../assets/images/heartBeat.png';
+import {URL_AUDIO} from "../utils/path";
 
 
 const DiagnoHelpScreen = () => {
@@ -60,7 +61,7 @@ const DiagnoHelpScreen = () => {
     console.log('sharedFile:', sharedFile);
 
 
-    const url = 'http://172.16.20.252:2834/api/audio'; //TODO : ipconfig et mettre son addresse IP locale
+    const url = URL_AUDIO; //TODO : ipconfig et mettre son addresse IP locale
 
     // @ts-ignore
     const fichierWaveUri = sharedFile[0].contentUri;
