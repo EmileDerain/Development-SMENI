@@ -8,7 +8,8 @@ import {URL_LOGIN} from "../utils/path";
 import {getTokenFromStorage, isTokenValid} from "../utils/jwtCheck";
 
 
-const checkToken = async (navigation: { navigate: (arg0: string) => void; }) => {
+const checkToken = async () => {
+    const navigation = useNavigation();
     const tokenFromStorage = await AsyncStorage.getItem('token');
     if(isTokenValid(tokenFromStorage)){
         console.log("token is valid")
@@ -18,7 +19,7 @@ const checkToken = async (navigation: { navigate: (arg0: string) => void; }) => 
 
 const SignIn = () => {
     const navigation = useNavigation();
-    checkToken(navigation);
+    checkToken();
 
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
@@ -39,7 +40,7 @@ const SignIn = () => {
         }
 
         try {
-            const response = await fetch(url, {
+            await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -54,7 +55,7 @@ const SignIn = () => {
                 })
                 .then(data => {
                     const token = data.token;
-                    if (token != null) {
+                    if (token !== null) {
                         // Utiliser AsyncStorage pour stocker le token
                         AsyncStorage.setItem('token', token)
                             .then(() => {

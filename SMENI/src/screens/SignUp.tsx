@@ -4,10 +4,24 @@ import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
 import {URL_SIGNUP} from "../utils/path";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {isTokenValid} from "../utils/jwtCheck";
 
+const checkToken = async ()=> {
+    const navigation = useNavigation();
+
+    const tokenFromStorage = await AsyncStorage.getItem('token');
+    if(isTokenValid(tokenFromStorage)){
+        console.log("token is valid")
+        navigation.navigate('DiagnoHelp');
+    }
+}
 
 const SignUp = () => {
     const navigation = useNavigation();
+
+    checkToken();
+
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [mail, setMail] = useState('');

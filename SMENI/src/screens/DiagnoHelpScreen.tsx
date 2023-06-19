@@ -20,11 +20,24 @@ import { useGetShare } from '../useGetShare';
 import heartBeat from '../assets/images/heartBeat.png';
 import {URL_AUDIO} from "../utils/path";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {isTokenValid} from "../utils/jwtCheck";
 
 
+const checkToken = async () => {
+  const navigation = useNavigation();
+
+  const tokenFromStorage = await AsyncStorage.getItem('token');
+  if(!isTokenValid(tokenFromStorage)){
+    console.log("token is invalid")
+    navigation.navigate('SignIn');
+  }
+}
 const DiagnoHelpScreen = () => {
   const sharedFile = useGetShare();
   const navigation = useNavigation();
+
+  checkToken(navigation);
+
   const [selectedValue, setSelectedValue] = useState('');
   const [suggestions, setSuggestions] = useState([
     '',
@@ -109,7 +122,7 @@ const DiagnoHelpScreen = () => {
         <TouchableOpacity onPress={() => {
           if (navigation.canGoBack()) {
             AsyncStorage.clear()
-                .then(() => navigation.goBack())
+                .then(() => navigation.navigate('SignIn'))
                 .catch(error => console.error('Failed to clear AsyncStorage:', error));
           }
         }}
