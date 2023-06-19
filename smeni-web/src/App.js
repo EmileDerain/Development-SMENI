@@ -1,5 +1,7 @@
 import React from 'react';
 import './App.css';
+import "@fontsource/nunito-sans";
+
 
 import {Routes, Route} from 'react-router-dom';
 import {BrowserRouter as Router} from "react-router-dom";
@@ -10,9 +12,8 @@ import Audios from "./containers/Audios";
 import Model from "./containers/Model";
 
 function App() {
-
     return (
-        <div className="App">
+        <div>
             <Router>
                 <Routes>
                     <Route path="/" exact element={<Menu/>}/>

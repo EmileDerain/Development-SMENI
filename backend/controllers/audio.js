@@ -1,40 +1,46 @@
 const Audio = require('../models/audio');
 const fs = require("fs");
+const Model = require("../models/model");
 
 
 exports.renameFile = (req, res, next) => {
     fs.rename(req.file.path, "./CNN/dataStemoscope/Test/" + req.body.label + "/" + req.body.label + "_" + req.file.filename, (err) => {
-        if (err) throw err;
-        console.log("File renamed and moved!");
+        if (err) {
+            console.log("Error : file renamed and moved!");
+            res.status(500).json({"status": 500, "reason": "Can't rename file"})
+            throw err;
+        }else{
+            console.log("File renamed and moved!");
+            req.file.path = req.body.label + "/" + req.body.label + "_" + req.file.filename;
+            next();
+        }
     });
-    req.file.path = req.body.label + "/" + req.body.label + "_" + req.file.filename;
-    next();
 }
 
 exports.saveAudio = (req, res) => {
     console.log("req.file:", req.file);
     const audioFile = new Audio({
         audioName: req.file.filename,
-        path : req.file.path,
+        path: req.file.path,
         date: new Date().toDateString(),
         label: req.body.label,
     });
     audioFile.save()
-        .then(() => res.status(201).json({message: 'Audio saved !'}))
-        .catch(error => res.status(400).json({error}));
+        .then(() => res.status(201).json({"status": 201, message: 'Audio saved'}))
+        .catch(error => res.status(400).json({"status": 201, reason: error}));
 };
 
 
 exports.getAllAudio = (req, res) => {
     Audio.find()
-        .then(things => res.status(200).json(things))
-        .catch(error => res.status(400).json({error}));
+        .then(audios => res.status(200).json({"status": 200, "audios": audios}))
+        .catch(error => res.status(400).json({"status": 400, reason: error}));
 };
 
 exports.streamAudio = async (req, res) => {
     console.log("streamAudio")
     const audioData = await Audio.findOne({_id: req.params.id})
-        .catch(error => res.status(404).json({error}));
+        .catch(error => res.status(404).json({"status": 404, "reason": "Not found"}));
 
     console.log("Find audio !:", audioData)
 
@@ -44,7 +50,7 @@ exports.streamAudio = async (req, res) => {
 
     // Vérifiez si le fichier audio existe
     if (!fs.existsSync(filePath)) {
-        res.status(404).send('Fichier audio non trouvé');
+        res.status(404).send({"status": 404, "reason": "Not found"});
         return;
     }
 
@@ -60,7 +66,7 @@ exports.streamAudio = async (req, res) => {
         const end = positions[1] ? parseInt(positions[1], 10) : fileSize - 1;
 
         if (isNaN(start) || isNaN(end) || start >= fileSize || end >= fileSize || start < 0 || end < 0 || start > end) {
-            res.status(416).send('Plage de lecture invalide');
+            res.status(416).send({"status": 416, "reason": "Invalid range request"});
             return;
         }
 
@@ -83,4 +89,10 @@ exports.streamAudio = async (req, res) => {
         });
         fs.createReadStream(filePath).pipe(res);
     }
+};
+
+exports.deleteAudio = (req, res) => {
+    Audio.findByIdAndDelete(req.params.id)
+        .then(() => res.status(200).json({message: 'Audio delete !'}))
+        .catch(error => res.status(400).json({error}));
 };

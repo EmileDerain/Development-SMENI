@@ -60,7 +60,7 @@ const DiagnoHelpScreen = () => {
     console.log('sharedFile:', sharedFile);
 
 
-    const url = 'http://172.16.20.252:2834/api/audio'; //TODO : ipconfig et mettre son addresse IP locale
+    const url = 'http://172.16.6.115:2834/api/audio'; //TODO : ipconfig et mettre son addresse IP locale
 
     // @ts-ignore
     const fichierWaveUri = sharedFile[0].contentUri;
@@ -71,10 +71,12 @@ const DiagnoHelpScreen = () => {
     formData.append('audio', {
       uri: fichierWaveUri,
       type: 'audio/x-wav',
-      name: '1683880817754.wav',
+      name: sharedFile[0].fileName,
     });
 
     formData.append('label', "normal");
+
+    console.log('formData.append OK')
 
     try {
       const response = await fetch(url, {
@@ -88,7 +90,7 @@ const DiagnoHelpScreen = () => {
         console.error('Erreur lors de l\'envoi du fichier :', response.statusText);
       }
     } catch (error) {
-      console.error('Erreur lors de l\'envoi du fichier :', error);
+      console.error('Erreur lors de l\'envoi du * :', error);
     }
   };
 
