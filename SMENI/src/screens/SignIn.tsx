@@ -34,24 +34,26 @@ const SignIn = () => {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: formData.toString(),
-            });
-
-            if (response.ok) {
-                console.log('response ok');
-                console.log('token', response);
-                console.log('header', response.headers);
-
-                const token = response.headers.get('Authorization');
-                console.log('token', token);
-                if (token != null) {
-                    await AsyncStorage.setItem('token', token);
-                }
-                navigation.navigate('DiagnoHelp');
-            } else{
-                console.error('The credentials are not correct');
-                //TODO : create a popup to say that the mail is already used
-
-            }
+            })
+                .then(response => {
+                    if(response.ok){
+                        return response.json();
+                    }
+                    throw new Error('The credentials are not correct');
+                })
+                .then(data => {
+                    const token = data.token;
+                    if (token != null) {
+                        // Utiliser AsyncStorage pour stocker le token
+                        AsyncStorage.setItem('token', token)
+                            .then(() => {
+                                navigation.navigate('DiagnoHelp');
+                            })
+                            .catch(error => {
+                                console.error('Failed to store token:', error);
+                            });
+                    }
+                });
         } catch (error) {
             console.error('error:', error);
         }
