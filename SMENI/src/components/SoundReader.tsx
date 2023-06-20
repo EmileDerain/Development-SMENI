@@ -16,7 +16,8 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
     isPaused: false,
   });
   const [sound, setSound] = useState<Sound | null>(null);
-  const [waveformBitmap, setWaveformBitmap] = useState<Uint8Array | null>(null);
+  const [waveformImagePath, setWaveformImagePath] = useState<string | null>(null);
+  const [spectrogramImagePath, setSpectrogramImagePath] = useState<string | null>(null);
 
   useEffect(() => {
     requestPermissions();
@@ -27,6 +28,7 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
       const granted = await PermissionsAndroid.requestMultiple([
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       ]);
 
       if (
@@ -75,30 +77,39 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
     sound?.pause();
     setPlayerState({ ...playerState, isPlaying: false, isPaused: true });
   };
-  
-  
-  
-  
+
   const generateWaveform = async () => {
     try {
       console.log('Génération de la waveform en cours...');
-      const waveformString = await WaveformGenerator.generateWaveform(transferedFile.filePath);
-      setWaveformBitmap(waveformString);
+      const waveformPath = await WaveformGenerator.generateWaveform(transferedFile.filePath);
+      setWaveformImagePath(waveformPath);
       console.log('Waveform générée avec succès');
-      console.log(waveformString);
+      generateSpectrogram();
     } catch (error) {
       console.log('Erreur lors de la génération de la waveform', error);
+    }
+  };
+
+  const generateSpectrogram = async () => {
+    try {
+      console.log('Génération du spectrogramme en cours...');
+      const spectrogramPath = await WaveformGenerator.generateSpectrogram(transferedFile.filePath);
+      setSpectrogramImagePath(spectrogramPath);
+      console.log('Spectrogramme généré avec succès');
+    } catch (error) {
+      console.log('Erreur lors de la génération du spectrogramme', error);
     }
   };
 
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.soundWrapper}>
-        {waveformBitmap && 
-        <Image
-          source={{ uri: `data:image/png;base64,${waveformBitmap}` }}
-          style={styles.waveformImage}
-        />}
+        {waveformImagePath && (
+          <Image source={{ uri: waveformImagePath }} style={styles.waveformImage} /> 
+        )}
+        {spectrogramImagePath && (
+          <Image source={{ uri: spectrogramImagePath }} style={styles.waveformImage} /> 
+        )}
       </SafeAreaView>
       <SafeAreaView style={styles.editWrapper}>
         <SafeAreaView style={styles.audioEdit}>
@@ -160,7 +171,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     width: '100%',
     height: '100%',
-    backgroundColor: colors.default,
     borderColor: colors.default,
   },
   editWrapper: {

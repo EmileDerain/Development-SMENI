@@ -2,8 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import soundfile as sf
 
-def generate_waveform_image(audio_path, output_path):
+def generate_waveform_image(audio_path):
     audio, sample_rate = sf.read(audio_path)
+
+    output_path = get_output_path(audio_path, 'onde_audio.png')
 
     plt.figure(figsize=(12, 4))
     time = np.arange(0, len(audio)) / sample_rate
@@ -13,8 +15,12 @@ def generate_waveform_image(audio_path, output_path):
     plt.savefig(output_path)
     plt.close()
 
-def generate_spectrogram_image(audio_path, output_path):
+    return output_path
+
+def generate_spectrogram_image(audio_path):
     audio, sample_rate = sf.read(audio_path)
+
+    output_path = get_output_path(audio_path, 'spectrogramme.png')
 
     plt.figure(figsize=(12, 4))
     plt.specgram(audio, Fs=sample_rate)
@@ -23,11 +29,13 @@ def generate_spectrogram_image(audio_path, output_path):
     plt.savefig(output_path)
     plt.close()
 
-# Chemin relatif vers le fichier audio
-audio_path = '1683880817754.wav'
+    return output_path
 
-# Générer l'onde audio (oscillogramme)
-generate_waveform_image(audio_path, 'onde_audio.png')
+def get_output_path(audio_path, filename):
+    # Extraire le répertoire en supprimant le nom de fichier
+    audio_dir = '/'.join(audio_path.split('/')[:-1])
 
-# Calculer et générer le spectrogramme
-generate_spectrogram_image(audio_path, 'spectrogramme.png')
+    # Concaténer le répertoire et le nom de fichier pour obtenir le output_path
+    output_path = audio_dir + '/' + filename
+
+    return output_path
