@@ -23,10 +23,85 @@ const SignUp = () => {
     CheckToken();
 
     const [firstName, setFirstName] = useState('');
+    const [fistNameError, setFirstNameError] = useState(''); //TODO : faire un style pour les erreurs
     const [lastName, setLastName] = useState('');
+    const [lastNameError, setLastNameError] = useState('');
     const [mail, setMail] = useState('');
+    const [mailError, setMailError] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
 
+
+    const handleSubmit = () => {
+        let firstNameValid = false;
+        if(firstName.length == 0){
+            setFirstNameError('First Name is required');
+        }
+        else{
+            setFirstNameError('');
+            firstNameValid = true;
+        }
+
+        let lastNameValid = false;
+        if(lastName.length == 0){
+            setLastNameError('Last Name is required');
+        }
+        else{
+            setLastNameError('');
+            lastNameValid = true;
+        }
+
+        let mailValid = false;
+        const mailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(mail.length == 0){
+            setMailError('Mail is required');
+        }
+        else if(!mailValidator.test(String(mail).toLowerCase())){
+            setMailError('Mail is not valid, it should be like : example@example.com');
+        }
+        else{
+            setMailError('');
+            mailValid = true;
+        }
+
+        let passwordValid = false;
+        if(password.length == 0){
+            setPasswordError('Password is required');
+        }
+        else if(password.length < 8){
+            setPasswordError('Password must be at least 8 characters long');
+        }
+        else if(password.length > 20){
+            setPasswordError('Password must be at most 20 characters long');
+        }
+        else if(!password.match(/[a-z]/g)){
+            setPasswordError('Password must contain at least one lowercase letter');
+        }
+        else if(!password.match(/[A-Z]/g)){
+            setPasswordError('Password must contain at least one uppercase letter');
+        }
+        else if(!password.match(/[0-9]/g)){
+            setPasswordError('Password must contain at least one number');
+        }
+        else if(!password.match(/[^a-zA-Z\d]/g)){
+            setPasswordError('Password must contain at least one special character');
+        }
+        else{
+            setPasswordError('');
+            passwordValid = true;
+        }
+
+        if(firstNameValid && lastNameValid && mailValid && passwordValid){
+            registerAccount();
+        }
+    }
+
+    const clearForm = () => {
+        setFirstName('');
+        setLastName('');
+        setMail('');
+        setPassword('');
+    }
 
     const registerAccount = async () => {
         const url = URL_SIGNUP; //TODO : ipconfig et mettre son addresse IP locale
@@ -55,6 +130,7 @@ const SignUp = () => {
 
             if (response.ok) {
                 console.log('response ok');
+                clearForm();
                 navigation.navigate('SignIn');
             } else{
                 console.error('mail is already used');
@@ -86,6 +162,9 @@ const SignUp = () => {
                         onChangeText={(text) => setFirstName(text)}
                     />
                 </SafeAreaView>
+                {fistNameError.length > 0 &&
+                    <Text>{fistNameError}</Text>
+                }
                 {/*Last Name*/}
                 <SafeAreaView style={styles.labelWrapper}>
                     <Text style={[styles.text, styles.subtitle]}>Last Name</Text>
@@ -96,6 +175,9 @@ const SignUp = () => {
                         onChangeText={(text) => setLastName(text)}
                     />
                 </SafeAreaView>
+                {lastNameError.length > 0 &&
+                    <Text>{lastNameError}</Text>
+                }
                 {/*Mail*/}
                 <SafeAreaView style={styles.labelWrapper}>
                     <Text style={[styles.text, styles.subtitle]}>Mail</Text>
@@ -106,6 +188,9 @@ const SignUp = () => {
                         onChangeText={(text) => setMail(text)}
                     />
                 </SafeAreaView>
+                {mailError.length > 0 &&
+                    <Text>{mailError}</Text>
+                }
                 {/*Password*/}
                 <SafeAreaView style={styles.labelWrapper}>
                     <Text style={[styles.text, styles.subtitle]}>Password</Text>
@@ -116,17 +201,20 @@ const SignUp = () => {
                         onChangeText={(text) => setPassword(text)}
                     />
                 </SafeAreaView>
+                {passwordError.length > 0 &&
+                    <Text>{passwordError}</Text>
+                }
                 {/*TODO : peut être rajouter un champ confirm password    */}
 
                 <SafeAreaView>
                     <SafeAreaView>
                         <TouchableOpacity
                             onPress={() => {
-                                registerAccount();
+                                handleSubmit();
                                 //TODO : créer la méthode pour envoyer le compte au back
                             }}
-                            disabled={firstName === '' || lastName === '' || mail === '' || password === ''}
-                            style={[styles.buttonContent, styles.button, (firstName === '' || lastName === '' || mail === '' || password === '') && styles.disabledButton]}
+                            // disabled={firstName === '' || lastName === '' || mail === '' || password === ''}
+                            style={[styles.buttonContent, styles.button ]} //, (firstName === '' || lastName === '' || mail === '' || password === '') && styles.disabledButton]}
                         >
                             <Text style={[styles.text, styles.title]}>Create</Text>
 
@@ -141,6 +229,7 @@ const SignUp = () => {
                 <Text style={[styles.text, styles.subtitle]}>Already have an account ?</Text>
                 <TouchableOpacity
                     onPress={() => {
+                        clearForm();
                         navigation.navigate('SignIn');
                     }}>
                     <Text style={[styles.text, styles.subtitle, styles.navigate]}>Sign In</Text>

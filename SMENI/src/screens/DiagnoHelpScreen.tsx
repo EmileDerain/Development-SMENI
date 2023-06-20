@@ -36,7 +36,7 @@ const DiagnoHelpScreen = () => {
   const sharedFile = useGetShare();
   const navigation = useNavigation();
 
-  CheckToken(navigation);
+  CheckToken();
 
   const [selectedValue, setSelectedValue] = useState('');
   const [suggestions, setSuggestions] = useState([

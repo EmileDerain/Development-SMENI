@@ -25,6 +25,11 @@ const SignIn = () => {
     const [password, setPassword] = useState('');
 
 
+    const clearForm = () => {
+        setMail('');
+        setPassword('');
+    }
+
     const login = async () => {
         const url = URL_LOGIN; //TODO : ipconfig et mettre son addresse IP locale
 
@@ -59,6 +64,7 @@ const SignIn = () => {
                         // Utiliser AsyncStorage pour stocker le token
                         AsyncStorage.setItem('token', token)
                             .then(() => {
+                                clearForm();
                                 navigation.navigate('DiagnoHelp');
                             })
                             .catch(error => {
@@ -125,6 +131,7 @@ const SignIn = () => {
                 <Text style={[styles.text, styles.subtitle]}>No account ?</Text>
                 <TouchableOpacity
                     onPress={() => {
+                        clearForm();
                         navigation.navigate('SignUp');
                     }}>
                     <Text style={[styles.text, styles.subtitle, styles.navigate]}>Create One !</Text>
