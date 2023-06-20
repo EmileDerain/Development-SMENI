@@ -14,6 +14,7 @@ import com.facebook.react.bridge.ReactMethod;
 import java.io.IOException;
 import java.util.Arrays;
 
+
 public class WaveformGenerator extends ReactContextBaseJavaModule {
     private byte[] fullWaveform;
 
@@ -29,6 +30,9 @@ public class WaveformGenerator extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void generateWaveform(String audioFilePath, Promise promise) {
+        /*if (! Python.isStarted()) {
+            Python.start(new Python.Platform());
+        }*/
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
             mediaPlayer.setDataSource(audioFilePath);
