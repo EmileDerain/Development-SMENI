@@ -1,17 +1,17 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
 import {URL_SIGNUP} from "../utils/path";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {isTokenValid} from "../utils/jwtCheck";
 
-const CheckToken = async ()=> {
+const CheckToken = async () => {
     const navigation = useNavigation();
 
     const tokenFromStorage = await AsyncStorage.getItem('token');
-    if(isTokenValid(tokenFromStorage)){
+    if (isTokenValid(tokenFromStorage)) {
         console.log("token is valid")
         navigation.navigate('DiagnoHelp');
     }
@@ -30,68 +30,58 @@ const SignUp = () => {
     const [mailError, setMailError] = useState('');
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 
 
     const handleSubmit = () => {
         let firstNameValid = false;
-        if(firstName.length == 0){
+        if (firstName.length == 0) {
             setFirstNameError('First Name is required');
-        }
-        else{
+        } else {
             setFirstNameError('');
             firstNameValid = true;
         }
 
         let lastNameValid = false;
-        if(lastName.length == 0){
+        if (lastName.length == 0) {
             setLastNameError('Last Name is required');
-        }
-        else{
+        } else {
             setLastNameError('');
             lastNameValid = true;
         }
 
         let mailValid = false;
         const mailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if(mail.length == 0){
+        if (mail.length == 0) {
             setMailError('Mail is required');
-        }
-        else if(!mailValidator.test(String(mail).toLowerCase())){
-            setMailError('Mail is not valid, it should be like : example@example.com');
-        }
-        else{
+        } else if (!mailValidator.test(String(mail).toLowerCase())) {
+            setMailError('Mail is not valid, it should be like : example@xyz.com');
+        } else {
             setMailError('');
             mailValid = true;
         }
 
         let passwordValid = false;
-        if(password.length == 0){
+        if (password.length == 0) {
             setPasswordError('Password is required');
-        }
-        else if(password.length < 8){
+        } else if (password.length < 8) {
             setPasswordError('Password must be at least 8 characters long');
-        }
-        else if(password.length > 20){
+        } else if (password.length > 20) {
             setPasswordError('Password must be at most 20 characters long');
-        }
-        else if(!password.match(/[a-z]/g)){
+        } else if (!password.match(/[a-z]/g)) {
             setPasswordError('Password must contain at least one lowercase letter');
-        }
-        else if(!password.match(/[A-Z]/g)){
+        } else if (!password.match(/[A-Z]/g)) {
             setPasswordError('Password must contain at least one uppercase letter');
-        }
-        else if(!password.match(/[0-9]/g)){
+        } else if (!password.match(/[0-9]/g)) {
             setPasswordError('Password must contain at least one number');
-        }
-        else if(!password.match(/[^a-zA-Z\d]/g)){
+        } else if (!password.match(/[^a-zA-Z\d]/g)) {
             setPasswordError('Password must contain at least one special character');
-        }
-        else{
+        } else {
             setPasswordError('');
             passwordValid = true;
         }
 
-        if(firstNameValid && lastNameValid && mailValid && passwordValid){
+        if (firstNameValid && lastNameValid && mailValid && passwordValid) {
             registerAccount();
         }
     }
@@ -119,7 +109,7 @@ const SignUp = () => {
             formData.append(key, params[key]);
         }
 
-        try{
+        try {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -132,7 +122,7 @@ const SignUp = () => {
                 console.log('response ok');
                 clearForm();
                 navigation.navigate('SignIn');
-            } else{
+            } else {
                 console.error('mail is already used');
                 //TODO : create a popup to say that the mail is already used
 
@@ -199,7 +189,12 @@ const SignUp = () => {
                         style={[styles.input]}
                         placeholder={'Password'}
                         onChangeText={(text) => setPassword(text)}
+                        secureTextEntry={passwordIsVisible}
                     />
+                    <TouchableOpacity onPress={() => setPasswordIsVisible(!passwordIsVisible)}>
+                        {/*{passwordIsVisible ? <VisibilityOffIcon/> : <VisibilityIcon/>}*/}
+                        <Text>Show</Text>
+                    </TouchableOpacity>
                 </SafeAreaView>
                 {passwordError.length > 0 &&
                     <Text>{passwordError}</Text>
@@ -214,7 +209,7 @@ const SignUp = () => {
                                 //TODO : créer la méthode pour envoyer le compte au back
                             }}
                             // disabled={firstName === '' || lastName === '' || mail === '' || password === ''}
-                            style={[styles.buttonContent, styles.button ]} //, (firstName === '' || lastName === '' || mail === '' || password === '') && styles.disabledButton]}
+                            style={[styles.buttonContent, styles.button]} //, (firstName === '' || lastName === '' || mail === '' || password === '') && styles.disabledButton]}
                         >
                             <Text style={[styles.text, styles.title]}>Create</Text>
 
@@ -278,7 +273,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 17,
     },
-    navigate:{
+    navigate: {
         textDecorationLine: 'underline',
         marginLeft: 10,
     },
