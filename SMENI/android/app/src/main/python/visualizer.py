@@ -1,28 +1,33 @@
-import librosa
 import matplotlib.pyplot as plt
 import numpy as np
+import soundfile as sf
 
+def generate_waveform_image(audio_path, output_path):
+    audio, sample_rate = sf.read(audio_path)
+
+    plt.figure(figsize=(12, 4))
+    time = np.arange(0, len(audio)) / sample_rate
+    plt.plot(time, audio)
+    plt.axis('off')
+    plt.tight_layout()
+    plt.savefig(output_path)
+    plt.close()
+
+def generate_spectrogram_image(audio_path, output_path):
+    audio, sample_rate = sf.read(audio_path)
+
+    plt.figure(figsize=(12, 4))
+    plt.specgram(audio, Fs=sample_rate)
+    plt.axis('off')
+    plt.tight_layout()
+    plt.savefig(output_path)
+    plt.close()
 
 # Chemin relatif vers le fichier audio
 audio_path = '1683880817754.wav'
 
-# Charger le fichier audio
-audio, sr = librosa.load(audio_path)
-
 # Générer l'onde audio (oscillogramme)
-plt.figure(figsize=(12, 4))
-librosa.display.waveshow(audio, sr=sr)
-plt.title('Onde audio (oscillogramme)')
-plt.xlabel('Temps (s)')
-plt.ylabel('Amplitude')
-plt.show()
+generate_waveform_image(audio_path, 'onde_audio.png')
 
-# Calculer le spectrogramme
-plt.figure(figsize=(12, 4))
-D = librosa.amplitude_to_db(np.abs(librosa.stft(audio)), ref=np.max)
-librosa.display.specshow(D, sr=sr, x_axis='time', y_axis='log')
-plt.colorbar(format='%+2.0f dB')
-plt.title('Spectrogramme')
-plt.xlabel('Temps (s)')
-plt.ylabel('Fréquence (Hz)')
-plt.show()
+# Calculer et générer le spectrogramme
+generate_spectrogram_image(audio_path, 'spectrogramme.png')

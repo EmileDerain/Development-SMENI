@@ -111,7 +111,7 @@ android {
             pip {
                 install "numpy"
                 install "matplotlib"
-
+                install "soundfile"
             }
         }
     }
