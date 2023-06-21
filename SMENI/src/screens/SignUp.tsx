@@ -203,7 +203,7 @@ const SignUp = () => {
                             // disabled={firstName === '' || lastName === '' || mail === '' || password === ''}
                             style={[styles.buttonContent, styles.button]} //, (firstName === '' || lastName === '' || mail === '' || password === '') && styles.disabledButton]}
                         >
-                            <Text style={[styles.text, styles.title]}>Create</Text>
+                            <Text style={[styles.text, styles.title, styles.buttonText]}>Create</Text>
 
                         </TouchableOpacity>
                     </SafeAreaView>
@@ -212,7 +212,7 @@ const SignUp = () => {
 
             </SafeAreaView>
 
-            <SafeAreaView style={styles.labelWrapper}>
+            <SafeAreaView style={styles.navigateWrapper}>
                 <Text style={[styles.text, styles.subtitle]}>Already have an account ?</Text>
                 <TouchableOpacity
                     onPress={() => {
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
         color: colors.default,
         paddingHorizontal: 15,
         paddingVertical: 10,
-        width: '90%',
+        width: '95%',
     }, invalidInput: {
         borderColor: 'red', // Couleur de la bordure en cas d'input invalide
     }, errorInput: {
@@ -266,23 +266,28 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems:'center',
         justifyContent:'space-between',
-        width:'85%'
+        width:'90%'
     },
     button: {
-        borderColor: colors.default,
+        borderColor: '#96D3FE',
         borderWidth: 1,
         borderRadius: 30,
         alignContent: 'center',
         alignItems: 'center',
-        width: '40%',
+        width: '85%',
         padding: 10,
         alignSelf: 'center',
         marginVertical: 20,
+        backgroundColor: '#96D3FE',
+        marginRight: 10
     }, buttonContent: {
         flex: 1, opacity: 1, // Default opacity when the button is enabled
-    }, disabledButton: {
-        opacity: 0.5, // Opacity when the button is disabled
-    },
+    }, buttonText: {
+        color:'white'
+    }, navigateWrapper: {
+        flexDirection: 'row', alignItems: 'center', marginTop: 15,
+        justifyContent:'center'
+    }
 });
 
 export default SignUp;
