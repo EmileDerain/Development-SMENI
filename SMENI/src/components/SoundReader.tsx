@@ -18,9 +18,11 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   const [sound, setSound] = useState<Sound | null>(null);
   const [waveformImagePath, setWaveformImagePath] = useState<string | null>(null);
   const [spectrogramImagePath, setSpectrogramImagePath] = useState<string | null>(null);
+  const [cursorPosition, setCursorPosition] = useState(0);
 
   useEffect(() => {
     requestPermissions();
+    generateWaveform();
   }, []);
 
   const requestPermissions = async () => {
@@ -45,7 +47,6 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   };
 
   const playAudio = () => {
-    generateWaveform();
     if (playerState.isPaused) {
       sound?.play();
       setPlayerState({ ...playerState, isPlaying: true, isPaused: false });
@@ -68,8 +69,17 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
         }
       });
 
+      const timerId = setInterval(() => {
+        if (newSound && newSound.isLoaded()) {
+          newSound.getCurrentTime((seconds) => {
+            setCursorPosition(seconds);
+          });
+        }
+      }, 500);
+
       setSound(newSound);
       setPlayerState({ ...playerState, isPlaying: true, isPaused: false });
+      setCursorPosition(0);
     }
   };
 
@@ -101,15 +111,18 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
     }
   };
 
+
+
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.soundWrapper}>
         {waveformImagePath && (
-          <Image source={{ uri: waveformImagePath }} style={styles.waveformImage} /> 
+          <Image source={{ uri: waveformImagePath }} style={styles.waveformImage} />
         )}
         {spectrogramImagePath && (
           <Image source={{ uri: spectrogramImagePath }} style={styles.waveformImage} /> 
         )}
+        <View style={[styles.cursor, { left: (cursorPosition / sound?.getDuration()) * 100 + '%' }]} />
       </SafeAreaView>
       <SafeAreaView style={styles.editWrapper}>
         <SafeAreaView style={styles.audioEdit}>
@@ -156,32 +169,38 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   );
 };
 
+const IMAGE_HEIGHT = 150; // Adjust the height of the waveform image if needed
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.background,
   },
   soundWrapper: {
-    flexDirection: 'column',
-    marginTop: 15,
-    height: 150,
-    borderColor: colors.default,
-    borderWidth: 0,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   waveformImage: {
-    borderWidth: 1,
     width: '100%',
-    height: '100%',
-    borderColor: colors.default,
+    height: IMAGE_HEIGHT,
+  },
+  cursor: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: 2,
+    backgroundColor: 'red', // Change the color of the cursor if needed
   },
   editWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
     marginHorizontal: 30,
     justifyContent: 'space-between',
   },
   audioEdit: {
     flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   bookmark: {
