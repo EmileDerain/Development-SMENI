@@ -1,11 +1,14 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
+import {Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
 import {URL_SIGNUP} from "../utils/path";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {isTokenValid} from "../utils/jwtCheck";
+import {WithLocalSvg} from 'react-native-svg';
+/*import visibilityIcon from "../assets/images/eye-solid.svg";
+import visibilityOffIcon from "../assets/images/eye-slash-solid.svg";*/
 
 const CheckToken = async () => {
     const navigation = useNavigation();
@@ -32,6 +35,9 @@ const SignUp = () => {
     const [passwordError, setPasswordError] = useState('');
     const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 
+
+    const visibilityIcon = require('../assets/images/eye-solid.svg');
+    const visibilityOffIcon = require('../assets/images/eye-slash-solid.svg');
 
     const handleSubmit = () => {
         let firstNameValid = false;
@@ -192,8 +198,9 @@ const SignUp = () => {
                         secureTextEntry={passwordIsVisible}
                     />
                     <TouchableOpacity onPress={() => setPasswordIsVisible(!passwordIsVisible)}>
-                        {/*{passwordIsVisible ? <VisibilityOffIcon/> : <VisibilityIcon/>}*/}
-                        <Text>Show</Text>
+                        {passwordIsVisible ?
+                                <WithLocalSvg asset={visibilityIcon} width={40} height={40}/> :
+                                <WithLocalSvg asset={visibilityOffIcon} width={40} height={40}/>}
                     </TouchableOpacity>
                 </SafeAreaView>
                 {passwordError.length > 0 &&
