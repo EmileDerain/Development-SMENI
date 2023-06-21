@@ -101,10 +101,7 @@ const SignUp = () => {
         const url = URL_SIGNUP; //TODO : ipconfig et mettre son addresse IP locale
 
         const params = {
-            firstName: firstName,
-            lastName: lastName,
-            mail: mail,
-            password: password
+            firstName: firstName, lastName: lastName, mail: mail, password: password
         };
 
         const formData = new URLSearchParams();
@@ -115,11 +112,9 @@ const SignUp = () => {
 
         try {
             const response = await fetch(url, {
-                method: 'POST',
-                headers: {
+                method: 'POST', headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formData.toString(),
+                }, body: formData.toString(),
             });
 
             if (response.ok) {
@@ -137,8 +132,7 @@ const SignUp = () => {
     };
 
 
-    return (
-        // KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.
+    return (// KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.
         <KeyboardAwareScrollView style={styles.container}>
             {/*header*/}
             <SafeAreaView style={styles.headerWrapper}>
@@ -155,10 +149,8 @@ const SignUp = () => {
                         placeholder={'First Name'}
                         onChangeText={(text) => setFirstName(text)}
                     />
+                    {fistNameError.length > 0 && <Text style={styles.errorInput}>{fistNameError}</Text>}
                 </SafeAreaView>
-                {fistNameError.length > 0 &&
-                    <Text>{fistNameError}</Text>
-                }
                 {/*Last Name*/}
                 <SafeAreaView style={styles.labelWrapper}>
                     <Text style={[styles.text, styles.subtitle]}>Last Name</Text>
@@ -168,10 +160,8 @@ const SignUp = () => {
                         placeholder={'Last Name'}
                         onChangeText={(text) => setLastName(text)}
                     />
+                    {lastNameError.length > 0 && <Text style={styles.errorInput}>{lastNameError}</Text>}
                 </SafeAreaView>
-                {lastNameError.length > 0 &&
-                    <Text>{lastNameError}</Text>
-                }
                 {/*Mail*/}
                 <SafeAreaView style={styles.labelWrapper}>
                     <Text style={[styles.text, styles.subtitle]}>Mail</Text>
@@ -181,13 +171,17 @@ const SignUp = () => {
                         placeholder={'Mail'}
                         onChangeText={(text) => setMail(text)}
                     />
+                    {mailError.length > 0 && <Text style={styles.errorInput}>{mailError}</Text>}
                 </SafeAreaView>
-                {mailError.length > 0 &&
-                    <Text>{mailError}</Text>
-                }
                 {/*Password*/}
                 <SafeAreaView style={styles.labelWrapper}>
-                    <Text style={[styles.text, styles.subtitle]}>Password</Text>
+                    <SafeAreaView style={styles.passwordWrapper}>
+                        <Text style={[styles.text, styles.subtitle]}>Password</Text>
+                        <TouchableOpacity onPress={() => setPasswordIsVisible(!passwordIsVisible)}>
+                            {passwordIsVisible ? <WithLocalSvg asset={visibilityIcon} width={25} height={25}/> :
+                                <WithLocalSvg asset={visibilityOffIcon} width={25} height={25}/>}
+                        </TouchableOpacity>
+                    </SafeAreaView>
                     <TextInput
                         value={password}
                         style={[styles.input]}
@@ -195,15 +189,8 @@ const SignUp = () => {
                         onChangeText={(text) => setPassword(text)}
                         secureTextEntry={passwordIsVisible}
                     />
-                    <TouchableOpacity onPress={() => setPasswordIsVisible(!passwordIsVisible)}>
-                        {passwordIsVisible ?
-                                <WithLocalSvg asset={visibilityIcon} width={40} height={40}/> :
-                                <WithLocalSvg asset={visibilityOffIcon} width={40} height={40}/>}
-                    </TouchableOpacity>
+                    {passwordError.length > 0 && <Text style={styles.errorInput}>{passwordError}</Text>}
                 </SafeAreaView>
-                {passwordError.length > 0 &&
-                    <Text>{passwordError}</Text>
-                }
                 {/*TODO : peut être rajouter un champ confirm password    */}
 
                 <SafeAreaView>
@@ -236,27 +223,18 @@ const SignUp = () => {
                 </TouchableOpacity>
             </SafeAreaView>
 
-        </KeyboardAwareScrollView>
-    );
+        </KeyboardAwareScrollView>);
 }
 
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-    headerWrapper: {
-        alignItems: 'center',
-        marginTop: 65,
-    },
-    labelWrapper: {
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        marginTop: 20,
-        marginLeft: 20,
-    },
-    text: {
+        flex: 1, backgroundColor: '#fff',
+    }, headerWrapper: {
+        alignItems: 'center', marginTop: 65,
+    }, labelWrapper: {
+        flexDirection: 'column', alignItems: 'flex-start', marginTop: 15, marginLeft: 20,
+    }, text: {
         color: '#0E1012',
         fontFamily: 'Nunito Sans',
         fontStyle: 'normal',
@@ -264,20 +242,13 @@ const styles = StyleSheet.create({
         fontSize: 17,
         lineHeight: 32,
         letterSpacing: 0.01,
-    },
-    title: {
-        fontWeight: '700',
-        fontSize: 30,
-    },
-    subtitle: {
-        fontWeight: '700',
-        fontSize: 17,
-    },
-    navigate: {
-        textDecorationLine: 'underline',
-        marginLeft: 10,
-    },
-    input: {
+    }, title: {
+        fontWeight: '700', fontSize: 30,
+    }, subtitle: {
+        fontWeight: '700', fontSize: 17,
+    }, navigate: {
+        textDecorationLine: 'underline', marginLeft: 10,
+    }, input: {
         borderRadius: 15,
         backgroundColor: colors.inputBackground,
         borderWidth: 1,
@@ -286,9 +257,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 10,
         width: '90%',
-    },
-    invalidInput: {
+    }, invalidInput: {
         borderColor: 'red', // Couleur de la bordure en cas d'input invalide
+    }, errorInput: {
+        color: 'red',
+    },
+    passwordWrapper:{
+        flexDirection: 'row',
+        alignItems:'center',
+        justifyContent:'space-between',
+        width:'85%'
     },
     button: {
         borderColor: colors.default,
@@ -300,12 +278,9 @@ const styles = StyleSheet.create({
         padding: 10,
         alignSelf: 'center',
         marginVertical: 20,
-    },
-    buttonContent: {
-        flex: 1,
-        opacity: 1, // Default opacity when the button is enabled
-    },
-    disabledButton: {
+    }, buttonContent: {
+        flex: 1, opacity: 1, // Default opacity when the button is enabled
+    }, disabledButton: {
         opacity: 0.5, // Opacity when the button is disabled
     },
 });
