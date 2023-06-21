@@ -1,14 +1,12 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
-import {Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
+import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
 import {URL_SIGNUP} from "../utils/path";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {isTokenValid} from "../utils/jwtCheck";
 import {WithLocalSvg} from 'react-native-svg';
-/*import visibilityIcon from "../assets/images/eye-solid.svg";
-import visibilityOffIcon from "../assets/images/eye-slash-solid.svg";*/
 
 const CheckToken = async () => {
     const navigation = useNavigation();
@@ -249,19 +247,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     headerWrapper: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
         marginTop: 65,
-        marginLeft: 25,
-        marginRight: 20,
     },
     labelWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 15,
-        marginLeft: 30,
-        marginBottom: 20,
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        marginTop: 20,
+        marginLeft: 20,
     },
     text: {
         color: '#0E1012',
@@ -274,7 +267,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: '700',
-        fontSize: 27,
+        fontSize: 30,
     },
     subtitle: {
         fontWeight: '700',
@@ -285,15 +278,14 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     input: {
-        borderRadius: 30,
+        borderRadius: 15,
         backgroundColor: colors.inputBackground,
         borderWidth: 1,
         borderColor: colors.inputBackground,
         color: colors.default,
         paddingHorizontal: 15,
         paddingVertical: 10,
-        width: '50%',
-        marginLeft: 10,
+        width: '90%',
     },
     invalidInput: {
         borderColor: 'red', // Couleur de la bordure en cas d'input invalide
