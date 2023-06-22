@@ -5,13 +5,14 @@ import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {URL_LOGIN} from "../utils/path";
-import {getTokenFromStorage, isTokenValid} from "../utils/jwtCheck";
+import {isTokenValid} from "../utils/jwtCheck";
+import {WithLocalSvg} from "react-native-svg";
 
 
 const CheckToken = async () => {
     const navigation = useNavigation();
     const tokenFromStorage = await AsyncStorage.getItem('token');
-    if(isTokenValid(tokenFromStorage)){
+    if (isTokenValid(tokenFromStorage)) {
         console.log("token is valid")
         navigation.navigate('DiagnoHelp');
     }
@@ -23,7 +24,10 @@ const SignIn = () => {
 
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 
+    const visibilityIcon = require('../assets/images/eye-solid.svg');
+    const visibilityOffIcon = require('../assets/images/eye-slash-solid.svg');
 
     const clearForm = () => {
         setMail('');
@@ -100,7 +104,13 @@ const SignIn = () => {
                 </SafeAreaView>
                 {/*Password*/}
                 <SafeAreaView style={styles.labelWrapper}>
-                    <Text style={[styles.text, styles.subtitle]}>Password</Text>
+                    <SafeAreaView style={styles.passwordWrapper}>
+                        <Text style={[styles.text, styles.subtitle]}>Password</Text>
+                        <TouchableOpacity onPress={() => setPasswordIsVisible(!passwordIsVisible)}>
+                            {passwordIsVisible ? <WithLocalSvg asset={visibilityIcon} width={25} height={25}/> :
+                                <WithLocalSvg asset={visibilityOffIcon} width={25} height={25}/>}
+                        </TouchableOpacity>
+                    </SafeAreaView>
                     <TextInput
                         value={password}
                         style={[styles.input]}
@@ -120,14 +130,14 @@ const SignIn = () => {
                             disabled={mail === '' || password === ''}
                             style={[styles.buttonContent, styles.button, (mail === '' || password === '') && styles.disabledButton]}
                         >
-                            <Text style={[styles.text, styles.title]}>Sign In</Text>
+                            <Text style={[styles.text, styles.title, styles.buttonText]}>Sign In</Text>
 
                         </TouchableOpacity>
                     </SafeAreaView>
                 </SafeAreaView>
             </SafeAreaView>
 
-            <SafeAreaView style={styles.labelWrapper}>
+            <SafeAreaView style={styles.navigateWrapper}>
                 <Text style={[styles.text, styles.subtitle]}>No account ?</Text>
                 <TouchableOpacity
                     onPress={() => {
@@ -148,19 +158,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     headerWrapper: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 65,
-        marginLeft: 25,
-        marginRight: 20,
+        alignItems: 'center', marginTop: 65,
     },
     labelWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 15,
-        marginLeft: 30,
-        marginBottom: 20,
+        flexDirection: 'column', alignItems: 'flex-start', marginTop: 15, marginLeft: 20,
     },
     text: {
         color: '#0E1012',
@@ -184,36 +185,48 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     input: {
-        borderRadius: 30,
+        borderRadius: 15,
         backgroundColor: colors.inputBackground,
         borderWidth: 1,
         borderColor: colors.inputBackground,
         color: colors.default,
         paddingHorizontal: 15,
         paddingVertical: 10,
-        width: '50%',
-        marginLeft: 10,
+        width: '95%',
     },
     invalidInput: {
         borderColor: 'red', // Couleur de la bordure en cas d'input invalide
+    }, errorInput: {
+        color: 'red',
+    },
+    passwordWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '90%'
     },
     button: {
-        borderColor: colors.default,
+        borderColor: '#96D3FE',
         borderWidth: 1,
         borderRadius: 30,
         alignContent: 'center',
         alignItems: 'center',
-        width: '40%',
+        width: '85%',
         padding: 10,
         alignSelf: 'center',
         marginVertical: 20,
+        backgroundColor: '#96D3FE',
+        marginRight: 10
     },
     buttonContent: {
         flex: 1,
         opacity: 1, // Default opacity when the button is enabled
     },
-    disabledButton: {
-        opacity: 0.5, // Opacity when the button is disabled
-    },
+    buttonText: {
+        color: 'white'
+    }, navigateWrapper: {
+        flexDirection: 'row', alignItems: 'center', marginTop: 15,
+        justifyContent: 'center'
+    }
 });
 export default SignIn;
