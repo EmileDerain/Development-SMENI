@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, Image, PermissionsAndroid, Text } from 'react-native';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { View, TouchableOpacity, StyleSheet, Image, PermissionsAndroid, Text, PanResponder } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import colors from '../assets/colors/colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,10 +16,14 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
     isPaused: false,
   });
   const [sound, setSound] = useState<Sound | null>(null);
-  const [waveformBitmap, setWaveformBitmap] = useState<Uint8Array | null>(null);
+  const [waveformImagePath, setWaveformImagePath] = useState<string | null>(null);
+  const [spectrogramImagePath, setSpectrogramImagePath] = useState<string | null>(null);
+  const [cursorPosition, setCursorPosition] = useState(0);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     requestPermissions();
+    generateWaveform();
   }, []);
 
   const requestPermissions = async () => {
@@ -27,6 +31,7 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
       const granted = await PermissionsAndroid.requestMultiple([
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       ]);
 
       if (
@@ -43,7 +48,6 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   };
 
   const playAudio = () => {
-    generateWaveform();
     if (playerState.isPaused) {
       sound?.play();
       setPlayerState({ ...playerState, isPlaying: true, isPaused: false });
@@ -66,8 +70,17 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
         }
       });
 
+      const timerId = setInterval(() => {
+        if (newSound && newSound.isLoaded()) {
+          newSound.getCurrentTime((seconds) => {
+            setCursorPosition(seconds);
+          });
+        }
+      }, 500);
+
       setSound(newSound);
       setPlayerState({ ...playerState, isPlaying: true, isPaused: false });
+      setCursorPosition(0);
     }
   };
 
@@ -75,30 +88,71 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
     sound?.pause();
     setPlayerState({ ...playerState, isPlaying: false, isPaused: true });
   };
-  
-  
-  
-  
+
   const generateWaveform = async () => {
     try {
       console.log('Génération de la waveform en cours...');
-      const waveformString = await WaveformGenerator.generateWaveform(transferedFile.filePath);
-      setWaveformBitmap(waveformString);
+      const waveformPath = await WaveformGenerator.generateWaveform(transferedFile.filePath);
+      setWaveformImagePath(waveformPath);
       console.log('Waveform générée avec succès');
-      console.log(waveformString);
+      generateSpectrogram();
     } catch (error) {
       console.log('Erreur lors de la génération de la waveform', error);
     }
   };
 
+  const generateSpectrogram = async () => {
+    try {
+      console.log('Génération du spectrogramme en cours...');
+      const spectrogramPath = await WaveformGenerator.generateSpectrogram(transferedFile.filePath);
+      setSpectrogramImagePath(spectrogramPath);
+      console.log('Spectrogramme généré avec succès');
+    } catch (error) {
+      console.log('Erreur lors de la génération du spectrogramme', error);
+    }
+  };
+
+  const onPanResponderMove = useCallback(
+    (event, gestureState) => {
+      containerRef.current?.measure((x, y, width, height) => {
+        const { moveX, moveY } = gestureState;
+        const positionX = Math.max(0, Math.min(moveX - x, width));
+        const positionY = Math.max(0, Math.min(moveY - y, height));
+        const duration = sound?.getDuration() || 1;
+        const newPosition = (positionX / width) * duration;
+        setCursorPosition(newPosition);
+      });
+    },
+    [sound]
+  );
+  
+  const onPanResponderRelease = useCallback(() => {
+    if (sound && sound.isLoaded()) {
+      sound.setCurrentTime(cursorPosition);
+      sound.play();
+    }
+  }, [sound, cursorPosition]);
+  
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderMove: onPanResponderMove,
+      onPanResponderRelease: onPanResponderRelease,
+    })
+  ).current;
+ 
+
   return (
     <View style={styles.container}>
-      <SafeAreaView style={styles.soundWrapper}>
-        {waveformBitmap && 
-        <Image
-          source={{ uri: `data:image/png;base64,${waveformBitmap}` }}
-          style={styles.waveformImage}
-        />}
+      <SafeAreaView style={styles.soundWrapper} {...panResponder.panHandlers} ref={containerRef}>
+        {waveformImagePath && (
+          <Image source={{ uri: waveformImagePath }} style={styles.waveformImage} />
+        )}
+        {spectrogramImagePath && (
+          <Image source={{ uri: spectrogramImagePath }} style={styles.waveformImage} />
+        )}
+        <View style={[styles.cursor, { left: (cursorPosition / (sound?.getDuration() || 1)) * 100 + '%' }]} />
       </SafeAreaView>
       <SafeAreaView style={styles.editWrapper}>
         <SafeAreaView style={styles.audioEdit}>
@@ -145,33 +199,38 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   );
 };
 
+const IMAGE_HEIGHT = 150; // Adjust the height of the waveform image if needed
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.background,
   },
   soundWrapper: {
-    flexDirection: 'column',
-    marginTop: 15,
-    height: 150,
-    borderColor: colors.default,
-    borderWidth: 0,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   waveformImage: {
-    borderWidth: 1,
     width: '100%',
-    height: '100%',
-    backgroundColor: colors.default,
-    borderColor: colors.default,
+    height: IMAGE_HEIGHT,
+  },
+  cursor: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: 2,
+    backgroundColor: 'red', // Change the color of the cursor if needed
   },
   editWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
     marginHorizontal: 30,
     justifyContent: 'space-between',
   },
   audioEdit: {
     flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   bookmark: {
