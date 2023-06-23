@@ -91,7 +91,7 @@ const SignIn = () => {
 
             </SafeAreaView>
             {/*form*/}
-            <SafeAreaView>
+            <SafeAreaView style={styles.form}>
                 {/*Mail*/}
                 <SafeAreaView style={styles.labelWrapper}>
                     <Text style={[styles.text, styles.subtitle]}>Mail</Text>
@@ -116,6 +116,7 @@ const SignIn = () => {
                         style={[styles.input]}
                         placeholder={'Password'}
                         onChangeText={(text) => setPassword(text)}
+                        secureTextEntry={!passwordIsVisible}
                     />
                 </SafeAreaView>
                 {/*TODO : peut être rajouter un champ confirm password    */}
@@ -154,16 +155,12 @@ const SignIn = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-    headerWrapper: {
-        alignItems: 'center', marginTop: 65,
-    },
-    labelWrapper: {
-        flexDirection: 'column', alignItems: 'flex-start', marginTop: 15, marginLeft: 20,
-    },
-    text: {
+        flex: 1, backgroundColor: '#fff',
+    }, headerWrapper: {
+        alignItems: 'center', marginTop: 65, marginBottom: 20,
+    }, labelWrapper: {
+        flexDirection: 'column', alignItems: 'flex-start', marginLeft: 20,
+    }, text: {
         color: '#0E1012',
         fontFamily: 'Nunito Sans',
         fontStyle: 'normal',
@@ -171,20 +168,13 @@ const styles = StyleSheet.create({
         fontSize: 17,
         lineHeight: 32,
         letterSpacing: 0.01,
-    },
-    title: {
-        fontWeight: '700',
-        fontSize: 27,
-    },
-    subtitle: {
-        fontWeight: '700',
-        fontSize: 17,
-    },
-    navigate: {
-        textDecorationLine: 'underline',
-        marginLeft: 10,
-    },
-    input: {
+    }, title: {
+        fontWeight: '700', fontSize: 30,
+    }, subtitle: {
+        fontWeight: '700', fontSize: 17,
+    }, navigate: {
+        textDecorationLine: 'underline', marginLeft: 10,
+    }, input: {
         borderRadius: 15,
         backgroundColor: colors.inputBackground,
         borderWidth: 1,
@@ -193,17 +183,17 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 10,
         width: '95%',
-    },
-    invalidInput: {
+    }, invalidInput: {
         borderColor: 'red', // Couleur de la bordure en cas d'input invalide
     }, errorInput: {
         color: 'red',
+        marginTop: 5,
     },
-    passwordWrapper: {
+    passwordWrapper:{
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '90%'
+        alignItems:'center',
+        justifyContent:'space-between',
+        width:'90%'
     },
     button: {
         borderColor: '#96D3FE',
@@ -217,16 +207,15 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         backgroundColor: '#96D3FE',
         marginRight: 10
-    },
-    buttonContent: {
-        flex: 1,
-        opacity: 1, // Default opacity when the button is enabled
-    },
-    buttonText: {
-        color: 'white'
+    }, buttonContent: {
+        flex: 1, opacity: 1, // Default opacity when the button is enabled
+    }, buttonText: {
+        color:'white'
     }, navigateWrapper: {
         flexDirection: 'row', alignItems: 'center', marginTop: 15,
-        justifyContent: 'center'
+        justifyContent:'center'
+    }, disabledButton: {
+        opacity: 1, // Opacity when the button is disabled
     }
 });
 export default SignIn;

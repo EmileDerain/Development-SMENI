@@ -149,7 +149,7 @@ const SignUp = () => {
                         placeholder={'First Name'}
                         onChangeText={(text) => setFirstName(text)}
                     />
-                    {fistNameError.length > 0 && <Text style={styles.errorInput}>{fistNameError}</Text>}
+                    <Text style={styles.errorInput}>{fistNameError}</Text>
                 </SafeAreaView>
                 {/*Last Name*/}
                 <SafeAreaView style={styles.labelWrapper}>
@@ -160,7 +160,7 @@ const SignUp = () => {
                         placeholder={'Last Name'}
                         onChangeText={(text) => setLastName(text)}
                     />
-                    {lastNameError.length > 0 && <Text style={styles.errorInput}>{lastNameError}</Text>}
+                    <Text style={styles.errorInput}>{lastNameError}</Text>
                 </SafeAreaView>
                 {/*Mail*/}
                 <SafeAreaView style={styles.labelWrapper}>
@@ -171,7 +171,7 @@ const SignUp = () => {
                         placeholder={'Mail'}
                         onChangeText={(text) => setMail(text)}
                     />
-                    {mailError.length > 0 && <Text style={styles.errorInput}>{mailError}</Text>}
+                    <Text style={styles.errorInput}>{mailError}</Text>
                 </SafeAreaView>
                 {/*Password*/}
                 <SafeAreaView style={styles.labelWrapper}>
@@ -187,9 +187,9 @@ const SignUp = () => {
                         style={[styles.input]}
                         placeholder={'Password'}
                         onChangeText={(text) => setPassword(text)}
-                        secureTextEntry={passwordIsVisible}
+                        secureTextEntry={!passwordIsVisible}
                     />
-                    {passwordError.length > 0 && <Text style={styles.errorInput}>{passwordError}</Text>}
+                    <Text style={styles.errorInput}>{passwordError}</Text>
                 </SafeAreaView>
                 {/*TODO : peut être rajouter un champ confirm password    */}
 
@@ -231,9 +231,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1, backgroundColor: '#fff',
     }, headerWrapper: {
-        alignItems: 'center', marginTop: 65,
+        alignItems: 'center', marginTop: 65, marginBottom: 20,
     }, labelWrapper: {
-        flexDirection: 'column', alignItems: 'flex-start', marginTop: 15, marginLeft: 20,
+        flexDirection: 'column', alignItems: 'flex-start', marginLeft: 20,
     }, text: {
         color: '#0E1012',
         fontFamily: 'Nunito Sans',
@@ -261,6 +261,7 @@ const styles = StyleSheet.create({
         borderColor: 'red', // Couleur de la bordure en cas d'input invalide
     }, errorInput: {
         color: 'red',
+        marginTop: 5,
     },
     passwordWrapper:{
         flexDirection: 'row',

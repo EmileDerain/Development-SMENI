@@ -1,4 +1,4 @@
-const URL = "172.16.20.252"
+const URL = "172.16.6.108"
 
 const API_URL = `http://${URL}:2834/api/`
 
