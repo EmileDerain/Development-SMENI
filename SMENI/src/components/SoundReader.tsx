@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, Image, PermissionsAndroid, Text } from 'react-native';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { View, TouchableOpacity, StyleSheet, Image, PermissionsAndroid, Text, PanResponder } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import colors from '../assets/colors/colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,6 +19,7 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   const [waveformImagePath, setWaveformImagePath] = useState<string | null>(null);
   const [spectrogramImagePath, setSpectrogramImagePath] = useState<string | null>(null);
   const [cursorPosition, setCursorPosition] = useState(0);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     requestPermissions();
@@ -111,18 +112,47 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
     }
   };
 
-
+  const onPanResponderMove = useCallback(
+    (event, gestureState) => {
+      containerRef.current?.measure((x, y, width, height) => {
+        const { moveX, moveY } = gestureState;
+        const positionX = Math.max(0, Math.min(moveX - x, width));
+        const positionY = Math.max(0, Math.min(moveY - y, height));
+        const duration = sound?.getDuration() || 1;
+        const newPosition = (positionX / width) * duration;
+        setCursorPosition(newPosition);
+      });
+    },
+    [sound]
+  );
+  
+  const onPanResponderRelease = useCallback(() => {
+    if (sound && sound.isLoaded()) {
+      sound.setCurrentTime(cursorPosition);
+      sound.play();
+    }
+  }, [sound, cursorPosition]);
+  
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderMove: onPanResponderMove,
+      onPanResponderRelease: onPanResponderRelease,
+    })
+  ).current;
+ 
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={styles.soundWrapper}>
+      <SafeAreaView style={styles.soundWrapper} {...panResponder.panHandlers} ref={containerRef}>
         {waveformImagePath && (
           <Image source={{ uri: waveformImagePath }} style={styles.waveformImage} />
         )}
         {spectrogramImagePath && (
-          <Image source={{ uri: spectrogramImagePath }} style={styles.waveformImage} /> 
+          <Image source={{ uri: spectrogramImagePath }} style={styles.waveformImage} />
         )}
-        <View style={[styles.cursor, { left: (cursorPosition / sound?.getDuration()) * 100 + '%' }]} />
+        <View style={[styles.cursor, { left: (cursorPosition / (sound?.getDuration() || 1)) * 100 + '%' }]} />
       </SafeAreaView>
       <SafeAreaView style={styles.editWrapper}>
         <SafeAreaView style={styles.audioEdit}>
