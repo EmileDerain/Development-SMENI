@@ -6,6 +6,9 @@ const audioSchema = mongoose.Schema({
     path: {type: String, required: true},
     date: {type: String, required: true},
     label: {type: String, required: true},
+    doctor: {type: String, required: true},
+    patient: {type: String, required: true},
+    time: {type: String, required: true},
 });
 
 audioSchema.plugin(uniqueValidator);

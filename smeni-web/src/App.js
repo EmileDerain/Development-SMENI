@@ -10,6 +10,7 @@ import Models from "./containers/Models";
 import Menu from "./containers/Menu";
 import Audios from "./containers/Audios";
 import Model from "./containers/Model";
+import Doctors from "./containers/Doctors";
 
 function App() {
     return (
@@ -19,6 +20,7 @@ function App() {
                     <Route path="/" exact element={<Menu/>}/>
                     <Route path="/audios" element={<Audios/>}/>
                     <Route path="/models" element={<Models/>}/>
+                    <Route path="/doctors" element={<Doctors/>}/>
                     <Route path="/model" element={<Model/>}/>
                     <Route>404 Not Found!</Route>
                 </Routes>

@@ -1,0 +1,172 @@
+input {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.player {
+    width: 100%;
+    height: 100%;
+
+    padding: 0;
+}
+
+
+.progressBarDiv {
+    height: 20%;
+    width: 100%;
+
+    display: flex;
+
+    background-color: #00cc33;
+    border-top-left-radius: min(0.5vw, 1vh);
+    border-top-right-radius: min(0.5vw, 1vh);
+    overflow: hidden;
+}
+
+.progressBar {
+    --bar-bg: #000000;
+    --seek-before-width: 0;
+    --seek-before-color: #6BB2E6;
+    --knobby: red;
+    --selectedKnobby: blue;
+
+    width: 100%;
+    height: 100%;
+
+    appearance: none;
+    background: var(--bar-bg);;
+    position: relative;
+    outline: none;
+}
+
+
+/* progress bar - safari */
+.progressBar::-webkit-slider-runnable-track {
+    background: var(--bar-bg);;
+    position: relative;
+    outline: none;
+}
+
+/* progress bar - firefox */
+.progressBar::-moz-range-track {
+    background: var(--bar-bg);;
+    position: relative;
+    outline: none;
+}
+
+.progressBar::-moz-focus-outer {
+    border: 0;
+}
+
+/* progress bar - chrome and safari */
+.progressBar::before {
+    content: '';
+    width: var(--seek-before-width);
+    background-color: var(--seek-before-color);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    cursor: pointer;
+}
+
+/* progress bar - firefox */
+.progressBar::-moz-range-progress {
+    background-color: var(--seek-before-color);
+    height: 100%;
+}
+
+/* knobby - chrome and safari */
+.progressBar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+
+    border: none;
+    background-color: var(--knobby);
+    cursor: pointer;
+    position: relative;
+    margin: -2px 0 0 0;
+    z-index: 3;
+    box-sizing: border-box;
+}
+
+/* knobby while dragging - chrome and safari */
+.progressBar:active::-webkit-slider-thumb {
+    /*transform: scale(1.2);*/
+    background: var(--selectedKnobby);
+}
+
+/* knobby - firefox */
+.progressBar::-moz-range-thumb {
+    height: 15px;
+    width: 15px;
+    border: transparent;
+    background-color: var(--knobby);
+    cursor: pointer;
+    position: relative;
+    /*z-index: -3;*/
+    box-sizing: border-box;
+}
+
+/* knobby while dragging - firefox */
+.progressBar:active::-moz-range-thumb {
+    /*transform: scale(1.2);*/
+    background: var(--selectedKnobby);
+}
+
+.blue {
+    height: 20px;
+    width: 20px;
+    background-color: black;
+}
+
+.red {
+    height: 20px;
+    width: 20px;
+    background-color: #9C1A1C;
+}
+
+/*######################*/
+
+.progressBarButton {
+    height: 80%;
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+
+    color: white;
+}
+
+.play {
+    position: relative;
+    /*left: 5px;*/
+}
+
+.currentTime,
+.duration {
+    font-family: monospace;
+    /*font-size: 16px;*/
+}
+
+.playPauseDiv {
+    height: 100%;
+    width: 20%;
+}
+
+.nameDiv{
+    height: 100%;
+    width: 50%;
+}
+
+.currentTime {
+    /*margin-left: 25px;*/
+    height: 100%;
+    width: 20%;
+}
+
+.moreInfoDiv {
+    height: 100%;
+    width: 10%;
+}
+

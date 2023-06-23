@@ -1,8 +1,10 @@
 const {spawn} = require('child_process');
 const serverConf = require("../global/server");
+const config = require("../CNN/config/config");
+
 
 const fs = require("fs");
-const Audio = require("../models/audio");
+const Label = require("../models/label");
 const Model = require("../models/model");
 
 exports.renameFile = (req, res, next) => {
@@ -28,16 +30,54 @@ exports.renameFile = (req, res, next) => {
             next();
         });
     } catch (e) {
-        console.log("Multiple req")
+        console.log("Multiple req", e)
     }
 };
 
 exports.getAllModel = (req, res) => {
     Model.find()
-        .then(models => res.status(200).json({"status": 200, "models": models}))
+        .then(models => res.status(200).json({
+            "status": 200,
+            "models": models,
+            "selectedModel": JSON.parse(fs.readFileSync('./CNN/config/selectedModel.json', 'utf-8'))
+        }))
         .catch(error => res.status(400).json({"status": 400, reason: error}));
 };
 
+exports.selectModel = (req, res) => {
+    console.log('selectModel')
+    Model.findById(req.body._id)
+        .then(model => {
+
+            const json = JSON.stringify(model, null, 2);
+            fs.writeFileSync('./CNN/config/selectedModel.json', json);
+
+            res.status(200).json({
+                "status": 200,
+            });
+        })
+        .catch(error => res.status(400).json({"status": 400, reason: error}));
+};
+
+exports.initLabels = async (req, res) => {
+    const labelList = ["Murmur", "Normal", "Artifact", "Extrastole", "Extrahls"]
+    for (const label of labelList) {
+        console.log(label);
+        const labelSave = new Label({
+            labelName: label,
+        });
+        await labelSave.save()
+    }
+    res.status(200).json({"status": 200});
+}
+
+
+exports.getAllLabels = (req, res) => {
+    Label.find().select('labelName -_id').sort('labelName')
+        // Label.find().select('labelName')
+        .then(labels => res.status(200).json({"status": 200, "labels": labels}))
+        .catch(error => res.status(400).json({"status": 400, reason: error}));
+};
 
 exports.train = async (req, res) => {
     console.log('RUN train');
@@ -88,9 +128,16 @@ exports.train = async (req, res) => {
             const loss = lossAndAccuracyArray[0];
             const accuracy = lossAndAccuracyArray[1];
 
+            const date = new Date();
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois sont indexés à partir de 0
+            const year = date.getFullYear();
+
+            const formattedDate = `${day}/${month}/${year}`;
+
             const model = {
                 path: './CNN/models/' + req.body.name + '.h5',
-                date: new Date().toDateString(),
+                date: formattedDate,
                 loss: loss,
                 accuracy: accuracy,
             };
@@ -117,7 +164,14 @@ exports.train = async (req, res) => {
 
 exports.predict = async (req, res) => {
     console.log("Predict: ", req.file.path);
-    const python = spawn('python', ['./CNN/LSTM_Classification_model.py', req.file.path, './CNN/models/my_model_save.h5']);
+
+    //TODO : change path in database !
+
+    const modelPath = JSON.parse(fs.readFileSync('./CNN/config/selectedModel.json', 'utf-8')).path
+
+    console.log("prediction use ",modelPath)
+
+    const python = spawn('python', ['./CNN/LSTM_Classification_model.py', req.file.path, modelPath]);
 
     python.stdout.on('data', function (data) {
         console.log('Pipe data from python script ...');
@@ -137,7 +191,7 @@ exports.predict = async (req, res) => {
                     console.log('Le fichier a été supprimé avec succès: ', req.file.path);
                 });
             } catch (e) {
-                console.log("Multiple req")
+                console.log("Multiple req", e)
             }
         }
         // send data to browser

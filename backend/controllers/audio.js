@@ -1,7 +1,9 @@
 const Audio = require('../models/audio');
 const fs = require("fs");
 const Model = require("../models/model");
+const wav = require('node-wav');
 
+const {getAudioDurationInSeconds} = require('get-audio-duration')
 
 exports.renameFile = (req, res, next) => {
     fs.rename(req.file.path, "./CNN/dataStemoscope/Test/" + req.body.label + "/" + req.body.label + "_" + req.file.filename, (err) => {
@@ -9,7 +11,7 @@ exports.renameFile = (req, res, next) => {
             console.log("Error : file renamed and moved!");
             res.status(500).json({"status": 500, "reason": "Can't rename file"})
             throw err;
-        }else{
+        } else {
             console.log("File renamed and moved!");
             req.file.path = req.body.label + "/" + req.body.label + "_" + req.file.filename;
             next();
@@ -17,19 +19,43 @@ exports.renameFile = (req, res, next) => {
     });
 }
 
-exports.saveAudio = (req, res) => {
+exports.saveAudio = async (req, res) => {
     console.log("req.file:", req.file);
+
+    const duration = await getAudioDurationInSeconds("./CNN/dataStemoscope/Test/" + req.file.path).then((duration) => {
+        return duration;
+    })
+
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois sont indexés à partir de 0
+    const year = date.getFullYear();
+
+    const formattedDate = `${day}/${month}/${year}`;
+
     const audioFile = new Audio({
         audioName: req.file.filename,
         path: req.file.path,
-        date: new Date().toDateString(),
+        date: formattedDate,
         label: req.body.label,
+        doctor: "Tom Jedusor",
+        patient: "undefine",
+        time : Math.ceil(duration),
     });
     audioFile.save()
         .then(() => res.status(201).json({"status": 201, message: 'Audio saved'}))
         .catch(error => res.status(400).json({"status": 201, reason: error}));
 };
 
+function getWavDuration(filePath) {
+    const buffer = fs.readFileSync(filePath);
+    console.log("buffer:", buffer)
+    const result = wav.decode(buffer);
+    console.log("result:", result)
+    const duration = result.duration;
+    console.log("duration:", duration)
+    return duration;
+}
 
 exports.getAllAudio = (req, res) => {
     Audio.find()

@@ -1,10 +1,13 @@
 import React from "react";
 import Icon from '@mdi/react';
 
+import './Global.css';
 import './Menu.css';
+
 
 import {mdiExitToApp, mdiCog, mdiReload, mdiContentSave, mdiFolderPlayOutline, mdiDoctor} from '@mdi/js';
 import ReactLogo from './../ressource/Vector.svg';
+import {Link} from "react-router-dom";
 
 // import {Link} from "react-router-dom";
 
@@ -25,22 +28,22 @@ const menu = [
     {
         name: "Reload AI",
         mdi: mdiReload,
-        link: '',
+        link: '/model',
     },
     {
-        name: "AIs",
+        name: "AI",
         mdi: mdiContentSave,
-        link: '',
+        link: '/models',
     },
     {
         name: "Health sounds",
         mdi: mdiFolderPlayOutline,
-        link: '',
+        link: '/audios',
     },
     {
         name: "Doctor accounts",
         mdi: mdiDoctor,
-        link: '',
+        link: '/doctors',
     },
 ]
 
@@ -77,11 +80,6 @@ const Menu = () => {
                 <div className="circle6 "></div>
             </div>
 
-            {/*<div className={"circleArtImg"}>*/}
-            {/*    <img src={ReactLogo}/>*/}
-            {/*</div>*/}
-
-
             <div className={"header"}>
                 <div className={"title"}>
                     SMENI
@@ -105,20 +103,21 @@ const Menu = () => {
 
 function ButtonMenuHeader(info) {
     return (
-        <div className={"iconMenuHeader"}>
-            <Icon path={info.button.mdi} size={3}/>
-            <div className={"iconMenuHeaderInv"}></div>
+        <div className={"iconMenuHeaderDiv"}>
+            <Icon path={info.button.mdi} className={"iconMenuHeader"} size={3}/>
+            {/*<div className={"iconMenuHeaderInv"}></div>*/}
         </div>
     );
 }
 
 function ButtonMenu(info) {
     return (
-        <div className={"iconMenu"}>
-            <Icon path={info.button.mdi} size={10}/>
-            <h1>{info.button.name}</h1>
-            <div className={"iconMenuInv"}></div>
-        </div>
+        <Link className={"iconMenu"} to={info.button.link}>
+            {/*<div className={"iconMenu"}>*/}
+                <Icon path={info.button.mdi} size={10}/>
+                <h1 className={"iconMenuDesc"}>{info.button.name}</h1>
+            {/*</div>*/}
+        </Link>
     );
 }
 
