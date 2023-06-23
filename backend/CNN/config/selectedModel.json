@@ -1,0 +1,9 @@
+{
+  "_id": "64950304dc17da71426bf561",
+  "modelName": "Modelv3",
+  "__v": 0,
+  "accuracy": 0.623229444026947,
+  "date": "23/06/2023",
+  "loss": 1.0808699131011963,
+  "path": "./CNN/models/Modelv3.h5"
+}

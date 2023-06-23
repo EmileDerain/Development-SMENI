@@ -163,6 +163,7 @@ CNN/data/Test/unlabel/*.wav
 /CNN/venv
 
 /CNN/models/*.h5
+!/CNN/models/DefautModel.h5
 
 venv/
 /venv

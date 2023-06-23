@@ -2,7 +2,7 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-exports.signup = (req, res, next) => {
+exports.signup = (req, res) => {
     bcrypt.hash(req.body.password, 10)
         .then(
             hash => {
@@ -20,7 +20,7 @@ exports.signup = (req, res, next) => {
         .catch(error => res.status(500).json({error, message: 'Error while hashing password !'}));
 };
 
-exports.login = (req, res, next) => {
+exports.login = (req, res) => {
     console.log("req.body:", req.body);
     User.findOne({ mail: req.body.mail })
         .then(user => {
@@ -44,4 +44,10 @@ exports.login = (req, res, next) => {
                 .catch(error => res.status(500).json({ error , message: 'The credentials are incorrect'}));
         })
         .catch(error => res.status(500).json({ error , message: 'The email is incorrect'}));
+};
+
+exports.getAllUser = (req, res) => {
+    User.find()
+        .then(users => res.status(200).json({"status": 200, "users": users}))
+        .catch(error => res.status(400).json({"status": 400, reason: error}));
 };

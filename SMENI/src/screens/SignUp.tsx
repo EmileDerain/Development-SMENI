@@ -14,7 +14,7 @@ const SignUp = () => {
 
 
     const registerAccount = async () => {
-        const url = 'http://172.16.20.252:2834/api/user/signup'; //TODO : ipconfig et mettre son addresse IP locale
+        const url = 'http://172.16.6.115:2834/api/user/signup'; //TODO : ipconfig et mettre son addresse IP locale
 
         const params = {
             firstName: firstName,

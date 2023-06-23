@@ -1,5 +1,5 @@
-.App {
-    text-align: center;
+Body {
+    margin: 0;
 }
 
 .iconeMenu {
@@ -11,7 +11,7 @@
     direction: rtl;
 }
 
-.buttonMenu{
+.buttonMenu {
     background: #eeeeee;
     width: 10rem;
     padding: 1rem;
@@ -22,7 +22,7 @@
     cursor: pointer;
 }
 
-.listButtonMenu{
+.listButtonMenu {
     display: flex;
     flex-direction: row;
 }

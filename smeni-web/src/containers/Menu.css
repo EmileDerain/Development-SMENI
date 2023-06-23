@@ -1,4 +1,121 @@
-.textMenu{
-    color:green;
-    text-decoration : none;
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #1C6BA4;
+    color: white;
+    justify-content: space-between;
+    width: 100vw;
+    height: 40vh;
+    z-index: -1;
+    /*opacity: 1;*/
+    /*mix-blend-mode: multiply;*/
+    /*https://www.skymac.org/Admin-Dev/article-5f24b192-Astuce-CSS-Afficher-l-intersection-de-deux-elements-HTML-1.htm*/
+}
+
+.title {
+    font-size: min(10vw, 20vh);
+    margin-left: 30px;
+
+    color: white;
+    /*z-index: 1;*/
+}
+
+.iconMenuHeaderDiv{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2vw;
+
+    width:  min(5vw, 10vh);
+    height:  min(5vw, 10vh);
+}
+
+.iconMenuHeader {
+    /*z-index: 2;*/
+
+    /*background-color: red;*/
+    /*opacity: 0.5;*/
+
+    cursor: pointer;
+}
+
+/*#########################*/
+.menuGlobal{
+    width: 100vw;
+    height: 60vh;
+
+    display: flex;
+    align-items: center;
+
+    z-index: 1;
+    /*opacity: 1;*/
+    /*mix-blend-mode: multiply;*/
+}
+
+
+.menu {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: space-between;
+    width: 100vw;
+    /*margin-top: 10vh;*/
+    padding-left: 7vw;
+    padding-right: 7vw;
+}
+
+.iconMenu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 1vw;
+    margin-left: 1vw;
+
+
+    width:  min(17vw, 34vh);
+    height:  min(20vw, 40vh);
+    font-size: 1vw;
+
+    box-shadow: 0px 10px 6px #cccccc;
+    color: white;
+    background-color: #1C6BA4;
+    border-radius: 1vw;
+
+    cursor: pointer;
+
+    z-index: 10;
+}
+
+.iconMenuDesc{
+    text-align: center;
+}
+
+.iconMenuInv{
+    position: absolute;
+    height: 40vh;
+    width: 17vw;
+    border-radius: 1vw;
+
+    z-index: 10;
+
+    background-color: transparent;
+
+    cursor: pointer;
+}
+
+.iconMenuHeaderInv {
+    position: absolute;
+    width: 5vw;
+    height: 10vh;
+    border-radius: 1vw;
+    margin: 2vw;
+
+    z-index: 10;
+
+    background-color: transparent;
+    /*opacity: 0.5;*/
+    cursor: pointer;
 }
