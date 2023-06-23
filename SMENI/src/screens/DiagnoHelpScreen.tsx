@@ -18,11 +18,26 @@ import Prediction from '../components/Prediction';
 import colors from '../assets/colors/colors';
 import { useGetShare } from '../useGetShare';
 import heartBeat from '../assets/images/heartBeat.png';
+import {URL_AUDIO} from "../utils/path";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {isTokenValid} from "../utils/jwtCheck";
 
 
+const CheckToken = async () => {
+  const navigation = useNavigation();
+
+  const tokenFromStorage = await AsyncStorage.getItem('token');
+  if(!isTokenValid(tokenFromStorage)){
+    console.log("token is invalid")
+    navigation.navigate('SignIn');
+  }
+}
 const DiagnoHelpScreen = () => {
   const sharedFile = useGetShare();
   const navigation = useNavigation();
+
+  CheckToken();
+
   const [selectedValue, setSelectedValue] = useState('');
   const [suggestions, setSuggestions] = useState([
     '',
@@ -60,7 +75,7 @@ const DiagnoHelpScreen = () => {
     console.log('sharedFile:', sharedFile);
 
 
-    const url = 'http://172.16.6.115:2834/api/audio'; //TODO : ipconfig et mettre son addresse IP locale
+    const url = URL_AUDIO; //TODO : ipconfig et mettre son addresse IP locale
 
     // @ts-ignore
     const fichierWaveUri = sharedFile[0].contentUri;
@@ -106,7 +121,14 @@ const DiagnoHelpScreen = () => {
       {/* header */}
       <SafeAreaView style={styles.headerWrapper}>
         <Text style={[styles.text, styles.title]}>Diagnostic Page</Text>
-        <TouchableOpacity onPress={() => (navigation.canGoBack() ? navigation.goBack() : null)}>
+        <TouchableOpacity onPress={() => {
+          if (navigation.canGoBack()) {
+            AsyncStorage.clear()
+                .then(() => navigation.navigate('SignIn'))
+                .catch(error => console.error('Failed to clear AsyncStorage:', error));
+          }
+        }}
+        >
           <MaterialCommunityIcons name="dots-horizontal" size={24} color={colors.icons} />
         </TouchableOpacity>
       </SafeAreaView>

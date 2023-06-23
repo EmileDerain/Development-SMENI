@@ -22,7 +22,10 @@ const Navigation = () => {
                     headerShown: false
                 }}
                 />
-                <Stack.Screen name="SignIn" component={SignIn} />
+                <Stack.Screen name="SignIn" component={SignIn} options={{
+                    headerShown: false
+                }}
+                />
                 <Stack.Screen name="Exemple2" component={ExempleScreen2} />
             </Stack.Navigator>
         </NavigationContainer>
