@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import colors from '../assets/colors/colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ShareFile } from '../useGetShare';
-import {PREDICT_URL} from "../utils/path";
+import {URL_PREDICT} from "../utils/path";
 
 const Prediction = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   const transferedFile = transfertInfo;
@@ -18,7 +18,7 @@ const Prediction = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   }, []);
 
   const askPrediction = async () => {
-    const url = PREDICT_URL; // URL de l'API
+    const url = URL_PREDICT; // URL de l'API
 
     // @ts-ignore
     const fichierWaveUri = transfertInfo.contentUri;

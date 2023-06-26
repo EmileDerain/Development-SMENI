@@ -1,10 +1,10 @@
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {URL_LOGIN} from "../utils/path";
+import {PAGE_DIAGNOHELP, PAGE_SIGNUP, URL_LOGIN} from "../utils/path";
 import {isTokenValid} from "../utils/jwtCheck";
 import {WithLocalSvg} from "react-native-svg";
 import NetInfo from "@react-native-community/netinfo";
@@ -23,18 +23,29 @@ const CheckToken = async () => {
 const SignIn = () => {
     const navigation = useNavigation();
 
+    const checkConnexion = () => {
+        NetInfo.fetch().then(state => {
+            if (!state.isConnected) {
+                navigation.navigate('DiagnoHelp');
+            }
+        });
+    }
+
+    // Hook to call the function when the page is focused
+    useFocusEffect(() => {
+        checkConnexion(); // Call the function when the page is focused
+    });
+
     const Unsubscribe = NetInfo.addEventListener(state => {
         console.log("Connection type", state.isConnected);
 
         if (!state.isConnected) {
             console.log("no connexion")
-            navigation.navigate('DiagnoHelp');
-            return;
+            navigation.navigate(PAGE_DIAGNOHELP);
         }
     });
 
     Unsubscribe();
-
 
     CheckToken();
 
@@ -85,7 +96,7 @@ const SignIn = () => {
                         AsyncStorage.setItem('token', token)
                             .then(() => {
                                 clearForm();
-                                navigation.navigate('DiagnoHelp');
+                                navigation.navigate(PAGE_DIAGNOHELP);
                             })
                             .catch(error => {
                                 console.error('Failed to store token:', error);
@@ -107,7 +118,7 @@ const SignIn = () => {
 
             </SafeAreaView>
             {/*form*/}
-            <SafeAreaView style={styles.form}>
+            <SafeAreaView>
                 {/*Mail*/}
                 <SafeAreaView style={styles.labelWrapper}>
                     <Text style={[styles.text, styles.subtitle]}>Mail</Text>
@@ -159,7 +170,7 @@ const SignIn = () => {
                 <TouchableOpacity
                     onPress={() => {
                         clearForm();
-                        navigation.navigate('SignUp');
+                        navigation.navigate(PAGE_SIGNUP);
                     }}>
                     <Text style={[styles.text, styles.subtitle, styles.navigate]}>Create One !</Text>
                 </TouchableOpacity>

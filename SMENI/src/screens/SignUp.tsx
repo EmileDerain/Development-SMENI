@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
-import {URL_SIGNUP} from "../utils/path";
+import {PAGE_DIAGNOHELP, PAGE_SIGNIN, URL_SIGNUP} from "../utils/path";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {isTokenValid} from "../utils/jwtCheck";
 import {WithLocalSvg} from 'react-native-svg';
@@ -16,7 +16,7 @@ const CheckToken = async () => {
     const tokenFromStorage = await AsyncStorage.getItem('token');
     if (isTokenValid(tokenFromStorage)) {
         console.log("token is valid")
-        navigation.navigate('DiagnoHelp');
+        navigation.navigate(PAGE_DIAGNOHELP);
     }
 }
 
@@ -25,7 +25,8 @@ const SignUp = () => {
 
     const Unsubscribe = NetInfo.addEventListener(state => {
         if (!state.isConnected) {
-            navigation.navigate('DiagnoHelp');
+            navigation.navigate(PAGE_DIAGNOHELP);
+            return;
         }
     });
 
@@ -130,7 +131,7 @@ const SignUp = () => {
             if (response.ok) {
                 console.log('response ok');
                 clearForm();
-                navigation.navigate('SignIn');
+                navigation.navigate(PAGE_SIGNIN);
             } else {
                 console.error('mail is already used');
                 //TODO : create a popup to say that the mail is already used
@@ -227,7 +228,7 @@ const SignUp = () => {
                 <TouchableOpacity
                     onPress={() => {
                         clearForm();
-                        navigation.navigate('SignIn');
+                        navigation.navigate(PAGE_SIGNIN);
                     }}>
                     <Text style={[styles.text, styles.subtitle, styles.navigate]}>Sign In</Text>
                 </TouchableOpacity>
