@@ -9,7 +9,7 @@ import Prediction from '../components/Prediction';
 import colors from '../assets/colors/colors';
 import {useGetShare} from '../useGetShare';
 import heartBeat from '../assets/images/heartBeat.png';
-import {PAGE_SIGNIN, URL_AUDIO} from "../utils/path";
+import {PAGE_DIAGNOHELP, PAGE_SIGNIN, URL_AUDIO} from "../utils/path";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {isTokenValid} from "../utils/jwtCheck";
 import NetInfo from "@react-native-community/netinfo";
@@ -117,7 +117,7 @@ const DiagnoHelpScreen = () => {
                 <Text style={[styles.text, styles.title]}>Diagnostic Page</Text>
                 <TouchableOpacity onPress={() => {
                     AsyncStorage.clear()
-                        .then(() => navigation.navigate('SignIn'))
+                        .then(() =>navigation.navigate(PAGE_SIGNIN))
                         .catch(error => console.error('Failed to clear AsyncStorage:', error));
 
                 }}

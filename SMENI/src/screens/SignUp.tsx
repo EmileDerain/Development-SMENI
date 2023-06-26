@@ -1,4 +1,4 @@
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
@@ -23,11 +23,23 @@ const CheckToken = async () => {
 const SignUp = () => {
     const navigation = useNavigation();
 
+    const checkConnexion = () => {
+        NetInfo.fetch().then(state => {
+            if (!state.isConnected) {
+                navigation.navigate(PAGE_DIAGNOHELP);
+            }
+        });
+    }
+
+    // Hook to call the function when the page is focused
+    useFocusEffect(() => {
+        checkConnexion(); // Call the function when the page is focused
+    });
+
     const Unsubscribe = NetInfo.addEventListener(state => {
         if (!state.isConnected) {
             navigation.navigate(PAGE_DIAGNOHELP);
-            return;
-        }
+            }
     });
 
     Unsubscribe();

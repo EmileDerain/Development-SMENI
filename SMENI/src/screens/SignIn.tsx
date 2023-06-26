@@ -16,7 +16,7 @@ const CheckToken = async () => {
     const tokenFromStorage = await AsyncStorage.getItem('token');
     if (isTokenValid(tokenFromStorage)) {
         console.log("token is valid")
-        navigation.navigate('DiagnoHelp');
+        navigation.navigate(PAGE_DIAGNOHELP);
     }
 }
 
@@ -26,21 +26,19 @@ const SignIn = () => {
     const checkConnexion = () => {
         NetInfo.fetch().then(state => {
             if (!state.isConnected) {
-                navigation.navigate('DiagnoHelp');
+                navigation.navigate(PAGE_DIAGNOHELP);
             }
         });
     }
 
     // Hook to call the function when the page is focused
-    useFocusEffect(() => {
+   useFocusEffect(() => {
         checkConnexion(); // Call the function when the page is focused
     });
 
     const Unsubscribe = NetInfo.addEventListener(state => {
-        console.log("Connection type", state.isConnected);
-
         if (!state.isConnected) {
-            console.log("no connexion")
+            console.log("not connected");
             navigation.navigate(PAGE_DIAGNOHELP);
         }
     });
