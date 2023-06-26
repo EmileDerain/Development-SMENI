@@ -21,6 +21,7 @@ function parseJwt(token: string | null) {
 }
 
 function isTokenValid(token: string | null) {
+    if(token === null) return false;
     let parsedJwt = parseJwt(token);
     if (parsedJwt === null || parsedJwt.exp === undefined) return false;
     let expirationTime = parsedJwt.exp;

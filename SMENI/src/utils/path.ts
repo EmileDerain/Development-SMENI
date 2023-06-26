@@ -7,5 +7,6 @@ const URL_SIGNUP = `${API_URL}user/signup`
 
 const URL_AUDIO = `${API_URL}audio`
 
+const PREDICT_URL = `${API_URL}cnn/predict`
 
-export {URL_LOGIN, URL_SIGNUP, URL_AUDIO}
+export {URL_LOGIN, URL_SIGNUP, URL_AUDIO, PREDICT_URL}

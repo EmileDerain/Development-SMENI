@@ -7,10 +7,12 @@ import {URL_SIGNUP} from "../utils/path";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {isTokenValid} from "../utils/jwtCheck";
 import {WithLocalSvg} from 'react-native-svg';
+import NetInfo from "@react-native-community/netinfo";
+
+
 
 const CheckToken = async () => {
     const navigation = useNavigation();
-
     const tokenFromStorage = await AsyncStorage.getItem('token');
     if (isTokenValid(tokenFromStorage)) {
         console.log("token is valid")
@@ -20,6 +22,14 @@ const CheckToken = async () => {
 
 const SignUp = () => {
     const navigation = useNavigation();
+
+    const Unsubscribe = NetInfo.addEventListener(state => {
+        if (!state.isConnected) {
+            navigation.navigate('DiagnoHelp');
+        }
+    });
+
+    Unsubscribe();
 
     CheckToken();
 

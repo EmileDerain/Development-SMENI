@@ -7,10 +7,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {URL_LOGIN} from "../utils/path";
 import {isTokenValid} from "../utils/jwtCheck";
 import {WithLocalSvg} from "react-native-svg";
+import NetInfo from "@react-native-community/netinfo";
 
 
 const CheckToken = async () => {
     const navigation = useNavigation();
+
     const tokenFromStorage = await AsyncStorage.getItem('token');
     if (isTokenValid(tokenFromStorage)) {
         console.log("token is valid")
@@ -20,6 +22,20 @@ const CheckToken = async () => {
 
 const SignIn = () => {
     const navigation = useNavigation();
+
+    const Unsubscribe = NetInfo.addEventListener(state => {
+        console.log("Connection type", state.isConnected);
+
+        if (!state.isConnected) {
+            console.log("no connexion")
+            navigation.navigate('DiagnoHelp');
+            return;
+        }
+    });
+
+    Unsubscribe();
+
+
     CheckToken();
 
     const [mail, setMail] = useState('');
@@ -189,11 +205,11 @@ const styles = StyleSheet.create({
         color: 'red',
         marginTop: 5,
     },
-    passwordWrapper:{
+    passwordWrapper: {
         flexDirection: 'row',
-        alignItems:'center',
-        justifyContent:'space-between',
-        width:'90%'
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '90%'
     },
     button: {
         borderColor: '#96D3FE',
@@ -210,10 +226,10 @@ const styles = StyleSheet.create({
     }, buttonContent: {
         flex: 1, opacity: 1, // Default opacity when the button is enabled
     }, buttonText: {
-        color:'white'
+        color: 'white'
     }, navigateWrapper: {
         flexDirection: 'row', alignItems: 'center', marginTop: 15,
-        justifyContent:'center'
+        justifyContent: 'center'
     }, disabledButton: {
         opacity: 1, // Opacity when the button is disabled
     }
