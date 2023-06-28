@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {isTokenValid} from "../utils/jwtCheck";
 import {WithLocalSvg} from 'react-native-svg';
 import NetInfo from "@react-native-community/netinfo";
+import {err} from "react-native-svg/lib/typescript/xml";
 
 
 
@@ -110,7 +111,7 @@ const SignUp = () => {
     }
 
     const registerAccount = async () => {
-        const url = URL_SIGNUP; //TODO : ipconfig et mettre son addresse IP locale
+        const url = URL_SIGNUP;
 
         const params = {
             firstName: firstName, lastName: lastName, mail: mail, password: password
@@ -134,12 +135,15 @@ const SignUp = () => {
                 clearForm();
                 navigation.navigate(PAGE_SIGNIN);
             } else {
-                console.error('mail is already used');
-                //TODO : create a popup to say that the mail is already used
+                // get the error message from response
+                const error = await response.json()
+                console.log('first:', error.message);
+                setMailError(error.message); //TODO voir si on met une alerte à la place
 
             }
         } catch (error) {
-            console.error('error:', error);
+            console.log('error:', error);
+            //console.error('error:', error);
         }
     };
 

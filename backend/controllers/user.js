@@ -14,7 +14,7 @@ exports.signup = (req, res) => {
                 });
                 user.save()
                     .then(() => res.status(201).json({message: 'User created !'}))
-                    .catch(error => res.status(400).json({error, message: 'Email already used !'}));
+                    .catch(error => res.status(400).json({ message: 'Email is already used !'}));
             }
         )
         .catch(error => res.status(500).json({error, message: 'Error while hashing password !'}));
