@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Image, Keyboard, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View,} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -16,20 +16,35 @@ import NetInfo from "@react-native-community/netinfo";
 
 
 const CheckToken = async () => {
-    const navigation = useNavigation();
-
     const tokenFromStorage = await AsyncStorage.getItem('token');
-    if (!isTokenValid(tokenFromStorage)) {
-        console.log("token is invalid")
-        navigation.navigate(PAGE_SIGNIN);
-    }
+    return isTokenValid(tokenFromStorage);
 
 }
 const DiagnoHelpScreen = () => {
     const sharedFile = useGetShare();
     const navigation = useNavigation();
 
-    // CheckToken();
+    const [hasToken, setHasToken] = useState(true);
+
+    CheckToken().then((tokenIsValid) => {
+        setHasToken(tokenIsValid);
+        console.log("tokenIsValid: ", tokenIsValid);
+    }).catch((error) => {
+        console.log("error: ", error);
+    });
+
+    const [isConnected, setIsConnected] = useState(true);
+
+    useEffect(() => {
+        const unsubscribe = NetInfo.addEventListener(state => {
+            if(state.isConnected === null){
+                setIsConnected(false);
+            }
+            else setIsConnected(state.isConnected);
+        });
+        return unsubscribe;
+    }, []);
+
 
     const [selectedValue, setSelectedValue] = useState('');
     const [suggestions, setSuggestions] = useState([
@@ -117,7 +132,7 @@ const DiagnoHelpScreen = () => {
                 <Text style={[styles.text, styles.title]}>Diagnostic Page</Text>
                 <TouchableOpacity onPress={() => {
                     AsyncStorage.clear()
-                        .then(() =>navigation.navigate(PAGE_SIGNIN))
+                        .then(() => navigation.navigate(PAGE_SIGNIN))
                         .catch(error => console.error('Failed to clear AsyncStorage:', error));
 
                 }}
@@ -165,13 +180,24 @@ const DiagnoHelpScreen = () => {
             )}
 
             <SafeAreaView>
-                <TouchableOpacity
-                    onPress={() => saveLabeledRecording(selectedValue)}
-                    disabled={!isInputValid || selectedValue === ''}
-                    style={[styles.buttonContent, styles.button, (!isInputValid || selectedValue === '') && styles.disabledButton]}
-                >
-                    <Text style={[styles.text, styles.title]}>Save</Text>
-                </TouchableOpacity>
+                {hasToken ? <TouchableOpacity
+                        onPress={() => saveLabeledRecording(selectedValue)}
+                        disabled={!isInputValid || selectedValue === ''}
+                        style={[styles.buttonContent, styles.button, (!isInputValid || selectedValue === '') && styles.disabledButton]}
+                    >
+                        <Text style={[styles.text, styles.title]}>Save</Text>
+                    </TouchableOpacity> :
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate(PAGE_SIGNIN)}
+                        disabled={!isConnected}
+                        style={[styles.buttonContent, styles.button, !isConnected && styles.disabledButton]}
+                    >
+                        {isConnected ? <Text style={[styles.text, styles.title, { textAlign: 'center' }]}>Sign In to save</Text> :
+                            <Text style={[styles.text, styles.title, { textAlign: 'center' }]}>No Internet</Text>}
+
+                        {/*<Text style={[styles.text, styles.title, { textAlign: 'center' }]}>Sign In to save</Text>*/}
+                    </TouchableOpacity>}
+
             </SafeAreaView>
         </KeyboardAwareScrollView>
     );

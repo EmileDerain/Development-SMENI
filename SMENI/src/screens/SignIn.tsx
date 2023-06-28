@@ -162,6 +162,17 @@ const SignIn = () => {
                     <Text style={[styles.text, styles.subtitle, styles.navigate]}>Create One !</Text>
                 </TouchableOpacity>
             </SafeAreaView>
+
+            <SafeAreaView style={styles.navigateWrapper}>
+                <Text style={[styles.text, styles.subtitle]}>Only want to predict something ?</Text>
+                <TouchableOpacity
+                    onPress={() => {
+                        clearForm();
+                        navigation.navigate(PAGE_DIAGNOHELP);
+                    }}>
+                    <Text style={[styles.text, styles.subtitle, styles.navigate]}>Click Here !</Text>
+                </TouchableOpacity>
+            </SafeAreaView>
         </KeyboardAwareScrollView>
     );
 }
