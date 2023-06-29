@@ -214,13 +214,10 @@ const SignUp = () => {
                         <TouchableOpacity
                             onPress={() => {
                                 handleSubmit();
-                                //TODO : créer la méthode pour envoyer le compte au back
                             }}
-                            // disabled={firstName === '' || lastName === '' || mail === '' || password === ''}
-                            style={[styles.buttonContent, styles.button]} //, (firstName === '' || lastName === '' || mail === '' || password === '') && styles.disabledButton]}
+                            style={[styles.buttonContent, styles.button]}
                         >
                             <Text style={[styles.text, styles.title, styles.buttonText]}>Create</Text>
-
                         </TouchableOpacity>
                     </SafeAreaView>
 

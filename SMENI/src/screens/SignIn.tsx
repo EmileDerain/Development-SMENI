@@ -1,4 +1,4 @@
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
@@ -23,7 +23,6 @@ const CheckToken = async () => {
 const SignIn = () => {
     const navigation = useNavigation();
 
-
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
             if (!(state.isConnected)) {
@@ -37,17 +36,44 @@ const SignIn = () => {
     CheckToken();
 
     const [mail, setMail] = useState('');
+    const [mailError, setMailError] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 
     const visibilityIcon = require('../assets/images/eye-solid.svg');
     const visibilityOffIcon = require('../assets/images/eye-slash-solid.svg');
+
+    const [credentialsError, setCredentialsError] = useState('');
 
     const clearForm = () => {
         setMail('');
         setPassword('');
     }
 
+    const handleSubmit = () => {
+        let mailValid = false;
+        const mailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (mail.length == 0) {
+            setMailError('Mail is required');
+        } else if (!mailValidator.test(String(mail).toLowerCase())) {
+            setMailError('Mail is not valid, it should be like : example@xyz.com');
+        } else {
+            setMailError('');
+            mailValid = true;
+        }
+        let passwordValid = false;
+        if (password.length == 0) {
+            setPasswordError('Password is required');
+        } else {
+            setPasswordError('');
+            passwordValid = true;
+        }
+
+        if (mailValid && passwordValid) {
+            login();
+        }
+    }
     const login = async () => {
         const url = URL_LOGIN; //TODO : ipconfig et mettre son addresse IP locale
 
@@ -89,6 +115,9 @@ const SignIn = () => {
                                 console.error('Failed to store token:', error);
                             });
                     }
+                }).catch(error => {
+                    console.log('error:', error);
+                    setCredentialsError('The credentials are not correct');
                 });
         } catch (error) {
             console.error('error:', error);
@@ -115,6 +144,7 @@ const SignIn = () => {
                         placeholder={'Mail'}
                         onChangeText={(text) => setMail(text)}
                     />
+                    <Text style={styles.errorInput}>{mailError}</Text>
                 </SafeAreaView>
                 {/*Password*/}
                 <SafeAreaView style={styles.labelWrapper}>
@@ -132,22 +162,20 @@ const SignIn = () => {
                         onChangeText={(text) => setPassword(text)}
                         secureTextEntry={!passwordIsVisible}
                     />
+                    <Text style={styles.errorInput}>{passwordError}</Text>
                 </SafeAreaView>
-                {/*TODO : peut être rajouter un champ confirm password    */}
 
                 <SafeAreaView>
-                    <SafeAreaView>
+                    <SafeAreaView style={styles.submit}>
                         <TouchableOpacity
                             onPress={() => {
-                                login();
-                                //TODO : créer la méthode pour envoyer le compte au back
+                                handleSubmit();
                             }}
-                            disabled={mail === '' || password === ''}
                             style={[styles.buttonContent, styles.button, (mail === '' || password === '') && styles.disabledButton]}
                         >
                             <Text style={[styles.text, styles.title, styles.buttonText]}>Sign In</Text>
-
                         </TouchableOpacity>
+                        <Text style={styles.credentialsError}>{credentialsError}</Text>
                     </SafeAreaView>
                 </SafeAreaView>
             </SafeAreaView>
@@ -239,8 +267,13 @@ const styles = StyleSheet.create({
     }, navigateWrapper: {
         flexDirection: 'row', alignItems: 'center', marginTop: 15,
         justifyContent: 'center'
-    }, disabledButton: {
-        opacity: 1, // Opacity when the button is disabled
+    }, submit: {
+        alignItems: 'center',
+    },
+    credentialsError: {
+        color: 'red',
+        fontSize: 20,
+
     }
 });
 export default SignIn;
