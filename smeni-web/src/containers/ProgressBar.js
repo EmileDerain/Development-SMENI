@@ -50,9 +50,11 @@ const ProgressBar = (audioInfo) => {
     }
 
     const whilePlaying = () => {
-        progressBar.current.value = audioPlayer.current.currentTime;
-        changePlayerCurrentTime();
-        animationRef.current = requestAnimationFrame(whilePlaying);
+        if (audioPlayer.current !== null) {
+            progressBar.current.value = audioPlayer.current.currentTime;
+            changePlayerCurrentTime();
+            animationRef.current = requestAnimationFrame(whilePlaying);
+        }
     }
 
     const changeRange = () => {

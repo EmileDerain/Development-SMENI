@@ -8,6 +8,10 @@ const multer = require('../middleware/multer-config')
 router.post('/', multer, audioCtrl.renameFile, audioCtrl.saveAudio);
 router.get('/', audioCtrl.getAllAudio);
 
+router.get('/Label/:label', audioCtrl.getAllAudioOfALabel);
+router.get('/Doctor/:doctor', audioCtrl.getAllAudioOfADoctor);
+
+
 router.get('/stream/:id', audioCtrl.streamAudio);
 
 

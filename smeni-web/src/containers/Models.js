@@ -81,7 +81,6 @@ const Models = () => {
     });
 
     function ModelInfo(info) {
-        //TODO : bug losqu'un build de model est en cours !!
         const myElementRef = useRef(null);
 
         const handleButtonClick = (action) => {
@@ -194,6 +193,10 @@ const Models = () => {
                         if (!response.ok) {
                             throw new Error('Une erreur s\'est produite lors de la suppression des données.');
                         }
+                        console.log("response.ok")
+                        getModels();
+                        console.log("response.ok getModels")
+
                         setDialogBox(() => ({
                             ask: false,
                             type: undefined,

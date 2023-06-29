@@ -55,14 +55,13 @@ const orderByOptionList = [
     {
         name: "Doctor",
     },
-    {
-        name: "Patient",
-    },
+    // {
+    //     name: "Patient",
+    // },
 ]
 
-
 const Audios = () => {
-    const [orderBy, setOrderBy] = useState(orderByOptionList[0].name);
+    const [orderBy, setOrderBy] = useState(undefined);
 
 
     const [optionSelected, setOptionSelected] = useState(undefined);
@@ -72,9 +71,11 @@ const Audios = () => {
     const [audios, setAudios] = useState([]);
     const [path, setPath] = useState(undefined);
 
-    const getAudioFiles = () => {
-        console.log("Req getAudioFiles")
-        fetch('http://localhost:2834/api/audio/')
+
+    const getAudioFiles = (option) => {
+        const req = 'http://localhost:2834/api/audio/' + orderBy + '/' + option;
+        console.log("Req getAudioFiles: ", req)
+        fetch(req)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Une erreur s\'est produite lors de la récupération des données.');
@@ -91,7 +92,7 @@ const Audios = () => {
     };
 
     const getAudioLabels = () => {
-        console.log("Req getAudioLabels")
+        console.log("Req getAudioLabels");
         fetch('http://localhost:2834/api/cnn/labels')
             .then(response => {
                 if (!response.ok) {
@@ -100,9 +101,27 @@ const Audios = () => {
                 return response.json();
             })
             .then(audioLabels => {
-                console.log("audioLabels", audioLabels.audios)
+                console.log("audioLabels", audioLabels.labels)
                 setLabels(audioLabels.labels);
-                setOptionSelected(audioLabels.labels[0].labelName)
+                // setOptionSelected(audioLabels.labels[0].labelName)
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    };
+
+    const getDoctorLabels = () => {
+        console.log("Req getDoctorLabels")
+        fetch('http://localhost:2834/api/user/labels')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Une erreur s\'est produite lors de la récupération des données.');
+                }
+                return response.json();
+            })
+            .then(usersList => {
+                console.log("usersList", usersList.users)
+                setLabels(usersList.users);
             })
             .catch(error => {
                 console.error(error);
@@ -111,24 +130,24 @@ const Audios = () => {
 
     const calculateTime = (time) => `${(`0${Math.floor(time / 60)}`).slice(-2)}:${(`0${Math.floor(time % 60)}`).slice(-2)}`;
 
-    window.onload = function () {
-        const checkboxes = document.querySelectorAll('input[name="option"]');
-        checkboxes[0].setAttribute('checked', 'checked');
-
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
-                checkboxes.forEach(cb => {
-                    if (cb !== this) {
-                        cb.checked = false;
-                    } else {
-                        console.log("orderBy", orderBy)
-                        setOrderBy(cb.value);
-                        console.log("orderBy", orderBy)
-                    }
-                });
-            });
-        });
-    }
+    // window.onload = function () {
+    //     const checkboxes = document.querySelectorAll('input[name="option"]');
+    //     checkboxes[0].setAttribute('checked', 'checked');
+    //
+    //     checkboxes.forEach(checkbox => {
+    //         checkbox.addEventListener('change', function () {
+    //             checkboxes.forEach(cb => {
+    //                 if (cb !== this) {
+    //                     cb.checked = false;
+    //                 } else {
+    //                     console.log("orderBy", orderBy)
+    //                     setOrderBy(cb.value);
+    //                     console.log("orderBy", orderBy)
+    //                 }
+    //             });x
+    //         });
+    //     });
+    // }
 
 
     const labelList = labels.map((item, index) => {
@@ -139,11 +158,11 @@ const Audios = () => {
         const myElementRef = useRef();
 
         const handleButtonClick = () => {
-            console.log("optionSelected", optionSelected)
-
             const element = myElementRef.current;
             if (element) {
-                setOptionSelected(info.button[0])
+                setOptionSelected(info.button[0]);
+                getAudioFiles(info.button[0]);
+                setPath(undefined);
             }
         };
 
@@ -159,6 +178,39 @@ const Audios = () => {
         );
     }
 
+    const selectFilter = (filterSelected) => {
+        if (filterSelected !== orderBy) {
+            setPath(undefined);
+            setAudios([]);
+            setLabels([]);
+            setOptionSelected(undefined);
+        }
+
+        setOrderBy(filterSelected);
+
+        switch (filterSelected) {
+            case "Label":
+                getAudioLabels();
+                break;
+            case "Doctor":
+                getDoctorLabels();
+                break;
+            default :
+            // case "Patient": getAudioFiles()
+        }
+
+    }
+
+    function ButtonOrderBy(info) {
+        return (
+            <div className={"buttonOrderBy"}>
+                <input className={"chekboxOrder"} type="checkbox" name="option"
+                       value={info.button.name} onChange={() => selectFilter(info.button.name)}
+                       checked={orderBy === info.button.name}/>
+                <h1>{info.button.name}</h1>
+            </div>
+        );
+    }
 
     const audioList = audios.map((item, index) => {
         return <Audio key={index} button={item}></Audio>;
@@ -188,17 +240,11 @@ const Audios = () => {
                 <h1 className={"menuRightTopTitreDoctor menuRightTopTitreCentre"}>{info.button.doctor}</h1>
                 <h1 className={"menuRightTopTitreTime menuRightTopTitreCentre"}>{calculateTime(info.button.time)}</h1>
                 <div className={"menuRightTopTitreAction menuRightTopTitreCentre"}>
-                    <Icon path={mdiTrashCanOutline} className={"iconMenuHeaderPage"} size={1}/>
+                    <Icon path={mdiTrashCanOutline} className={"iconMenuHeaderPage cursorHoverPointerRed"} size={1}/>
                 </div>
             </div>
         );
     }
-
-    useEffect(() => {
-        getAudioFiles();
-        getAudioLabels();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     return (
         <div className={"screen"}>
@@ -254,37 +300,42 @@ const Audios = () => {
                             </div>
                             <ButtonOrderBy button={orderByOptionList[0]}></ButtonOrderBy>
                             <ButtonOrderBy button={orderByOptionList[1]}></ButtonOrderBy>
-                            <ButtonOrderBy button={orderByOptionList[2]}></ButtonOrderBy>
+                            {/*<ButtonOrderBy button={orderByOptionList[2]}></ButtonOrderBy>*/}
                         </div>
-                        <div className={"menuLeftBot"}>
-                            <div className={"menuLeftTopTitre"}>
-                                <h1>{orderBy}</h1>
-                            </div>
-                            {labelList}
-                        </div>
+                        {orderBy !== undefined ?
+                            <div className={"menuLeftBot"}>
+                                <div className={"menuLeftTopTitre"}>
+                                    <h1>{orderBy}</h1>
+                                </div>
+                                {labelList}
+                            </div> :
+                            <></>}
+
                     </div>
 
                     <div className={"menuRight"}>
-                        <div className={"menuRightTop"}>
-                            <div className={"menuRightTopTitre"}>
-                                <h1 className={"menuRightTopTitreDate menuRightTopTitreCentre menuRightTopTitreDateBorder"}>Date</h1>
-                                <h1 className={"menuRightTopTitreName menuRightTopTitreCentre menuRightTopTitreBorder"}>Name</h1>
-                                <h1 className={"menuRightTopTitreDoctor menuRightTopTitreCentre menuRightTopTitreBorder"}>Doctor</h1>
-                                <h1 className={"menuRightTopTitreTime menuRightTopTitreCentre menuRightTopTitreBorder"}>Time</h1>
-                                <h1 className={"menuRightTopTitreAction menuRightTopTitreCentre menuRightTopTitreActionBorder"}>Action</h1>
-                            </div>
+                        {optionSelected !== undefined ?
+                            <div className={"menuRightTop"}>
+                                <div className={"menuRightTopTitre"}>
+                                    <h1 className={"menuRightTopTitreDate menuRightTopTitreCentre menuRightTopTitreDateBorder"}>Date</h1>
+                                    <h1 className={"menuRightTopTitreName menuRightTopTitreCentre menuRightTopTitreBorder"}>Name</h1>
+                                    <h1 className={"menuRightTopTitreDoctor menuRightTopTitreCentre menuRightTopTitreBorder"}>Doctor</h1>
+                                    <h1 className={"menuRightTopTitreTime menuRightTopTitreCentre menuRightTopTitreBorder"}>Time</h1>
+                                    <h1 className={"menuRightTopTitreAction menuRightTopTitreCentre menuRightTopTitreActionBorder"}>Action</h1>
+                                </div>
+                                <div className={"menuRightTopListAudio"}>
+                                    {audioList}
+                                </div>
+                            </div> :
+                            <></>}
+                        {path !== undefined ?
+                            <div className={"menuRightBot"}>
+                                <ProgressBar
+                                    path={path}
+                                />
+                            </div> :
+                            <></>}
 
-                            <div className={"menuRightTopListAudio"}>
-                                {audioList}
-                            </div>
-
-
-                        </div>
-                        <div className={"menuRightBot"}>
-                            <ProgressBar
-                                path={path}
-                            />
-                        </div>
                     </div>
                 </div>
             </div>
@@ -296,17 +347,8 @@ const Audios = () => {
 function ButtonMenuHeader(info) {
     return (
         <Link className={"iconMenuHeaderDivPage"} to={info.button.link}>
-                <Icon path={info.button.mdi} className={"iconMenuHeaderPage"} size={2}/>
+            <Icon path={info.button.mdi} className={"iconMenuHeaderPage"} size={2}/>
         </Link>
-    );
-}
-
-function ButtonOrderBy(info) {
-    return (
-        <div className={"buttonOrderBy"}>
-            <input className={"chekboxOrder"} type="checkbox" name="option" value={info.button.name}/>
-            <h1>{info.button.name}</h1>
-        </div>
     );
 }
 

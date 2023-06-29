@@ -63,6 +63,19 @@ exports.getAllAudio = (req, res) => {
         .catch(error => res.status(400).json({"status": 400, reason: error}));
 };
 
+
+exports.getAllAudioOfALabel = (req, res) => {
+    Audio.find({label : req.params.label.toLowerCase()})
+        .then(audios => res.status(200).json({"status": 200, "audios": audios}))
+        .catch(error => res.status(400).json({"status": 400, reason: error}));
+};
+
+exports.getAllAudioOfADoctor = (req, res) => {
+    Audio.find({doctor : req.params.doctor})
+        .then(audios => res.status(200).json({"status": 200, "audios": audios}))
+        .catch(error => res.status(400).json({"status": 400, reason: error}));
+};
+
 exports.streamAudio = async (req, res) => {
     console.log("streamAudio")
     const audioData = await Audio.findOne({_id: req.params.id})

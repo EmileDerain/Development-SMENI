@@ -89,7 +89,7 @@ const Doctors = () => {
                 <h1 className={"menuRightTopTitreEmailDoctors menuRightTopTitreCentre"}>{info.doctor.mail}</h1>
                 <h1 className={"menuRightTopTitrePasswordDoctors menuRightTopTitreCentre"}>{info.doctor.password}</h1>
                 <div className={"menuRightTopTitreActionDoctors menuRightTopTitreCentre"}>
-                    <Icon path={mdiTrashCanOutline} className={"iconMenuHeaderPage"} size={1}/>
+                    <Icon path={mdiTrashCanOutline} className={"iconMenuHeaderPage cursorHoverPointerRed"} size={1}/>
                 </div>
             </div>
         );
