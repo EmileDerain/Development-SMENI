@@ -106,14 +106,18 @@
 
 .menuRightCenterLogs{
     display: flex;
+    width: 100%;
 
-    align-items: center;
-    justify-content: center;
-
+    flex-direction: column;
     overflow-y: scroll;
 
     text-align: justify;
 
     color: white;
     font-size: min(1vw, 2vh);;
+}
+
+.logItem{
+    margin: 0;
+    margin-left: 2%;
 }

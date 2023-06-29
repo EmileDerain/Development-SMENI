@@ -11,6 +11,10 @@ from keras.layers import Input, Conv1D, MaxPool1D, BatchNormalization, MaxPoolin
 
 import argparse
 
+global audio_load
+
+audio_load = 0
+
 
 def stretch(data, rate):
     data = librosa.effects.time_stretch(data, rate=rate)
@@ -18,42 +22,44 @@ def stretch(data, rate):
 
 
 def load_file_data(folder, file_names, duration=10, sr=22050):
+    global audio_load, TRAIN_IMG_COUNT
+
     input_length = sr * duration
     features = 55
     data = []
     for file_name in file_names:
-        try:
-            sound_file = folder + file_name
-            print("Loading file")
-            X, sr = librosa.load(sound_file, sr=sr, duration=duration)
-            dur = librosa.get_duration(y=X, sr=sr)
-            # pad audio file same duration
-            if round(dur) < duration:
-                print("fixing audio lenght :", file_name)
-                X = librosa.util.fix_length(X, size=input_length)
 
-                # extract normalized mfcc feature from data
-            mfccs = np.mean(librosa.feature.mfcc(y=X, sr=sr, n_mfcc=features).T, axis=0)
-            feature = np.array(mfccs).reshape([-1, 1])
-            data.append(feature)
+        sound_file = folder + file_name
+        # print("Loading file :", file_name)
+        X, sr = librosa.load(sound_file, sr=sr, duration=duration)
+        dur = librosa.get_duration(y=X, sr=sr)
+        # pad audio file same duration
+        if round(dur) < duration:
+            # print("fixing audio lenght :", file_name)
+            X = librosa.util.fix_length(X, size=input_length)
 
-            stretch_data_1 = stretch(X, 0.8)
-            mfccs_stretch_1 = np.mean(librosa.feature.mfcc(y=stretch_data_1, sr=sr, n_mfcc=features).T, axis=0)
-            feature_1 = np.array(mfccs_stretch_1).reshape([-1, 1])
-            data.append(feature_1)
+            # extract normalized mfcc feature from data
+        mfccs = np.mean(librosa.feature.mfcc(y=X, sr=sr, n_mfcc=features).T, axis=0)
+        feature = np.array(mfccs).reshape([-1, 1])
+        data.append(feature)
 
-            stretch_data_2 = stretch(X, 1.2)
-            mfccs_stretch_2 = np.mean(librosa.feature.mfcc(y=stretch_data_2, sr=sr, n_mfcc=features).T, axis=0)
-            feature_2 = np.array(mfccs_stretch_2).reshape([-1, 1])
-            data.append(feature_2)
+        stretch_data_1 = stretch(X, 0.8)
+        mfccs_stretch_1 = np.mean(librosa.feature.mfcc(y=stretch_data_1, sr=sr, n_mfcc=features).T, axis=0)
+        feature_1 = np.array(mfccs_stretch_1).reshape([-1, 1])
+        data.append(feature_1)
 
-        except Exception as e:
-            print("Error encountered while parsing file: ", file_name)
+        stretch_data_2 = stretch(X, 1.2)
+        mfccs_stretch_2 = np.mean(librosa.feature.mfcc(y=stretch_data_2, sr=sr, n_mfcc=features).T, axis=0)
+        feature_2 = np.array(mfccs_stretch_2).reshape([-1, 1])
+        data.append(feature_2)
+        audio_load += 1
+        print(audio_load,"/", TRAIN_IMG_COUNT ,"- Loaded file :", file_name)
 
     return data
 
 
 def trainModel(model_name):
+    global audio_load, TRAIN_IMG_COUNT
     ###############
     ### Folders ###
     ###############
@@ -75,23 +81,32 @@ def trainModel(model_name):
     artifact_dataS = data_path2 + '/artifact/'
     extrahls_dataS = data_path2 + '/extrahls/'
 
-    TRAIN_IMG_COUNT = len(os.listdir(normal_data) + os.listdir(normal_dataS)) + len(
-        os.listdir(murmur_data) + os.listdir(murmur_dataS)) + len(
-        os.listdir(extrastole_data) + os.listdir(extrastole_dataS)) + len(
-        os.listdir(artifact_data) + os.listdir(artifact_dataS)) + len(
-        os.listdir(extrahls_data) + os.listdir(extrahls_dataS))
 
-    COUNT_0 = len(os.listdir(artifact_data) + os.listdir(artifact_dataS))  # artifact
-    COUNT_1 = len(os.listdir(murmur_data) + os.listdir(murmur_dataS))  # murmur
-    COUNT_2 = len(os.listdir(normal_data) + os.listdir(normal_dataS))  # normal
-    COUNT_3 = len(os.listdir(extrahls_data) + os.listdir(extrahls_dataS))  # extrahls
-    COUNT_4 = len(os.listdir(extrastole_data) + os.listdir(extrastole_dataS))  # extrastole
+    COUNT_0 = len(os.listdir(artifact_data) + os.listdir(artifact_dataS)) - 2  # artifact
+    COUNT_1 = len(os.listdir(murmur_data) + os.listdir(murmur_dataS)) - 2  # murmur
+    COUNT_2 = len(os.listdir(normal_data) + os.listdir(normal_dataS)) - 2  # normal
+    COUNT_3 = len(os.listdir(extrahls_data) + os.listdir(extrahls_dataS)) - 2  # extrahls
+    COUNT_4 = len(os.listdir(extrastole_data) + os.listdir(extrastole_dataS)) - 2  # extrastole
 
-    print("Normal files:", COUNT_2)  # length of normal training sounds
-    print("Murmur files:", COUNT_1)  # length of murmur training sounds
-    print("Extrastole files", COUNT_4)  # length of extrastole training sounds
-    print("Artifact files:", COUNT_0)  # length of artifact training sounds
-    print("Extrahls files:", COUNT_3)  # length of extrahls training sounds
+    TRAIN_IMG_COUNT = COUNT_0 + COUNT_1 + COUNT_2 + COUNT_3 + COUNT_4
+
+    print("Normal files:", len(os.listdir(normal_data)) - 1)  # length of normal training sounds
+    print("Murmur files:", len(os.listdir(murmur_data)) - 1)  # length of murmur training sounds
+    print("Extrastole files", len(os.listdir(extrastole_data)) - 1)  # length of extrastole training sounds
+    print("Artifact files:", len(os.listdir(artifact_data)) - 1)  # length of artifact training sounds
+    print("Extrahls files:", len(os.listdir(extrahls_data)) - 1)  # length of extrahls training sounds
+
+    print("Normal stemoscope files:", len(os.listdir(normal_dataS)) - 1)  # length of normal training sounds
+    print("Murmur stemoscope files:", len(os.listdir(murmur_dataS)) - 1)  # length of murmur training sounds
+    print("Extrastole stemoscope files", len(os.listdir(extrastole_dataS)) - 1)  # length of extrastole training sounds
+    print("Artifact stemoscope files:", len(os.listdir(artifact_dataS)) - 1)  # length of artifact training sounds
+    print("Extrahls stemoscope files:", len(os.listdir(extrahls_dataS)) - 1)  # length of extrahls training sounds
+
+    print("Total Normal files:", COUNT_2)  # length of normal training sounds
+    print("Total Murmur files:", COUNT_1)  # length of murmur training sounds
+    print("Total Extrastole files", COUNT_4)  # length of extrastole training sounds
+    print("Total Artifact files:", COUNT_0)  # length of artifact training sounds
+    print("Total Extrahls files:", COUNT_3)  # length of extrahls training sounds
 
     print("Total files:", TRAIN_IMG_COUNT)  # length of extrahls training sounds
 
@@ -101,10 +116,10 @@ def trainModel(model_name):
 
     # Map integer value to text labels
     label_to_int = {k: v for v, k in enumerate(CLASSES)}
-    print(label_to_int)
-    print(" ")
+    # print(label_to_int)
+    # print(" ")
     int_to_label = {v: k for k, v in label_to_int.items()}
-    print(int_to_label)
+    # print(int_to_label)
 
     ##################
     ### Load files ###
@@ -115,8 +130,8 @@ def trainModel(model_name):
     # seconds
     MAX_SOUND_CLIP_DURATION = 10
 
-    print("rest")
-    print(os.path.dirname(__file__))
+    # print("rest")
+    # print(os.path.dirname(__file__))
 
     artifact_files = fnmatch.filter(os.listdir(artifact_data), 'artifact*.wav')
     artifact_sounds = load_file_data(folder=artifact_data, file_names=artifact_files, duration=MAX_SOUND_CLIP_DURATION,
@@ -146,31 +161,33 @@ def trainModel(model_name):
     print("Loading 0 Done")
 
     artifact_files = fnmatch.filter(os.listdir(artifact_dataS), 'artifact*.wav')
-    artifact_sounds += load_file_data(folder=artifact_data, file_names=artifact_files, duration=MAX_SOUND_CLIP_DURATION,
+    artifact_sounds += load_file_data(folder=artifact_dataS, file_names=artifact_files, duration=MAX_SOUND_CLIP_DURATION,
                                       sr=SAMPLE_RATE)
     artifact_labels = [0 for _ in artifact_sounds]
 
     normal_files = fnmatch.filter(os.listdir(normal_dataS), 'normal*.wav')
-    normal_sounds += load_file_data(folder=normal_data, file_names=normal_files, duration=MAX_SOUND_CLIP_DURATION,
+    normal_sounds += load_file_data(folder=normal_dataS, file_names=normal_files, duration=MAX_SOUND_CLIP_DURATION,
                                     sr=SAMPLE_RATE)
     normal_labels = [2 for _ in normal_sounds]
 
     extrahls_files = fnmatch.filter(os.listdir(extrahls_dataS), 'extrahls*.wav')
-    extrahls_sounds += load_file_data(folder=extrahls_data, file_names=extrahls_files, duration=MAX_SOUND_CLIP_DURATION,
+    extrahls_sounds += load_file_data(folder=extrahls_dataS, file_names=extrahls_files, duration=MAX_SOUND_CLIP_DURATION,
                                       sr=SAMPLE_RATE)
     extrahls_labels = [3 for _ in extrahls_sounds]
 
     murmur_files = fnmatch.filter(os.listdir(murmur_dataS), 'murmur*.wav')
-    murmur_sounds += load_file_data(folder=murmur_data, file_names=murmur_files, duration=MAX_SOUND_CLIP_DURATION,
+    murmur_sounds += load_file_data(folder=murmur_dataS, file_names=murmur_files, duration=MAX_SOUND_CLIP_DURATION,
                                     sr=SAMPLE_RATE)
     murmur_labels = [1 for _ in murmur_sounds]
 
     extrastole_files = fnmatch.filter(os.listdir(extrastole_dataS), 'extrastole*.wav')
-    extrastole_sounds += load_file_data(folder=extrastole_data, file_names=extrastole_files,
+    extrastole_sounds += load_file_data(folder=extrastole_dataS, file_names=extrastole_files,
                                         duration=MAX_SOUND_CLIP_DURATION, sr=SAMPLE_RATE)
     extrastole_labels = [4 for _ in extrastole_sounds]
 
     print("Loading (Stemoscope) 1 Done")
+
+    print(audio_load, '/', TRAIN_IMG_COUNT)
 
     ###################
     ### Split files ###
@@ -294,7 +311,6 @@ def trainModel(model_name):
     lstm_model.compile(optimizer=optimiser,
                        loss='categorical_crossentropy',
                        metrics=['accuracy'])
-
 
     callback = tf.keras.callbacks.EarlyStopping(patience=50, monitor='val_accuracy', mode='max',
                                                 restore_best_weights=True), \

@@ -113,15 +113,24 @@ exports.train = async (req, res) => {
     const python = spawn('python', ['CNN/LSTM_Classification.py', req.body.name]);
 
     python.stdout.on('data', function (data) {
-        console.log('Pipe data from python script ...');
+        console.log('Pipe data from python script ...: ');
         dataToSend = data.toString();
-        serverConf.IO.emit("receive_cnn_logs", dataToSend);
-        console.log(dataToSend);
+        // console.log('dataToSend[]', dataToSend.split("\n"))
+        const dataToSendTab = dataToSend.split("\r\n");
+        for (let i = 0; i < dataToSendTab.length; i++) {
+            serverConf.IO.emit("receive_cnn_logs", dataToSendTab[i]);
+        }
+
+        // serverConf.IO.emit("receive_cnn_logs", dataToSend);
+        // console.log(dataToSend);
+        console.log("serverConf.IO.emit");
     });
 
     python.on('close', (code) => {
         console.log(`child process close all stdio with code ${code}`);
         if (code === 0) {
+
+            serverConf.IO.emit("end_cnn_logs");
 
             const lossAndAccuracyArray = JSON.parse(dataToSend);
 
@@ -169,7 +178,7 @@ exports.predict = async (req, res) => {
 
     const modelPath = JSON.parse(fs.readFileSync('./CNN/config/selectedModel.json', 'utf-8')).path
 
-    console.log("prediction use ",modelPath)
+    console.log("prediction use ", modelPath)
 
     const python = spawn('python', ['./CNN/LSTM_Classification_model.py', req.file.path, modelPath]);
 
