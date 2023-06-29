@@ -125,18 +125,28 @@ const Models = () => {
         return (
             <div id={info.model._id} ref={myElementRef}
                  className={modelSelected._id === info.model._id ? "audioDivPageSelected" : "audioDivPage"}>
-                <h1 className={"menuRightTopTitreDateModels menuRightTopTitreCentre"}
-                    onClick={() => handleButtonClick("select")}>{info.model.date}</h1>
-                <h1 className={"menuRightTopTitreNameModels menuRightTopTitreCentre"}
-                    onClick={() => handleButtonClick("select")}>{info.model.modelName}</h1>
-                <h1 className={"menuRightTopTitreLossModels menuRightTopTitreCentre"}
-                    onClick={() => handleButtonClick("select")}>{info.model.loss.toFixed(2)} </h1>
-                <h1 className={"menuRightTopTitreAccuracyModels menuRightTopTitreCentre"}
-                    onClick={() => handleButtonClick("select")}>{info.model.accuracy.toFixed(4) * 100} %</h1>
-                <div className={"menuRightTopTitreActionModels menuRightTopTitreCentre noCursor"}>
-                    <Icon path={mdiTrashCanOutline} className={"iconMenuHeaderPage cursorHoverPointerRed"}
-                          onClick={() => handleButtonClick("delete")} size={1}/>
-                </div>
+                {info.model.accuracy === undefined ?
+                    <>
+                        <h1 className={"menuRightTopTitre100 menuRightTopTitreCentre"}>{info.model.modelName} : Model
+                            building</h1>
+                    </>
+                    :
+                    <>
+                        <h1 className={"menuRightTopTitreDateModels menuRightTopTitreCentre"}
+                            onClick={() => handleButtonClick("select")}>{info.model.date}</h1>
+                        <h1 className={"menuRightTopTitreNameModels menuRightTopTitreCentre"}
+                            onClick={() => handleButtonClick("select")}>{info.model.modelName}</h1>
+                        <h1 className={"menuRightTopTitreLossModels menuRightTopTitreCentre"}
+                            onClick={() => handleButtonClick("select")}>{info.model.loss.toFixed(2)} </h1>
+                        <h1 className={"menuRightTopTitreAccuracyModels menuRightTopTitreCentre"}
+                            onClick={() => handleButtonClick("select")}>{Math.round(info.model.accuracy * 10000) / 100} %</h1>
+                        <div className={"menuRightTopTitreActionModels menuRightTopTitreCentre noCursor"}>
+                            <Icon path={mdiTrashCanOutline} className={"iconMenuHeaderPage cursorHoverPointerRed"}
+                                  onClick={() => handleButtonClick("delete")} size={1}/>
+                        </div>
+                    </>
+                }
+
             </div>
         );
     }
