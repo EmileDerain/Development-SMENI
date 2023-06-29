@@ -1,4 +1,4 @@
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
@@ -8,7 +8,6 @@ import {PAGE_DIAGNOHELP, PAGE_SIGNUP, URL_LOGIN} from "../utils/path";
 import {isTokenValid} from "../utils/jwtCheck";
 import {WithLocalSvg} from "react-native-svg";
 import NetInfo from "@react-native-community/netinfo";
-import {HandledError} from "@reduxjs/toolkit/dist/query/HandledError";
 
 
 const CheckToken = async () => {
@@ -39,6 +38,7 @@ const SignIn = () => {
     const [mail, setMail] = useState('');
     const [mailError, setMailError] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 
     const visibilityIcon = require('../assets/images/eye-solid.svg');
@@ -62,7 +62,15 @@ const SignIn = () => {
             setMailError('');
             mailValid = true;
         }
-        if (mailValid) {
+        let passwordValid = false;
+        if (password.length == 0) {
+            setPasswordError('Password is required');
+        } else {
+            setPasswordError('');
+            passwordValid = true;
+        }
+
+        if (mailValid && passwordValid) {
             login();
         }
     }
@@ -154,11 +162,11 @@ const SignIn = () => {
                         onChangeText={(text) => setPassword(text)}
                         secureTextEntry={!passwordIsVisible}
                     />
-                    <Text style={styles.errorInput}></Text>
+                    <Text style={styles.errorInput}>{passwordError}</Text>
                 </SafeAreaView>
 
                 <SafeAreaView>
-                    <SafeAreaView>
+                    <SafeAreaView style={styles.submit}>
                         <TouchableOpacity
                             onPress={() => {
                                 handleSubmit();
@@ -167,7 +175,7 @@ const SignIn = () => {
                         >
                             <Text style={[styles.text, styles.title, styles.buttonText]}>Sign In</Text>
                         </TouchableOpacity>
-                        <Text style={styles.errorInput}>{credentialsError}</Text>
+                        <Text style={styles.credentialsError}>{credentialsError}</Text>
                     </SafeAreaView>
                 </SafeAreaView>
             </SafeAreaView>
@@ -259,8 +267,13 @@ const styles = StyleSheet.create({
     }, navigateWrapper: {
         flexDirection: 'row', alignItems: 'center', marginTop: 15,
         justifyContent: 'center'
-    }, disabledButton: {
-        opacity: 1, // Opacity when the button is disabled
+    }, submit: {
+        alignItems: 'center',
+    },
+    credentialsError: {
+        color: 'red',
+        fontSize: 20,
+
     }
 });
 export default SignIn;
