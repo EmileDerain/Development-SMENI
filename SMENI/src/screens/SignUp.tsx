@@ -1,25 +1,38 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
-import {URL_SIGNUP} from "../utils/path";
+import {PAGE_DIAGNOHELP, PAGE_SIGNIN, URL_SIGNUP} from "../utils/path";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {isTokenValid} from "../utils/jwtCheck";
 import {WithLocalSvg} from 'react-native-svg';
+import NetInfo from "@react-native-community/netinfo";
+import {err} from "react-native-svg/lib/typescript/xml";
+
+
 
 const CheckToken = async () => {
     const navigation = useNavigation();
-
     const tokenFromStorage = await AsyncStorage.getItem('token');
     if (isTokenValid(tokenFromStorage)) {
         console.log("token is valid")
-        navigation.navigate('DiagnoHelp');
+        navigation.navigate(PAGE_DIAGNOHELP);
     }
 }
 
 const SignUp = () => {
     const navigation = useNavigation();
+
+    useEffect(() => {
+        const unsubscribe = NetInfo.addEventListener(state => {
+            if (!(state.isConnected)) {
+                console.log("not connected");
+                navigation.navigate(PAGE_DIAGNOHELP);
+            }
+        });
+        return unsubscribe;
+    }, []);
 
     CheckToken();
 
@@ -98,7 +111,7 @@ const SignUp = () => {
     }
 
     const registerAccount = async () => {
-        const url = URL_SIGNUP; //TODO : ipconfig et mettre son addresse IP locale
+        const url = URL_SIGNUP;
 
         const params = {
             firstName: firstName, lastName: lastName, mail: mail, password: password
@@ -120,14 +133,17 @@ const SignUp = () => {
             if (response.ok) {
                 console.log('response ok');
                 clearForm();
-                navigation.navigate('SignIn');
+                navigation.navigate(PAGE_SIGNIN);
             } else {
-                console.error('mail is already used');
-                //TODO : create a popup to say that the mail is already used
+                // get the error message from response
+                const error = await response.json()
+                console.log('first:', error.message);
+                setMailError(error.message); //TODO voir si on met une alerte à la place
 
             }
         } catch (error) {
-            console.error('error:', error);
+            console.log('error:', error);
+            //console.error('error:', error);
         }
     };
 
@@ -217,7 +233,7 @@ const SignUp = () => {
                 <TouchableOpacity
                     onPress={() => {
                         clearForm();
-                        navigation.navigate('SignIn');
+                        navigation.navigate(PAGE_SIGNIN);
                     }}>
                     <Text style={[styles.text, styles.subtitle, styles.navigate]}>Sign In</Text>
                 </TouchableOpacity>

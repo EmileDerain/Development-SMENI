@@ -15,6 +15,10 @@ const Navigation = () => {
             <Stack.Navigator
                 screenOptions={{contentStyle: {backgroundColor: 'blue'}}}
             >
+                <Stack.Screen name="SignIn" component={SignIn} options={{
+                    headerShown: false
+                }}
+                />
                 <Stack.Screen name="DiagnoHelp" component={DiagnoHelpScreen} options={{
                     headerShown: false
                 }}/>
@@ -22,10 +26,7 @@ const Navigation = () => {
                     headerShown: false
                 }}
                 />
-                <Stack.Screen name="SignIn" component={SignIn} options={{
-                    headerShown: false
-                }}
-                />
+
                 <Stack.Screen name="Exemple2" component={ExempleScreen2} />
             </Stack.Navigator>
         </NavigationContainer>

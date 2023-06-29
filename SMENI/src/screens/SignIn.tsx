@@ -1,25 +1,39 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {URL_LOGIN} from "../utils/path";
+import {PAGE_DIAGNOHELP, PAGE_SIGNUP, URL_LOGIN} from "../utils/path";
 import {isTokenValid} from "../utils/jwtCheck";
 import {WithLocalSvg} from "react-native-svg";
+import NetInfo from "@react-native-community/netinfo";
 
 
 const CheckToken = async () => {
     const navigation = useNavigation();
+
     const tokenFromStorage = await AsyncStorage.getItem('token');
     if (isTokenValid(tokenFromStorage)) {
         console.log("token is valid")
-        navigation.navigate('DiagnoHelp');
+        navigation.navigate(PAGE_DIAGNOHELP);
     }
 }
 
 const SignIn = () => {
     const navigation = useNavigation();
+
+
+    useEffect(() => {
+        const unsubscribe = NetInfo.addEventListener(state => {
+            if (!(state.isConnected)) {
+                console.log("not connected");
+                navigation.navigate(PAGE_DIAGNOHELP);
+            }
+        });
+        return unsubscribe;
+    }, []);
+
     CheckToken();
 
     const [mail, setMail] = useState('');
@@ -69,7 +83,7 @@ const SignIn = () => {
                         AsyncStorage.setItem('token', token)
                             .then(() => {
                                 clearForm();
-                                navigation.navigate('DiagnoHelp');
+                                navigation.navigate(PAGE_DIAGNOHELP);
                             })
                             .catch(error => {
                                 console.error('Failed to store token:', error);
@@ -91,7 +105,7 @@ const SignIn = () => {
 
             </SafeAreaView>
             {/*form*/}
-            <SafeAreaView style={styles.form}>
+            <SafeAreaView>
                 {/*Mail*/}
                 <SafeAreaView style={styles.labelWrapper}>
                     <Text style={[styles.text, styles.subtitle]}>Mail</Text>
@@ -143,9 +157,20 @@ const SignIn = () => {
                 <TouchableOpacity
                     onPress={() => {
                         clearForm();
-                        navigation.navigate('SignUp');
+                        navigation.navigate(PAGE_SIGNUP);
                     }}>
                     <Text style={[styles.text, styles.subtitle, styles.navigate]}>Create One !</Text>
+                </TouchableOpacity>
+            </SafeAreaView>
+
+            <SafeAreaView style={styles.navigateWrapper}>
+                <Text style={[styles.text, styles.subtitle]}>Only want to predict something ?</Text>
+                <TouchableOpacity
+                    onPress={() => {
+                        clearForm();
+                        navigation.navigate(PAGE_DIAGNOHELP);
+                    }}>
+                    <Text style={[styles.text, styles.subtitle, styles.navigate]}>Click Here !</Text>
                 </TouchableOpacity>
             </SafeAreaView>
         </KeyboardAwareScrollView>
@@ -189,11 +214,11 @@ const styles = StyleSheet.create({
         color: 'red',
         marginTop: 5,
     },
-    passwordWrapper:{
+    passwordWrapper: {
         flexDirection: 'row',
-        alignItems:'center',
-        justifyContent:'space-between',
-        width:'90%'
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '90%'
     },
     button: {
         borderColor: '#96D3FE',
@@ -210,10 +235,10 @@ const styles = StyleSheet.create({
     }, buttonContent: {
         flex: 1, opacity: 1, // Default opacity when the button is enabled
     }, buttonText: {
-        color:'white'
+        color: 'white'
     }, navigateWrapper: {
         flexDirection: 'row', alignItems: 'center', marginTop: 15,
-        justifyContent:'center'
+        justifyContent: 'center'
     }, disabledButton: {
         opacity: 1, // Opacity when the button is disabled
     }

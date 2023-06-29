@@ -14,7 +14,7 @@ exports.signup = (req, res) => {
                 });
                 user.save()
                     .then(() => res.status(201).json({message: 'User created !'}))
-                    .catch(error => res.status(400).json({error, message: 'Email already used !'}));
+                    .catch(error => res.status(400).json({ message: 'Email is already used !'}));
             }
         )
         .catch(error => res.status(500).json({error, message: 'Error while hashing password !'}));
@@ -37,7 +37,8 @@ exports.login = (req, res, next) => {
                             { userId: user._id },
                             'RANDOM_TOKEN_SECRET', //TODO : change this token to a more secure one later and the one in ../middleware/authDoctor.js
                             { expiresIn: '24h' } //TODO : maybe more longer validity
-                        )
+                        ),
+                        message:'Connexion successful'
                     });
                 })
                 .catch(error => res.status(500).json({ error , message: 'The credentials are incorrect'}));
@@ -47,6 +48,6 @@ exports.login = (req, res, next) => {
 
 exports.getAllUser = (req, res) => {
     User.find()
-        .then(users => res.status(200).json({"status": 200, "users": users}))
-        .catch(error => res.status(400).json({"status": 400, reason: error}));
+        .then(users => res.status(200).json({"users": users, message:'All the users have been retrieved'}))
+        .catch(error => res.status(400).json({error, message:'Error while retrieving all the users'}));
 };
