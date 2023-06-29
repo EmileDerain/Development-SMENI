@@ -44,6 +44,8 @@ const SignIn = () => {
     const visibilityIcon = require('../assets/images/eye-solid.svg');
     const visibilityOffIcon = require('../assets/images/eye-slash-solid.svg');
 
+    const [credentialsError, setCredentialsError] = useState('');
+
     const clearForm = () => {
         setMail('');
         setPassword('');
@@ -105,6 +107,9 @@ const SignIn = () => {
                                 console.error('Failed to store token:', error);
                             });
                     }
+                }).catch(error => {
+                    console.log('error:', error);
+                    setCredentialsError('The credentials are not correct');
                 });
         } catch (error) {
             console.error('error:', error);
@@ -151,20 +156,18 @@ const SignIn = () => {
                     />
                     <Text style={styles.errorInput}></Text>
                 </SafeAreaView>
-                {/*TODO : peut être rajouter un champ confirm password    */}
 
                 <SafeAreaView>
                     <SafeAreaView>
                         <TouchableOpacity
                             onPress={() => {
                                 handleSubmit();
-
                             }}
                             style={[styles.buttonContent, styles.button, (mail === '' || password === '') && styles.disabledButton]}
                         >
                             <Text style={[styles.text, styles.title, styles.buttonText]}>Sign In</Text>
-
                         </TouchableOpacity>
+                        <Text style={styles.errorInput}>{credentialsError}</Text>
                     </SafeAreaView>
                 </SafeAreaView>
             </SafeAreaView>
