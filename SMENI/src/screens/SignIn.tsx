@@ -8,6 +8,7 @@ import {PAGE_DIAGNOHELP, PAGE_SIGNUP, URL_LOGIN} from "../utils/path";
 import {isTokenValid} from "../utils/jwtCheck";
 import {WithLocalSvg} from "react-native-svg";
 import NetInfo from "@react-native-community/netinfo";
+import {HandledError} from "@reduxjs/toolkit/dist/query/HandledError";
 
 
 const CheckToken = async () => {
@@ -23,7 +24,6 @@ const CheckToken = async () => {
 const SignIn = () => {
     const navigation = useNavigation();
 
-
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
             if (!(state.isConnected)) {
@@ -37,6 +37,7 @@ const SignIn = () => {
     CheckToken();
 
     const [mail, setMail] = useState('');
+    const [mailError, setMailError] = useState('');
     const [password, setPassword] = useState('');
     const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 
@@ -48,6 +49,21 @@ const SignIn = () => {
         setPassword('');
     }
 
+    const handleSubmit = () => {
+        let mailValid = false;
+        const mailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (mail.length == 0) {
+            setMailError('Mail is required');
+        } else if (!mailValidator.test(String(mail).toLowerCase())) {
+            setMailError('Mail is not valid, it should be like : example@xyz.com');
+        } else {
+            setMailError('');
+            mailValid = true;
+        }
+        if (mailValid) {
+            login();
+        }
+    }
     const login = async () => {
         const url = URL_LOGIN; //TODO : ipconfig et mettre son addresse IP locale
 
@@ -115,6 +131,7 @@ const SignIn = () => {
                         placeholder={'Mail'}
                         onChangeText={(text) => setMail(text)}
                     />
+                    <Text style={styles.errorInput}>{mailError}</Text>
                 </SafeAreaView>
                 {/*Password*/}
                 <SafeAreaView style={styles.labelWrapper}>
@@ -132,6 +149,7 @@ const SignIn = () => {
                         onChangeText={(text) => setPassword(text)}
                         secureTextEntry={!passwordIsVisible}
                     />
+                    <Text style={styles.errorInput}></Text>
                 </SafeAreaView>
                 {/*TODO : peut être rajouter un champ confirm password    */}
 
@@ -139,10 +157,9 @@ const SignIn = () => {
                     <SafeAreaView>
                         <TouchableOpacity
                             onPress={() => {
-                                login();
-                                //TODO : créer la méthode pour envoyer le compte au back
+                                handleSubmit();
+
                             }}
-                            disabled={mail === '' || password === ''}
                             style={[styles.buttonContent, styles.button, (mail === '' || password === '') && styles.disabledButton]}
                         >
                             <Text style={[styles.text, styles.title, styles.buttonText]}>Sign In</Text>
