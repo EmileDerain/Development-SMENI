@@ -25,6 +25,7 @@ const SignIn = () => {
 
 
     useEffect(() => {
+        // console.log("useEffect connected");
         const unsubscribe = NetInfo.addEventListener(state => {
             if (!(state.isConnected)) {
                 console.log("not connected");
