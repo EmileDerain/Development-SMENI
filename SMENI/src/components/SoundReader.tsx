@@ -1,11 +1,18 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, TouchableOpacity, StyleSheet, Image, PermissionsAndroid, Text, PanResponder } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  PermissionsAndroid,
+} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import colors from '../assets/colors/colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Sound from 'react-native-sound';
 import { ShareFile } from '../useGetShare';
 import { NativeModules } from 'react-native';
+import Slider from '@react-native-community/slider';
 
 const WaveformGenerator = NativeModules.WaveformGenerator;
 
@@ -18,12 +25,14 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   const [sound, setSound] = useState<Sound | null>(null);
   const [waveformImagePath, setWaveformImagePath] = useState<string | null>(null);
   const [spectrogramImagePath, setSpectrogramImagePath] = useState<string | null>(null);
-  const [cursorPosition, setCursorPosition] = useState(0);
-  const containerRef = useRef(null);
+  const [currentPosition, setCurrentPosition] = useState(0);
+
+  
 
   useEffect(() => {
     requestPermissions();
-    generateWaveform();
+    if (waveformImagePath === null && spectrogramImagePath === null)
+      generateWaveform();
   }, []);
 
   const requestPermissions = async () => {
@@ -47,46 +56,59 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
     }
   };
 
-  const playAudio = () => {
-    if (playerState.isPaused) {
-      sound?.play();
-      setPlayerState({ ...playerState, isPlaying: true, isPaused: false });
+  const togglePlayback = () => {
+    if (playerState.isPlaying) {
+      sound?.pause();
+      setPlayerState({ ...playerState, isPlaying: false, isPaused: true });
     } else {
-      const newSound = new Sound(transferedFile.filePath, Sound.MAIN_BUNDLE, (error) => {
-        if (error) {
-          console.log('Erreur lors de la lecture audio', error);
-          setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
-        } else {
-          newSound.play((success) => {
-            if (success) {
-              console.log('Lecture audio terminée avec succès');
-              setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
-            } else {
-              console.log('Erreur lors de la lecture audio');
-              setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
+      if (playerState.isPaused && sound) {
+        console.log('sound chien casse bark bark');
+        sound?.play((success) => {
+          if (success) {
+            console.log('Lecture audio terminée avec succès');
+            setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
+          } else {
+            console.log('Erreur lors de la lecture audio');
+            setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
+          }
+          sound.release();
+        });
+        setPlayerState({ ...playerState, isPlaying: true, isPaused: false });
+      } else {
+        const newSound = new Sound(transferedFile.filePath, Sound.MAIN_BUNDLE, (error) => {
+          if (error) {
+            console.log('Erreur lors de la lecture audio', error);
+            setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
+          } else {
+            if (currentPosition > 0) {
+              newSound.setCurrentTime(currentPosition);
             }
-            newSound.release();
-          });
-        }
-      });
+            newSound.play((success) => {
+              if (success) {
+                console.log('Lecture audio terminée avec succès');
+                setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
+                setCurrentPosition(0);
+              } else {
+                console.log('Erreur lors de la lecture audio');
+                setPlayerState({ ...playerState, isPlaying: false, isPaused: false });
+              }
+              newSound.release();
+            });
+          }
+        });
 
-      const timerId = setInterval(() => {
-        if (newSound && newSound.isLoaded()) {
-          newSound.getCurrentTime((seconds) => {
-            setCursorPosition(seconds);
-          });
-        }
-      }, 500);
+        const timerId = setInterval(() => {
+          if (newSound && newSound.isLoaded()) {
+            newSound.getCurrentTime((seconds) => {
+              setCurrentPosition(seconds);
+            });
+          }
+        }, 250);
 
-      setSound(newSound);
-      setPlayerState({ ...playerState, isPlaying: true, isPaused: false });
-      setCursorPosition(0);
+        setSound(newSound);
+        setPlayerState({ ...playerState, isPlaying: true, isPaused: false });
+      }
     }
-  };
-
-  const pauseAudio = () => {
-    sound?.pause();
-    setPlayerState({ ...playerState, isPlaying: false, isPaused: true });
   };
 
   const generateWaveform = async () => {
@@ -110,63 +132,64 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
     } catch (error) {
       console.log('Erreur lors de la génération du spectrogramme', error);
     }
-  };
+  }; 
 
-  const onPanResponderMove = useCallback(
-    (event, gestureState) => {
-      containerRef.current?.measure((x, y, width, height) => {
-        const { moveX, moveY } = gestureState;
-        const positionX = Math.max(0, Math.min(moveX - x, width));
-        const positionY = Math.max(0, Math.min(moveY - y, height));
-        const duration = sound?.getDuration() || 1;
-        const newPosition = (positionX / width) * duration;
-        setCursorPosition(newPosition);
-      });
-    },
-    [sound]
-  );
-  
-  const onPanResponderRelease = useCallback(() => {
+  const calculateSeebBar = () => {
     if (sound && sound.isLoaded()) {
-      sound.setCurrentTime(cursorPosition);
-      sound.play();
+      return currentPosition / sound.getDuration();
+    } else {
+      return 0;
     }
-  }, [sound, cursorPosition]);
-  
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderMove: onPanResponderMove,
-      onPanResponderRelease: onPanResponderRelease,
-    })
-  ).current;
- 
+  };
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={styles.soundWrapper} {...panResponder.panHandlers} ref={containerRef}>
+      <SafeAreaView style={styles.soundWrapper}>
         {waveformImagePath && (
-          <Image source={{ uri: waveformImagePath }} style={styles.waveformImage} />
+          <Image
+          source={{ uri: waveformImagePath }}
+          style={[styles.waveformImage, { zIndex: waveformImagePath ? 0 : -1 }]}
+        />
         )}
         {spectrogramImagePath && (
-          <Image source={{ uri: spectrogramImagePath }} style={styles.waveformImage} />
+          <Image
+          source={{ uri: spectrogramImagePath }}
+          style={[styles.waveformImage, { zIndex: spectrogramImagePath ? 0 : -1 }]}
+        />
         )}
-        <View style={[styles.cursor, { left: (cursorPosition / (sound?.getDuration() || 1)) * 100 + '%' }]} />
+
+      <View
+        style={[styles.cursor, { left: (currentPosition / (sound?.getDuration() || 1)) * 100 + '%' }]}
+      />
+      <Slider
+        style={styles.slider}
+        minimumValue={0}
+        maximumValue={1}
+        value={calculateSeebBar()}
+        minimumTrackTintColor={colors.textLight}
+        maximumTrackTintColor={colors.background}
+        onValueChange={ value => {
+          console.log(value * (sound?.getDuration() || 1));
+          setCurrentPosition(value * (sound?.getDuration() || 1));
+        }}
+        onSlidingStart={ () => {
+          if (sound && sound.isLoaded() && playerState.isPlaying) {
+            togglePlayback();
+          }
+        }}
+        onSlidingComplete={ value => {
+          if (sound && sound.isLoaded()) {
+            sound.setCurrentTime(value * (sound?.getDuration() || 1));
+            togglePlayback();
+          }
+        }}
+        />
       </SafeAreaView>
       <SafeAreaView style={styles.editWrapper}>
         <SafeAreaView style={styles.audioEdit}>
-          <TouchableOpacity onPress={playAudio}>
+          <TouchableOpacity onPress={togglePlayback}>
             <MaterialCommunityIcons
-              name="play-circle"
-              size={24}
-              paddingRight={5}
-              color={colors.icons}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={pauseAudio}>
-            <MaterialCommunityIcons
-              name="pause-circle"
+              name={playerState.isPlaying ? 'pause-circle' : 'play-circle'}
               size={24}
               paddingRight={5}
               color={colors.icons}
@@ -199,8 +222,7 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   );
 };
 
-const IMAGE_HEIGHT = 150; // Adjust the height of the waveform image if needed
-
+const IMAGE_SIZE = 150;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -213,29 +235,39 @@ const styles = StyleSheet.create({
   },
   waveformImage: {
     width: '100%',
-    height: IMAGE_HEIGHT,
+    height: IMAGE_SIZE,
+    resizeMode: 'contain',
   },
   cursor: {
     position: 'absolute',
-    top: 0,
-    bottom: 0,
-    width: 2,
-    backgroundColor: 'red', // Change the color of the cursor if needed
+    top: 5,
+    height: IMAGE_SIZE*2,
+    width: 1,
+    backgroundColor: 'red',
   },
   editWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 30,
     justifyContent: 'space-between',
+    paddingHorizontal: 16,
   },
   audioEdit: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   bookmark: {
-    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  slider: {
+    width: '100%',
+    alignSelf: 'center',
+    position: 'absolute',
+    top: 5,
+    height: IMAGE_SIZE*2,
+    opacity: 0,
+    zIndex: 1,
   },
 });
 
