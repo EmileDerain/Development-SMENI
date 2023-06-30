@@ -95,7 +95,9 @@ const DiagnoHelpScreen = () => {
 
         console.log("L'uri du fichier à envoyer: ", fichierWaveUri)
 
-        const docteurJson = GetToken();
+        const docteurJson = await GetToken();
+
+        console.log("docteurJson: ", docteurJson);
 
         const formData = new FormData();
 
@@ -106,7 +108,7 @@ const DiagnoHelpScreen = () => {
             doctor: docteurJson.lastName + ' ' + docteurJson.firstName
         });
 
-        formData.append('label', "normal");
+        formData.append('label', value);
 
         console.log('formData.append OK')
 

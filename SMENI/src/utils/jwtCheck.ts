@@ -44,4 +44,4 @@ function getTokenFromStorage() {
 
 }
 
-export {isTokenValid, getTokenFromStorage};
+export {isTokenValid, getTokenFromStorage, parseJwt};
