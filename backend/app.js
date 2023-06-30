@@ -4,6 +4,9 @@ const mongoose = require('mongoose');
 const path = require('path');
 var cors = require('cors');
 
+const {initUsers} = require("./utils/init");
+
+
 const audioRoutes = require("./routes/audio")
 const cnnRoutes = require("./routes/cnn")
 const userRoutes = require("./routes/user")
@@ -41,6 +44,7 @@ app.use("/api/audio", audioRoutes);
 app.use("/api/cnn", cnnRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
+initUsers();
 
 const config = require("./CNN/config/config");
 const Model = require("./models/model");
