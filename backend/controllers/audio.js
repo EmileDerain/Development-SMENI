@@ -39,7 +39,7 @@ exports.saveAudio = async (req, res) => {
         date: formattedDate,
         label: req.body.label,
         doctor: "Tom Jedusor",
-        patient: "undefine",
+        patient: "undefined",
         time : Math.ceil(duration),
     });
     audioFile.save()
@@ -59,6 +59,19 @@ function getWavDuration(filePath) {
 
 exports.getAllAudio = (req, res) => {
     Audio.find()
+        .then(audios => res.status(200).json({"status": 200, "audios": audios}))
+        .catch(error => res.status(400).json({"status": 400, reason: error}));
+};
+
+
+exports.getAllAudioOfALabel = (req, res) => {
+    Audio.find({label : req.params.label.toLowerCase()})
+        .then(audios => res.status(200).json({"status": 200, "audios": audios}))
+        .catch(error => res.status(400).json({"status": 400, reason: error}));
+};
+
+exports.getAllAudioOfADoctor = (req, res) => {
+    Audio.find({doctor : req.params.doctor})
         .then(audios => res.status(200).json({"status": 200, "audios": audios}))
         .catch(error => res.status(400).json({"status": 400, reason: error}));
 };

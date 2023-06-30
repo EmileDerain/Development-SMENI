@@ -44,3 +44,15 @@ exports.getAllUser = (req, res) => {
         .then(users => res.status(200).json({"users": users, message: 'All the users have been retrieved'}))
         .catch(error => res.status(400).json({error, message: 'Error while retrieving all the users'}));
 };
+
+exports.getAllUserLabels = (req, res) => {
+    User.find()
+        .then(users => {
+            const modifiedUsers = users.map(user => {
+                return {
+                    labelName: user.lastName + ' ' + user.firstName,
+                };
+            });
+            res.status(200).json({ users: modifiedUsers, message: 'All the users have been retrieved' });
+        })
+        .catch(error => res.status(400).json({ error, message: 'Error while retrieving all the users' }));};

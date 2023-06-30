@@ -25,6 +25,7 @@ const SignIn = () => {
     const isScreenFocused = useIsFocused();
 
     useEffect(() => {
+        // console.log("useEffect connected");
         const unsubscribe = NetInfo.addEventListener(state => {
             if (!(state.isConnected)) {
                 console.log("not connected");

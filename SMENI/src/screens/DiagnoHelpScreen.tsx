@@ -11,7 +11,7 @@ import {useGetShare} from '../useGetShare';
 import heartBeat from '../assets/images/heartBeat.png';
 import {PAGE_DIAGNOHELP, PAGE_SIGNIN, PAGE_SIGNUP, URL_AUDIO} from "../utils/path";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {isTokenValid} from "../utils/jwtCheck";
+import {isTokenValid, parseJwt} from "../utils/jwtCheck";
 import NetInfo from "@react-native-community/netinfo";
 
 
@@ -20,6 +20,12 @@ const CheckToken = async () => {
     return isTokenValid(tokenFromStorage);
 
 }
+
+const GetToken = async () => {
+    const tokenFromStorage = await AsyncStorage.getItem('token');
+    return  parseJwt(tokenFromStorage);
+}
+
 const DiagnoHelpScreen = () => {
     const sharedFile = useGetShare();
     const navigation = useNavigation();
@@ -37,10 +43,9 @@ const DiagnoHelpScreen = () => {
 
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
-            if(state.isConnected === null){
+            if (state.isConnected === null) {
                 setIsConnected(false);
-            }
-            else setIsConnected(state.isConnected);
+            } else setIsConnected(state.isConnected);
         });
         return unsubscribe;
     }, []);
@@ -90,11 +95,15 @@ const DiagnoHelpScreen = () => {
 
         console.log("L'uri du fichier à envoyer: ", fichierWaveUri)
 
+        const docteurJson = GetToken();
+
         const formData = new FormData();
+
         formData.append('audio', {
             uri: fichierWaveUri,
             type: 'audio/x-wav',
             name: sharedFile[0].fileName,
+            doctor: docteurJson.lastName + ' ' + docteurJson.firstName
         });
 
         formData.append('label', "normal");
@@ -192,8 +201,9 @@ const DiagnoHelpScreen = () => {
                         disabled={!isConnected}
                         style={[styles.buttonContent, styles.button, !isConnected && styles.disabledButton]}
                     >
-                        {isConnected ? <Text style={[styles.text, styles.title, { textAlign: 'center' }]}>Sign In to save</Text> :
-                            <Text style={[styles.text, styles.title, { textAlign: 'center' }]}>No Internet</Text>}
+                        {isConnected ?
+                            <Text style={[styles.text, styles.title, {textAlign: 'center'}]}>Sign In to save</Text> :
+                            <Text style={[styles.text, styles.title, {textAlign: 'center'}]}>No Internet</Text>}
 
                         {/*<Text style={[styles.text, styles.title, { textAlign: 'center' }]}>Sign In to save</Text>*/}
                     </TouchableOpacity>}
