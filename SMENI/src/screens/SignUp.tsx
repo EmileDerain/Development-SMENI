@@ -1,4 +1,4 @@
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useIsFocused, useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
@@ -24,6 +24,8 @@ const CheckToken = async () => {
 const SignUp = () => {
     const navigation = useNavigation();
 
+    const isScreenFocused = useIsFocused();
+
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
             if (!(state.isConnected)) {
@@ -32,7 +34,7 @@ const SignUp = () => {
             }
         });
         return unsubscribe;
-    }, []);
+    }, [isScreenFocused]);
 
     CheckToken();
 

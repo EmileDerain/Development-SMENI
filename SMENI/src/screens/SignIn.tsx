@@ -1,4 +1,4 @@
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
@@ -12,7 +12,6 @@ import NetInfo from "@react-native-community/netinfo";
 
 const CheckToken = async () => {
     const navigation = useNavigation();
-
     const tokenFromStorage = await AsyncStorage.getItem('token');
     if (isTokenValid(tokenFromStorage)) {
         console.log("token is valid")
@@ -23,6 +22,8 @@ const CheckToken = async () => {
 const SignIn = () => {
     const navigation = useNavigation();
 
+    const isScreenFocused = useIsFocused();
+
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
             if (!(state.isConnected)) {
@@ -31,7 +32,7 @@ const SignIn = () => {
             }
         });
         return unsubscribe;
-    }, []);
+    }, [isScreenFocused]);
 
     CheckToken();
 
