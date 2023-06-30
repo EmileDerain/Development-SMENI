@@ -39,7 +39,7 @@ exports.saveAudio = async (req, res) => {
         date: formattedDate,
         label: req.body.label,
         doctor: "Tom Jedusor",
-        patient: "undefine",
+        patient: "undefined",
         time : Math.ceil(duration),
     });
     audioFile.save()
