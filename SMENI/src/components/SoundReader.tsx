@@ -47,7 +47,7 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
         granted['android.permission.READ_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED &&
         granted['android.permission.RECORD_AUDIO'] === PermissionsAndroid.RESULTS.GRANTED
       ) {
-        console.log('Autorisations accordées');
+        //console.log('Autorisations accordées');
       } else {
         console.log('Autorisations refusées');
       }
@@ -62,7 +62,6 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
       setPlayerState({ ...playerState, isPlaying: false, isPaused: true });
     } else {
       if (playerState.isPaused && sound) {
-        console.log('sound chien casse bark bark');
         sound?.play((success) => {
           if (success) {
             console.log('Lecture audio terminée avec succès');
@@ -169,7 +168,6 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
         minimumTrackTintColor={colors.textLight}
         maximumTrackTintColor={colors.background}
         onValueChange={ value => {
-          console.log(value * (sound?.getDuration() || 1));
           setCurrentPosition(value * (sound?.getDuration() || 1));
         }}
         onSlidingStart={ () => {

@@ -105,10 +105,10 @@ const DiagnoHelpScreen = () => {
             uri: fichierWaveUri,
             type: 'audio/x-wav',
             name: sharedFile[0].fileName,
-            doctor: docteurJson.lastName + ' ' + docteurJson.firstName
         });
 
         formData.append('label', value);
+        formData.append('doctor', docteurJson.lastName + ' ' + docteurJson.firstName);
 
         console.log('formData.append OK')
 
