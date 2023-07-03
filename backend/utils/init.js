@@ -8,7 +8,7 @@ exports.initUsers = () => {
                 bcrypt.hash("mdp", 10)
                     .then(hash => {
                         const user = new User({
-                            firstName: "Tom", lastName: "Bevan", mail: "mail", password: hash,
+                            firstName: "Tom", lastName: "Bevan", mail: "mail@mail.mail", password: hash,
                         });
                         user.save()
                             .then(() => console.log('Tom created !'))
@@ -31,7 +31,7 @@ exports.initUsers = () => {
             bcrypt.hash("mdp", 10)
                 .then(hash => {
                     const user = new User({
-                        firstName: "Vinh", lastName: "Faucher", mail: "a", password: hash,
+                        firstName: "Vinh", lastName: "Faucher", mail: "vinh@faucher.com", password: hash,
                     });
                     user.save()
                         .then(() => console.log('Vinh created !'))
