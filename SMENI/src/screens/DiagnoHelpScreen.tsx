@@ -9,7 +9,7 @@ import Prediction from '../components/Prediction';
 import colors from '../assets/colors/colors';
 import {useGetShare} from '../useGetShare';
 import heartBeat from '../assets/images/heartBeat.png';
-import {PAGE_DIAGNOHELP, PAGE_SIGNIN, PAGE_SIGNUP, URL_AUDIO} from "../utils/path";
+import {PAGE_SIGNIN, URL_AUDIO} from "../utils/path";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {isTokenValid, parseJwt} from "../utils/jwtCheck";
 import NetInfo from "@react-native-community/netinfo";
@@ -23,7 +23,7 @@ const CheckToken = async () => {
 
 const GetToken = async () => {
     const tokenFromStorage = await AsyncStorage.getItem('token');
-    return  parseJwt(tokenFromStorage);
+    return parseJwt(tokenFromStorage);
 }
 
 const DiagnoHelpScreen = () => {
