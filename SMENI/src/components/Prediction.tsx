@@ -15,7 +15,7 @@ const Prediction = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
 
   useEffect(() => {
     askPrediction();
-  }, []);
+  }, [transfertInfo]);
 
   const askPrediction = async () => {
     const url = URL_PREDICT; // URL de l'API
@@ -53,10 +53,6 @@ const Prediction = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
     }
    // Mise à jour des valeurs de prédiction
   };
-
-  useEffect(() => {
-
-  }, [transfertInfo]);
 
   return (
     <View style={styles.container}>
