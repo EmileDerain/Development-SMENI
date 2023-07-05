@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import DiagnoHelpScreen from "./screens/DiagnoHelpScreen";
 import SignUp from "./screens/SignUp";
 import SignIn from "./screens/SignIn";
+import SearchPatient from "./screens/SearchPatient"
 
 const Stack = createNativeStackNavigator();
 
@@ -12,6 +13,10 @@ const Navigation = () => {
             <Stack.Navigator
                 screenOptions={{contentStyle: {backgroundColor: 'blue'}}}
             >
+                <Stack.Screen name="SearchPatient" component={SearchPatient} options={{
+                    headerShown: false
+                }}
+                />
                 <Stack.Screen name="SignIn" component={SignIn} options={{
                     headerShown: false
                 }}
