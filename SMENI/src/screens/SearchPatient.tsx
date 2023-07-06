@@ -1,13 +1,12 @@
-import {useIsFocused, useNavigation} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
-import {FlatList, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {useNavigation} from '@react-navigation/native';
+import React from 'react';
+import {SafeAreaView, StyleSheet, Text} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
-import colors from "../assets/colors/colors";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {PAGE_DIAGNOHELP, PAGE_SIGNIN, PAGE_SIGNUP, URL_LOGIN} from "../utils/path";
+import {PAGE_SIGNIN} from "../utils/path";
 import {isTokenValid} from "../utils/jwtCheck";
-import {WithLocalSvg} from "react-native-svg";
-import NetInfo from "@react-native-community/netinfo";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import NavigationBar from "./NavigationBar";
 
 
 const CheckToken = async () => {
@@ -19,37 +18,36 @@ const CheckToken = async () => {
     }
 }
 
+const Tab = createBottomTabNavigator();
+
 const SearchPatient = () => {
     const navigation = useNavigation();
 
     //CheckToken();
 
 
-
-    return (
-        // KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.
+    return (// KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.
         <KeyboardAwareScrollView style={styles.container}>
             {/*contenu*/}
             <SafeAreaView style={styles.content}>
-                <Text>Content goes there</Text>
+                <Text>Content goes there compris ?</Text>
             </SafeAreaView>
-            <SafeAreaView style={styles.footer}>
-                <Text>This footer will be pushed to the bottom</Text>
-            </SafeAreaView>
+            {/*footer*/}
+
+            <NavigationBar/>
         </KeyboardAwareScrollView>
-    );
+    )
+
 }
 
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, backgroundColor: '#fff',
-    },
-    content: {
-        flex: 1
-    },
-    footer: {
-        backgroundColor: "blue",
+        flex:1, backgroundColor: '#fff',
+    }, content: {
+        flex: 1, justifyContent: 'center', alignItems: 'center',
+    }, footer: {
+        backgroundColor: "blue", bottom:0
     }
 });
 export default SearchPatient;
