@@ -34,8 +34,10 @@ def generate_spectrogram_image(audio_path):
 def get_output_path(audio_path, filename):
     # Extraire le répertoire en supprimant le nom de fichier
     audio_dir = '/'.join(audio_path.split('/')[:-1])
+    # retrieve the filename without the extension
+    filename_no_ext = audio_path.split('/')[-1].split('.')[0]
 
     # Concaténer le répertoire et le nom de fichier pour obtenir le output_path
-    output_path = audio_dir + '/' + filename
+    output_path = audio_dir + '/' + filename_no_ext + '-' + filename
 
     return output_path

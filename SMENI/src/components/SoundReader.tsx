@@ -10,14 +10,15 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import colors from '../assets/colors/colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Sound from 'react-native-sound';
-import { ShareFile } from '../useGetShare';
+import { ShareFile, useGetShare } from '../useGetShare';
 import { NativeModules } from 'react-native';
 import Slider from '@react-native-community/slider';
 
-const WaveformGenerator = NativeModules.WaveformGenerator;
+
 
 const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
-  const transferedFile = transfertInfo;
+  const WaveformGenerator = NativeModules.WaveformGenerator;
+  const [transferedFile, setTransferedFile] = useState(transfertInfo);
   const [playerState, setPlayerState] = useState({
     isPlaying: false,
     isPaused: false,
@@ -26,14 +27,19 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   const [waveformImagePath, setWaveformImagePath] = useState<string | null>(null);
   const [spectrogramImagePath, setSpectrogramImagePath] = useState<string | null>(null);
   const [currentPosition, setCurrentPosition] = useState(0);
+  const transferedFilePathRef = useRef<string | null>(null);
 
   
 
   useEffect(() => {
+    setTransferedFile(transfertInfo);
+    transferedFilePathRef.current = transfertInfo.filePath;
+    console.log('Nouveau fichier reçu !');
+    console.log('Nom du fichier :', transfertInfo.fileName);
     requestPermissions();
     if (waveformImagePath === null && spectrogramImagePath === null)
       generateWaveform();
-  }, []);
+  }, [transfertInfo]);
 
   const requestPermissions = async () => {
     try {
@@ -113,7 +119,7 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
   const generateWaveform = async () => {
     try {
       console.log('Génération de la waveform en cours...');
-      const waveformPath = await WaveformGenerator.generateWaveform(transferedFile.filePath);
+      const waveformPath = await WaveformGenerator.generateWaveform(transferedFilePathRef.current);
       setWaveformImagePath(waveformPath);
       console.log('Waveform générée avec succès');
       generateSpectrogram();
@@ -121,11 +127,11 @@ const SoundReader = ({ transfertInfo }: { transfertInfo: ShareFile }) => {
       console.log('Erreur lors de la génération de la waveform', error);
     }
   };
-
+  
   const generateSpectrogram = async () => {
     try {
       console.log('Génération du spectrogramme en cours...');
-      const spectrogramPath = await WaveformGenerator.generateSpectrogram(transferedFile.filePath);
+      const spectrogramPath = await WaveformGenerator.generateSpectrogram(transferedFilePathRef.current);
       setSpectrogramImagePath(spectrogramPath);
       console.log('Spectrogramme généré avec succès');
     } catch (error) {
