@@ -87,7 +87,7 @@ const Doctors = () => {
             <div id={info.doctor._id} className={ "audioDivPage"}>
                 <h1 className={"menuRightTopTitreNameDoctors menuRightTopTitreCentre"}>{info.doctor.firstName} {info.doctor.lastName}</h1>
                 <h1 className={"menuRightTopTitreEmailDoctors menuRightTopTitreCentre"}>{info.doctor.mail}</h1>
-                <h1 className={"menuRightTopTitrePasswordDoctors menuRightTopTitreCentre"}>{info.doctor.password}</h1>
+                <h1 className={"menuRightTopTitrePasswordDoctors menuRightTopTitreCentre"}>****</h1>
                 <div className={"menuRightTopTitreActionDoctors menuRightTopTitreCentre"}>
                     <Icon path={mdiTrashCanOutline} className={"iconMenuHeaderPage cursorHoverPointerRed"} size={1}/>
                 </div>

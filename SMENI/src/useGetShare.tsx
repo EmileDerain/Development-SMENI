@@ -31,5 +31,7 @@ export const useGetShare = () => {
         );
     }, []);
 
+    console.log("Share: ", share);
+
     return share;
 };

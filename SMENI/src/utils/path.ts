@@ -1,4 +1,4 @@
-const URL = "172.16.6.108" //TODO : ipconfig et mettre son addresse IP locale
+const URL = "192.168.180.126" //TODO : ipconfig et mettre son addresse IP locale
 
 const API_URL = `http://${URL}:2834/api/`
 

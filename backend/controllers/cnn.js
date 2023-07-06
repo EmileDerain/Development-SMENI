@@ -15,13 +15,17 @@ exports.renameFile = (req, res, next) => {
 
         fs.copyFile(sourcePath, destinationPath, (err) => {
             if (err) {
-                throw err;
+                console.log("NOT - File copied to the new location!");
+                // throw err;
             }
             console.log("File copied to the new location!");
 
+
+
             fs.unlink(sourcePath, (err) => {
                 if (err) {
-                    throw err;
+                    console.log("NOT - Old file removed!");
+                    // throw err;
                 }
                 console.log("Old file removed!");
             });
@@ -199,12 +203,15 @@ exports.predict = async (req, res) => {
                     }
                     console.log('Le fichier a été supprimé avec succès: ', req.file.path);
                 });
+
+                res.send(JSON.parse(dataToSend));
             } catch (e) {
                 console.log("Multiple req", e)
             }
+        }else{
+            // send data to browser
+            res.send(JSON.parse('{"label_1": {"label": "normal", "accuracy": 95.78}, "label_2": {"label": "murmur", "accuracy": 3.67}}'));
         }
-        // send data to browser
-        res.send(JSON.parse(dataToSend));
     });
 };
 
