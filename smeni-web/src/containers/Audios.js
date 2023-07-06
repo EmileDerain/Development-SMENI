@@ -13,6 +13,7 @@ import {
     mdiReload,
     mdiFolderOutline,
     mdiTrashCanOutline,
+    mdiChevronDown,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
@@ -48,32 +49,36 @@ const menuHeader = [
     },
 ]
 
-const orderByOptionList = [
-    {
-        name: "Label",
-    },
-    {
-        name: "Doctor",
-    },
-    // {
-    //     name: "Patient",
-    // },
-]
 
 const Audios = () => {
+
     const [orderBy, setOrderBy] = useState(undefined);
 
+    const [filterSelected, setFilterSelected] = useState([]);
+    const [requestFilter, setRequestFilter] = useState(false);
 
-    const [optionSelected, setOptionSelected] = useState(undefined);
+
     const [labels, setLabels] = useState([]);
+    const [showLabels, setShowLabels] = useState(false);
+
+    const [doctors, setDoctors] = useState([]);
+    const [showDoctors, setShowDoctors] = useState(false);
 
 
     const [audios, setAudios] = useState([]);
+
     const [path, setPath] = useState(undefined);
 
+    let currentPage = 1;
+    let maxPage = 1;
+    let sendReq = false;
 
-    const getAudioFiles = (option) => {
-        const req = 'http://localhost:2834/api/audio/' + orderBy + '/' + option;
+    let labelsSelected = [];
+    let doctorsSelected = [];
+
+
+    const getAudioFiles = () => {
+        const req = 'http://localhost:2834/api/audio/' + currentPage;
         console.log("Req getAudioFiles: ", req)
         fetch(req)
             .then(response => {
@@ -83,13 +88,42 @@ const Audios = () => {
                 return response.json();
             })
             .then(audioFiles => {
-                console.log("audioFiles", audioFiles.audios)
-                setAudios(audioFiles.audios);
+                console.log("audioFiles.audios;", audioFiles.audios);
+                // setAudios(audioFiles.audios);
+                console.log("ADD -> ", audioFiles.audios.length)
+                setAudios(prevItems => prevItems.concat(audioFiles.audios));
+                maxPage = audioFiles.audioCount;
+                sendReq = false;
             })
             .catch(error => {
                 console.error(error);
             });
     };
+
+    const getAudioFiles2 = () => {
+        const req = 'http://localhost:2834/api/audio/' + currentPage;
+        console.log("Req getAudioFiles: ", req)
+        fetch(req)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Une erreur s\'est produite lors de la récupération des données.');
+                }
+                return response.json();
+            })
+            .then(audioFiles => {
+                setAudios(audioFiles.audios);
+                maxPage = audioFiles.audioCount;
+                sendReq = false;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    };
+
+    useEffect(() => {
+        getAudioFiles2();
+    }, []);
+
 
     const getAudioLabels = () => {
         console.log("Req getAudioLabels");
@@ -103,7 +137,51 @@ const Audios = () => {
             .then(audioLabels => {
                 console.log("audioLabels", audioLabels.labels)
                 setLabels(audioLabels.labels);
-                // setOptionSelected(audioLabels.labels[0].labelName)
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    };
+
+    const resetCurrentPage = () => {
+        maxPage = 1;
+    }
+
+    const audioLabelsFilter = () => {
+        setRequestFilter(true);
+        console.log("requestFilter2", requestFilter)
+        setAudios([]);
+        getAudioFilesFilter();
+    }
+
+    useEffect(() => {
+        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', audios.length)
+        if (audios.length === 11) {
+            currentPage = 1;
+        }
+    }, [audios]);
+
+    const getAudioFilesFilter = () => {
+        console.log("Req getAudioFilesFilter");
+        fetch('http://localhost:2834/api/audio/filter/' + currentPage, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(filterSelected)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Une erreur s\'est produite lors de l\'envoi des données.');
+                }
+                return response.json();
+            })
+            .then(audioFiles => {
+                console.log(audioFiles);
+                setAudios(prevItems => prevItems.concat(audioFiles.audios));
+                maxPage = audioFiles.audioCount;
+                sendReq = false;
+                console.log("requestFilter3", requestFilter)
             })
             .catch(error => {
                 console.error(error);
@@ -120,39 +198,73 @@ const Audios = () => {
                 return response.json();
             })
             .then(usersList => {
-                console.log("usersList", usersList.users)
-                setLabels(usersList.users);
+                console.log("usersList", usersList.users);
+                setDoctors(usersList.users);
             })
             .catch(error => {
                 console.error(error);
             });
     };
 
+
     const calculateTime = (time) => `${(`0${Math.floor(time / 60)}`).slice(-2)}:${(`0${Math.floor(time % 60)}`).slice(-2)}`;
-
-    // window.onload = function () {
-    //     const checkboxes = document.querySelectorAll('input[name="option"]');
-    //     checkboxes[0].setAttribute('checked', 'checked');
-    //
-    //     checkboxes.forEach(checkbox => {
-    //         checkbox.addEventListener('change', function () {
-    //             checkboxes.forEach(cb => {
-    //                 if (cb !== this) {
-    //                     cb.checked = false;
-    //                 } else {
-    //                     console.log("orderBy", orderBy)
-    //                     setOrderBy(cb.value);
-    //                     console.log("orderBy", orderBy)
-    //                 }
-    //             });x
-    //         });
-    //     });
-    // }
-
 
     const labelList = labels.map((item, index) => {
         return <FolderOrderBy key={index} button={[item.labelName, index]}></FolderOrderBy>;
     });
+
+    const doctorList = doctors.map((item, index) => {
+        return <FolderOrderBy key={index} button={[item.labelName, index]}></FolderOrderBy>;
+    });
+
+    const filterByOptionList = [
+        {
+            name: "Label",
+            getFunction: getAudioLabels,
+            display: showLabels,
+            setDisplay: setShowLabels,
+            listDisplay: labelList,
+        },
+        {
+            name: "Doctor",
+            getFunction: getDoctorLabels,
+            display: showDoctors,
+            setDisplay: setShowDoctors,
+            listDisplay: doctorList,
+        },
+        // {
+        //     name: "Patient",
+        // },
+    ]
+
+    const folderFilterByList = filterByOptionList.map((item, index) => {
+        return <FolderFilterBy key={index} button={item}></FolderFilterBy>;
+    });
+
+    function FolderFilterBy(info) {
+        console.log("FolderFilterBy");
+
+        const action = () => {
+            console.log("action");
+            info.button.getFunction();
+            info.button.setDisplay(prevState => !prevState)
+        }
+
+        return (
+            <div
+                className={filterSelected === info.button.name ? "iconFolderOrderByDivPageSelected1" : "iconFolderOrderByDivPage1"}>
+                <div className={"iconFolderOrderByDivPageInfo"} onClick={action}>
+                    <div className={"iconMenuLeftBot"}>
+                        <Icon path={mdiChevronDown} className={"iconMenuHeaderPage"} size={2}/>
+                    </div>
+                    <h1>{info.button.name}</h1>
+                </div>
+                {info.button.display ? <> {info.button.listDisplay}</>
+                    : <></>}
+            </div>
+        );
+    }
+
 
     function FolderOrderBy(info) {
         const myElementRef = useRef();
@@ -160,57 +272,29 @@ const Audios = () => {
         const handleButtonClick = () => {
             const element = myElementRef.current;
             if (element) {
-                setOptionSelected(info.button[0]);
-                getAudioFiles(info.button[0]);
+                if (filterSelected.includes(info.button[0]))
+                    setFilterSelected(prevItems => prevItems.filter(item => item !== info.button[0]));
+                else
+                    setFilterSelected(prevItems => [...prevItems, info.button[0]]);
                 setPath(undefined);
             }
         };
 
         return (
             <div ref={myElementRef}
-                 className={optionSelected === info.button[0] ? "iconFolderOrderByDivPageSelected" : "iconFolderOrderByDivPage"}
+                 className={filterSelected.includes(info.button[0]) ? "iconFolderOrderByDivPageSelected" : "iconFolderOrderByDivPage"}
                  onClick={handleButtonClick}>
                 <div className={"iconMenuLeftBot"}>
                     <Icon path={mdiFolderOutline} className={"iconMenuHeaderPage"} size={2}/>
                 </div>
                 <h1>{info.button[0]}</h1>
+                <div>
+                    {/*{labelList}*/}
+                </div>
             </div>
         );
     }
 
-    const selectFilter = (filterSelected) => {
-        if (filterSelected !== orderBy) {
-            setPath(undefined);
-            setAudios([]);
-            setLabels([]);
-            setOptionSelected(undefined);
-        }
-
-        setOrderBy(filterSelected);
-
-        switch (filterSelected) {
-            case "Label":
-                getAudioLabels();
-                break;
-            case "Doctor":
-                getDoctorLabels();
-                break;
-            default :
-            // case "Patient": getAudioFiles()
-        }
-
-    }
-
-    function ButtonOrderBy(info) {
-        return (
-            <div className={"buttonOrderBy"}>
-                <input className={"chekboxOrder"} type="checkbox" name="option"
-                       value={info.button.name} onChange={() => selectFilter(info.button.name)}
-                       checked={orderBy === info.button.name}/>
-                <h1>{info.button.name}</h1>
-            </div>
-        );
-    }
 
     const audioList = audios.map((item, index) => {
         return <Audio key={index} button={item}></Audio>;
@@ -219,6 +303,57 @@ const Audios = () => {
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
+
+    const refAudios = useRef(null);
+
+    window.onload = function () {
+        console.log("ON LOAD !! ");
+        getAudioFiles2();
+        currentPage++;
+        refAudios.current.addEventListener('scroll', test);
+    }
+
+    // useEffect(() => {
+    //     getAudioFiles();
+    // }, []);
+
+
+    const test = () => {
+        console.log("useEffect Scoll: ", currentPage, sendReq)
+        if (refAudios.current) {
+
+            const {scrollTop, scrollHeight, clientHeight} = refAudios.current;
+            const totalScrollableDistance = scrollHeight - clientHeight;
+            const currentScrollPercentage = (scrollTop / totalScrollableDistance) * 100;
+            const currentScrollDistance = totalScrollableDistance - scrollTop
+
+            console.log("currentScrollPercentage:", currentScrollPercentage);
+            console.log("currentScrollPercentage === 100", currentScrollPercentage === 100)
+            console.log("currentScrollDistance", currentScrollDistance)
+            console.log("currentScrollDistance < 40", currentScrollDistance < 40)
+            console.log("isNaN(currentScrollPercentage)", isNaN(currentScrollPercentage))
+
+            console.log("currentPage", currentPage)
+            console.log("maxPage >= currentPage", maxPage >= currentPage)
+            console.log(" !sendReq", !sendReq)
+
+            console.log('requestFilter', requestFilter)
+
+            if ((isNaN(currentScrollPercentage) || currentScrollPercentage === 100 || currentScrollDistance < 40) && maxPage >= currentPage && !sendReq) {
+                sendReq = true;
+                console.log('requestFilter', requestFilter)
+                if (!requestFilter) {
+                    console.log('getAudioFiles')
+                    getAudioFiles();
+                } else {
+                    console.log('getAudioFilesFilter')
+                    getAudioFilesFilter();
+                }
+                currentPage++;
+            }
+        }
+    }
+
 
     function Audio(info) {
         const myElementRef = useRef(null);
@@ -294,40 +429,68 @@ const Audios = () => {
             <div className={"PageGlobal"}>
                 <div className={"PageActionGlobal"}>
                     <div className={"menuLeft"}>
-                        <div className={"menuLeftTop"}>
+                        {/*<div className={"menuLeftTop"}>*/}
+                        {/*    <div className={"menuLeftTopTitre"}>*/}
+                        {/*        <h1>Filter by</h1>*/}
+                        {/*    </div>*/}
+                        {/*    <ButtonOrderBy button={orderByOptionList[0]}></ButtonOrderBy>*/}
+                        {/*    <ButtonOrderBy button={orderByOptionList[1]}></ButtonOrderBy>*/}
+                        {/*    /!*<ButtonOrderBy button={orderByOptionList[2]}></ButtonOrderBy>*!/*/}
+                        {/*</div>*/}
+
+                        <div className={"menuLeft100"}>
                             <div className={"menuLeftTopTitre"}>
-                                <h1>Order by</h1>
+                                <h1>Filter</h1>
                             </div>
-                            <ButtonOrderBy button={orderByOptionList[0]}></ButtonOrderBy>
-                            <ButtonOrderBy button={orderByOptionList[1]}></ButtonOrderBy>
-                            {/*<ButtonOrderBy button={orderByOptionList[2]}></ButtonOrderBy>*/}
-                        </div>
-                        {orderBy !== undefined ?
-                            <div className={"menuLeftBot"}>
-                                <div className={"menuLeftTopTitre"}>
-                                    <h1>{orderBy}</h1>
+                            <div className={"menuLeftTopMenus"}>
+                                <div className={"menuLeftTopMenusFilter"}>
+                                    {folderFilterByList}
                                 </div>
-                                {labelList}
-                            </div> :
-                            <></>}
+                                <div className={"menuLeftTopMenusResearch"}>
+                                    <button className={"menuLeftTopMenusResearchButton"}
+                                            onClick={() => {
+                                                audioLabelsFilter();
+                                                resetCurrentPage();
+                                            }}>
+                                        Research
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
 
                     </div>
 
                     <div className={"menuRight"}>
-                        {optionSelected !== undefined ?
-                            <div className={"menuRightTop"}>
-                                <div className={"menuRightTopTitre"}>
-                                    <h1 className={"menuRightTopTitreDate menuRightTopTitreCentre menuRightTopTitreDateBorder"}>Date</h1>
-                                    <h1 className={"menuRightTopTitreName menuRightTopTitreCentre menuRightTopTitreBorder"}>Name</h1>
-                                    <h1 className={"menuRightTopTitreDoctor menuRightTopTitreCentre menuRightTopTitreBorder"}>Doctor</h1>
-                                    <h1 className={"menuRightTopTitreTime menuRightTopTitreCentre menuRightTopTitreBorder"}>Time</h1>
-                                    <h1 className={"menuRightTopTitreAction menuRightTopTitreCentre menuRightTopTitreActionBorder"}>Action</h1>
-                                </div>
-                                <div className={"menuRightTopListAudio"}>
-                                    {audioList}
-                                </div>
-                            </div> :
-                            <></>}
+
+                        <div className={"menuRightTop"}>
+                            <div className={"menuRightTopTitre"}>
+                                <h1 className={"menuRightTopTitreDate menuRightTopTitreCentre menuRightTopTitreDateBorder"}>Date</h1>
+                                <h1 className={"menuRightTopTitreName menuRightTopTitreCentre menuRightTopTitreBorder"}>Name</h1>
+                                <h1 className={"menuRightTopTitreDoctor menuRightTopTitreCentre menuRightTopTitreBorder"}>Doctor</h1>
+                                <h1 className={"menuRightTopTitreTime menuRightTopTitreCentre menuRightTopTitreBorder"}>Time</h1>
+                                <h1 className={"menuRightTopTitreAction menuRightTopTitreCentre menuRightTopTitreActionBorder"}>Action</h1>
+                            </div>
+                            <div ref={refAudios} className={"menuRightTopListAudio"}>
+                                {audioList}
+                                {currentPage < maxPage ?
+                                    <div className={"audioDivPage"}>
+                                        <div className="wave"></div>
+                                        <div className="wave"></div>
+                                        <div className="wave"></div>
+                                        <div className="wave"></div>
+                                        <div className="wave"></div>
+                                        <div className="wave"></div>
+                                        <div className="wave"></div>
+                                        <div className="wave"></div>
+                                        <div className="wave"></div>
+                                        <div className="wave"></div>
+                                    </div> :
+                                    <></>
+                                }
+                            </div>
+                        </div>
+
                         {path !== undefined ?
                             <div className={"menuRightBot"}>
                                 <ProgressBar

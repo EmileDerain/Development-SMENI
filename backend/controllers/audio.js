@@ -6,14 +6,17 @@ const wav = require('node-wav');
 const {getAudioDurationInSeconds} = require('get-audio-duration')
 
 exports.renameFile = (req, res, next) => {
-    fs.rename(req.file.path, "./CNN/dataStemoscope/Test/" + req.body.label + "/" + req.body.label + "_" + req.file.filename, (err) => {
+    const date = Date.now();
+
+    fs.rename(req.file.path, "./CNN/dataStemoscope/Test/" + req.body.label + "/" + req.body.label + "_" + date + "_" + req.file.filename, (err) => {
         if (err) {
             console.log("Error : file renamed and moved!");
             res.status(500).json({"status": 500, "reason": "Can't rename file"})
             throw err;
         } else {
             console.log("File renamed and moved!");
-            req.file.path = req.body.label + "/" + req.body.label + "_" + req.file.filename;
+            req.file.path = req.body.label + "/" + req.body.label + "_" + date + "_" + req.file.filename;
+            req.file.filename = req.body.label + "_" + date + "_" + req.file.filename;
             next();
         }
     });
@@ -41,11 +44,17 @@ exports.saveAudio = async (req, res) => {
         // doctor: "Tom Jedusor",
         doctor: req.body.doctor,
         patient: "undefined",
-        time : Math.ceil(duration),
+        time: Math.ceil(duration),
     });
     audioFile.save()
-        .then(() => res.status(201).json({"status": 201, message: 'Audio saved'}))
-        .catch(error => res.status(400).json({"status": 201, reason: error}));
+        .then(() => {
+            console.log('Audio saved');
+            res.status(201).json({"status": 201, message: 'Audio saved'})
+        })
+        .catch(error => {
+            console.log('Audio error: ', error);
+            res.status(400).json({"status": 201, reason: error})
+        });
 };
 
 function getWavDuration(filePath) {
@@ -65,14 +74,79 @@ exports.getAllAudio = (req, res) => {
 };
 
 
+exports.get10Audio = async (req, res) => {
+    const nbAudio = 100;
+    const audioCount = await Audio.countDocuments();
+    console.log("min", (parseInt(req.params.pageNumber) - 1) * nbAudio);
+    console.log("max", parseInt(req.params.pageNumber) * nbAudio);
+
+    Audio.find().skip((req.params.pageNumber - 1) * nbAudio).limit(nbAudio)
+        .then(audios => res.status(200).json({
+            "status": 200,
+            "audioCount": Math.ceil(audioCount / nbAudio),
+            "audios": audios
+        }))
+        .catch(error => res.status(400).json({"status": 400, reason: error}));
+};
+
+
+exports.getFilted10Audio = async (req, res) => {
+    const nbAudio = 100;
+
+    const labelList = ["Murmur", "Normal", "Artifact", "Extrastole", "Extrahls"]
+    const orConditionsLabels = [];
+    const orConditionsDoctor = [];
+
+    console.log(req.body);
+
+    for (let i = 0; i < req.body.length; i++) {
+        if (labelList.includes(req.body[i]))
+            orConditionsLabels.push({label: req.body[i].toLowerCase()})
+        else
+            orConditionsDoctor.push({doctor: req.body[i]})
+    }
+
+    console.log(orConditionsLabels);
+    console.log(orConditionsDoctor);
+
+    if (orConditionsLabels.length === 0)
+        orConditionsLabels.push({})
+
+    if (orConditionsDoctor.length === 0)
+        orConditionsDoctor.push({})
+
+    const audioCount = await Audio.find({
+        $and: [
+            {$or: orConditionsLabels},
+            {$or: orConditionsDoctor},
+        ]
+    }).countDocuments();
+
+    Audio.find({
+        $and: [
+            {$or: orConditionsLabels},
+            {$or: orConditionsDoctor},
+        ]
+    }).skip((req.params.pageNumber - 1) * nbAudio).limit(nbAudio)
+        .then(audios => res.status(200).json({
+            "status": 200,
+            "audioCount": Math.ceil(audioCount / nbAudio),
+            "audios": audios
+        }))
+        .catch(error => {
+            console.log(error);
+            res.status(400).json({"status": 400, reason: error})
+        });
+};
+
 exports.getAllAudioOfALabel = (req, res) => {
-    Audio.find({label : req.params.label.toLowerCase()})
+    Audio.find({label: req.params.label.toLowerCase()})
         .then(audios => res.status(200).json({"status": 200, "audios": audios}))
         .catch(error => res.status(400).json({"status": 400, reason: error}));
 };
 
 exports.getAllAudioOfADoctor = (req, res) => {
-    Audio.find({doctor : req.params.doctor})
+    Audio.find({doctor: req.params.doctor})
         .then(audios => res.status(200).json({"status": 200, "audios": audios}))
         .catch(error => res.status(400).json({"status": 400, reason: error}));
 };

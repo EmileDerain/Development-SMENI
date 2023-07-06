@@ -2,8 +2,8 @@
   "_id": "64944200e4ad6121e4e182a8",
   "modelName": "DefautModel",
   "__v": 0,
-  "accuracy": 0.3626062273979187,
+  "accuracy": 0.9575,
   "date": "22/06/2023",
-  "loss": 1.1535128355026245,
+  "loss": 0.19,
   "path": "./CNN/models/DefautModel.h5"
 }
