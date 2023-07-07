@@ -5,6 +5,7 @@ import SearchPatient from "./SearchPatient";
 import DiagnoHelpScreen from "./DiagnoHelpScreen";
 import Home from "./Home";
 import Settings from "./Settings";
+import Chat from "./Chat";
 
 
 const Tab = createBottomTabNavigator();
@@ -28,6 +29,8 @@ const NavigationBar = () => {
                         iconName = focused ? 'help-circle' : 'help-circle-outline';
                     } else if (rn === 'Settings_Bar') {
                         iconName = focused ? 'settings' : 'settings-outline';
+                    } else if (rn === 'Chat_Bar') {
+                        iconName = focused ? 'chatbox-ellipses' : 'chatbox-ellipses-outline';
                     }
 
                     return <Ionicons name={iconName} size={size} color={color}/>;
@@ -54,6 +57,9 @@ const NavigationBar = () => {
                 headerShown: false
             }}/>
             <Tab.Screen name={'Diagno_Bar'} component={DiagnoHelpScreen} options={{
+                headerShown: false
+            }}/>
+            <Tab.Screen name={'Chat_Bar'} component={Chat} options={{
                 headerShown: false
             }}/>
             <Tab.Screen name={'Settings_Bar'} component={Settings} options={{
