@@ -15,7 +15,7 @@ const CheckToken = async () => {
     const tokenFromStorage = await AsyncStorage.getItem('token');
     if (isTokenValid(tokenFromStorage)) {
         console.log("token is valid")
-        navigation.navigate(PAGE_DIAGNOHELP);
+        navigation.navigate("SearchPatient");
     }
 }
 
@@ -29,7 +29,7 @@ const SignIn = () => {
         const unsubscribe = NetInfo.addEventListener(state => {
             if (!(state.isConnected)) {
                 console.log("not connected");
-                navigation.navigate(PAGE_DIAGNOHELP);
+                navigation.navigate("SearchPatient");
             }
         });
         return unsubscribe;
@@ -111,7 +111,7 @@ const SignIn = () => {
                         AsyncStorage.setItem('token', token)
                             .then(() => {
                                 clearForm();
-                                navigation.navigate(PAGE_DIAGNOHELP);
+                                navigation.navigate("SearchPatient");
                             })
                             .catch(error => {
                                 console.error('Failed to store token:', error);
@@ -187,7 +187,7 @@ const SignIn = () => {
                 <TouchableOpacity
                     onPress={() => {
                         clearForm();
-                        navigation.navigate(PAGE_SIGNUP);
+                        navigation.navigate("SearchPatient");
                     }}>
                     <Text style={[styles.text, styles.subtitle, styles.navigate]}>Create One !</Text>
                 </TouchableOpacity>
@@ -198,7 +198,7 @@ const SignIn = () => {
                 <TouchableOpacity
                     onPress={() => {
                         clearForm();
-                        navigation.navigate(PAGE_DIAGNOHELP);
+                        navigation.navigate("DiagnoPage");
                     }}>
                     <Text style={[styles.text, styles.subtitle, styles.navigate]}>Click Here !</Text>
                 </TouchableOpacity>
