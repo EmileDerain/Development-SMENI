@@ -22,8 +22,8 @@ const Navigation = () => {
                     headerShown: false
                 }}
                 />
-                <Stack.Screen name="SearchPatient" component={NavigationBar}/>
-                <Stack.Screen name="DiagnoPage" component={DiagnoHelpScreen}options={{
+                <Stack.Screen name="SearchPatient" component={NavigationBar} options={{headerShown: false}}/>
+                <Stack.Screen name="DiagnoPage" component={DiagnoHelpScreen} options={{
                     headerShown: false
                 }}/>
 

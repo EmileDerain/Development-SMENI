@@ -17,7 +17,7 @@ export default function App() {
         <Provider store={store}>
             <View style={styles.container}>
                 <Navigation/>
-                <StatusBar style="auto"/>
+                {/*<StatusBar style="auto"/>*/}
             </View>
         </Provider>
     );
