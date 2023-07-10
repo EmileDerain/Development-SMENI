@@ -10,6 +10,7 @@ const {initUsers} = require("./utils/init");
 const audioRoutes = require("./routes/audio")
 const cnnRoutes = require("./routes/cnn")
 const userRoutes = require("./routes/user")
+const patientRoutes = require("./routes/patient")
 const adminRoutes = require("./routes/admin")
 
 MONGO_URL = 'mongodb://' + process.env.USERNAME_MONGO + ':' + process.env.PASSWORD_MONGO + process.env.MONGO_URL
@@ -43,6 +44,7 @@ app.get('/audioFiles/:dir/:filename', (req, res) => {
 app.use("/api/audio", audioRoutes);
 app.use("/api/cnn", cnnRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/patient", patientRoutes);
 app.use("/api/admin", adminRoutes);
 initUsers();
 

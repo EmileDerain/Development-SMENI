@@ -53,6 +53,49 @@ exports.getAllUserLabels = (req, res) => {
                     labelName: user.lastName + ' ' + user.firstName,
                 };
             });
-            res.status(200).json({ users: modifiedUsers, message: 'All the users have been retrieved' });
+            res.status(200).json({labels: modifiedUsers, message: 'All the users have been retrieved'});
         })
-        .catch(error => res.status(400).json({ error, message: 'Error while retrieving all the users' }));};
+        .catch(error => res.status(400).json({error, message: 'Error while retrieving all the users'}));
+};
+
+
+exports.getAllUserLabelsFilter = (req, res) => {
+    console.log("req.body:", req.body.filter)
+    const [lastName, firstName] = req.body.filter.split(' ');
+
+    console.log("lastName: ", lastName, "firstName: ", firstName);
+
+    let orConditionsLastName;
+    let orConditionsFirstName;
+
+    if (lastName !== undefined) {
+        const regexLastName = new RegExp(`\\b${lastName}`, "i");
+        orConditionsLastName = [{lastName: {$regex: regexLastName}}, {firstName: {$regex: regexLastName}}];
+    } else {
+        orConditionsLastName = [{}]
+    }
+
+    if (firstName !== undefined) {
+        const regexFirstName = new RegExp(`\\b${firstName}`, "i");
+        orConditionsFirstName = [{lastName: {$regex: regexFirstName}}, {firstName: {$regex: regexFirstName}}];
+    } else {
+        orConditionsFirstName = [{}]
+    }
+
+
+    User.find({
+        $and: [
+            {$or: orConditionsLastName},
+            {$or: orConditionsFirstName},
+        ]
+    })
+        .then(users => {
+            const modifiedUsers = users.map(user => {
+                return {
+                    labelName: user.lastName + ' ' + user.firstName,
+                };
+            });
+            res.status(200).json({labels: modifiedUsers, message: 'All the users have been retrieved'});
+        })
+        .catch(error => res.status(400).json({error, message: 'Error while retrieving all the users'}));
+};

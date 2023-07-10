@@ -36,19 +36,19 @@
     /*background-color: red;*/
 }
 
-.menuLeftTopMenus{
+.menuLeftTopMenus {
     width: 100%;
     height: 91.5%;
-
-
 }
 
-.menuLeftTopMenusFilter{
+.menuLeftTopMenusFilter {
     width: 100%;
-    height: 90%;
+    height: 100%;
+
+    overflow-y: scroll;
 }
 
-.menuLeftTopMenusResearch{
+.menuLeftTopMenusResearch {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -57,7 +57,7 @@
     height: 10%;
 }
 
-.menuLeftTopMenusResearchButton{
+.menuLeftTopMenusResearchButton {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -136,7 +136,7 @@
     /*opacity: 0.5;*/
 }
 
-.iconFolderOrderByDivPage1{
+.iconFolderOrderByDivPage1 {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -149,49 +149,34 @@
 
     color: white;
 
-    border-bottom: solid white 1px;
+    /*border-bottom: solid white 1px;*/
+
 
     cursor: pointer;
+}
+
+.iconFolderOrderByDivSearch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    /*background-color: #9C1A1C;*/
 }
 
 .iconFolderOrderByDivPage {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
 
-    width: 100%;
-
-    font-size: min(0.5vw, 1vh);
-
-    color: white;
-
-    border-bottom: solid white 1px;
-
-    cursor: pointer;
-}
-
-.iconFolderOrderByDivPageInfo{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 100%;
-    height: 100%;
-}
-
-.iconFolderOrderByDivPageSelected1{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 100%;
+    width: 95%;
 
     font-size: min(0.5vw, 1vh);
 
     color: white;
 
-    border-bottom: solid white 1px;
-    background-color: #6BB2E6;
+    border-top: solid white 1px;
+    padding-left: 5%;
 
     cursor: pointer;
 }
@@ -199,6 +184,47 @@
 .iconFolderOrderByDivPageSelected {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
+
+    width: 95%;
+
+    font-size: min(0.5vw, 1vh);
+
+    color: white;
+
+    border-top: solid white 1px;
+    background-color: #6BB2E6;
+    padding-left: 5%;
+
+    cursor: pointer;
+}
+
+.iconFolderOrderByDivPageInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    border-bottom: solid white 2px;
+}
+
+.iconFolderOrderByDivPageInfoOpen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    margin-bottom: 0;
+}
+
+
+.iconFolderOrderByDivPageSelected1 {
+    display: flex;
+    align-items: center;
     justify-content: center;
 
     width: 100%;
@@ -212,6 +238,7 @@
 
     cursor: pointer;
 }
+
 
 .iconMenuLeftBot {
     display: flex;
@@ -340,30 +367,39 @@
     animation: wave 1s linear infinite;
     /*border-radius: 20px;*/
 }
+
 .wave:nth-child(2) {
     animation-delay: 0.1s;
 }
+
 .wave:nth-child(3) {
     animation-delay: 0.2s;
 }
+
 .wave:nth-child(4) {
     animation-delay: 0.3s;
 }
+
 .wave:nth-child(5) {
     animation-delay: 0.4s;
 }
+
 .wave:nth-child(6) {
     animation-delay: 0.5s;
 }
+
 .wave:nth-child(7) {
     animation-delay: 0.6s;
 }
+
 .wave:nth-child(8) {
     animation-delay: 0.7s;
 }
+
 .wave:nth-child(9) {
     animation-delay: 0.8s;
 }
+
 .wave:nth-child(10) {
     animation-delay: 0.9s;
 }

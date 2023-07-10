@@ -75,7 +75,7 @@ exports.getAllAudio = (req, res) => {
 
 
 exports.get10Audio = async (req, res) => {
-    const nbAudio = 100;
+    const nbAudio = 11;
     const audioCount = await Audio.countDocuments();
     console.log("min", (parseInt(req.params.pageNumber) - 1) * nbAudio);
     console.log("max", parseInt(req.params.pageNumber) * nbAudio);
@@ -91,13 +91,13 @@ exports.get10Audio = async (req, res) => {
 
 
 exports.getFilted10Audio = async (req, res) => {
-    const nbAudio = 100;
+    const nbAudio = 11;
 
     const labelList = ["Murmur", "Normal", "Artifact", "Extrastole", "Extrahls"]
     const orConditionsLabels = [];
     const orConditionsDoctor = [];
 
-    console.log(req.body);
+    console.log("req.body:", req.body);
 
     for (let i = 0; i < req.body.length; i++) {
         if (labelList.includes(req.body[i]))

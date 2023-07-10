@@ -10,5 +10,6 @@ router.post('/login', userCtrl.login);
 router.get('/', userCtrl.getAllUser);
 router.get('/labels', userCtrl.getAllUserLabels);
 
+router.post('/labels', userCtrl.getAllUserLabelsFilter);
 
 module.exports = router;

@@ -21,7 +21,6 @@ exports.renameFile = (req, res, next) => {
             console.log("File copied to the new location!");
 
 
-
             fs.unlink(sourcePath, (err) => {
                 if (err) {
                     console.log("NOT - Old file removed!");
@@ -82,6 +81,20 @@ exports.getAllLabels = (req, res) => {
         .then(labels => res.status(200).json({"status": 200, "labels": labels}))
         .catch(error => res.status(400).json({"status": 400, reason: error}));
 };
+
+exports.getAllLabelsFilter = (req, res) => {
+    console.log("req.body:", req.body.filter)
+    const label = req.body.filter;
+    const regexLabel = new RegExp(`\\b${label}`, "i");
+
+    Label.find({
+        labelName: {$regex: regexLabel}
+    }).select('labelName -_id').sort('labelName')
+        // Label.find().select('labelName')
+        .then(labels => res.status(200).json({"status": 200, "labels": labels}))
+        .catch(error => res.status(400).json({"status": 400, reason: error}));
+};
+
 
 exports.train = async (req, res) => {
     console.log('RUN train');
@@ -208,7 +221,7 @@ exports.predict = async (req, res) => {
             } catch (e) {
                 console.log("Multiple req", e)
             }
-        }else{
+        } else {
             // send data to browser
             res.send(JSON.parse('{"label_1": {"label": "normal", "accuracy": 95.78}, "label_2": {"label": "murmur", "accuracy": 3.67}}'));
         }

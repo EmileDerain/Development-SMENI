@@ -7,7 +7,7 @@ const audioSchema = mongoose.Schema({
     date: {type: String, required: true},
     label: {type: String, required: true},
     doctor: {type: String, required: true},
-    patient: {type: String, required: true},
+    patient: {type: String, required: true}, //patient
     time: {type: String, required: true},
 });
 
