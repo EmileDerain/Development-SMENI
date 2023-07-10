@@ -55,9 +55,6 @@ const Audios = () => {
 
     const [filterSelected, setFilterSelected] = useState([]);
 
-    const [labels, setLabels] = useState([]);
-    const [showLabels, setShowLabels] = useState(false);
-
     const [audios, setAudios] = useState([]);
 
     const [path, setPath] = useState(undefined);
@@ -70,6 +67,8 @@ const Audios = () => {
 
     useEffect(() => {
         refAudios.current.addEventListener('scroll', test);
+        setFilterSelected([]);
+
         return () => {
             if (refAudios.current)
                 refAudios.current.removeEventListener('scroll', test);
@@ -77,31 +76,15 @@ const Audios = () => {
     }, []);
 
     useEffect(() => {
-        console.log("ON LOAD !! filterSelected");
+        console.log("ON LOAD !! filterSelected:", filterSelected);
+        setFilterSelected(filterSelected);
         currentPage.current = 1;
         setAudios([]);
         getAudioFilesFilter();
     }, [filterSelected]);
 
-    const getAudioLabels = () => {
-        console.log("Req getAudioLabels");
-        fetch('http://localhost:2834/api/cnn/labels')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Une erreur s\'est produite lors de la récupération des données.');
-                }
-                return response.json();
-            })
-            .then(audioLabels => {
-                setLabels(audioLabels.labels);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    };
-
     const getAudioFilesFilter = () => {
-        console.log("Req getAudioFilesFilter");
+        console.log("Req getAudioFilesFilter filterSelected", filterSelected);
         fetch('http://localhost:2834/api/audio/filter/' + currentPage.current, {
             method: 'POST',
             headers: {
@@ -252,14 +235,5 @@ const Audios = () => {
         </div>
     )
 }
-
-function ButtonMenuHeader(info) {
-    return (
-        <Link className={"iconMenuHeaderDivPage"} to={info.button.link}>
-            <Icon path={info.button.mdi} className={"iconMenuHeaderPage"} size={2}/>
-        </Link>
-    );
-}
-
 
 export default Audios;

@@ -16,6 +16,11 @@ const Filter = ({name, urlSearch, filterSelected, setFilterSelected}) => {
     const [labels, setLabels] = useState([]);
     const [showLabels, setShowLabels] = useState(false);
 
+    let currentPage = useRef(1);
+    let maxPage = useRef(1);
+    let sendReq = useRef(false);
+
+    const refInfiniteScroll = useRef(null);
 
     const getLabels = (filter) => {
         console.log("Req getDoctorLabels: ", filter);
@@ -24,7 +29,7 @@ const Filter = ({name, urlSearch, filterSelected, setFilterSelected}) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({filter: filter})
+            body: JSON.stringify({filter: filter, pageNumber: currentPage.current})
         })
             .then(response => {
                 if (!response.ok) {
@@ -34,7 +39,10 @@ const Filter = ({name, urlSearch, filterSelected, setFilterSelected}) => {
             })
             .then(labelList => {
                 console.log("usersList", labelList.labels);
-                setLabels(labelList.labels);
+                setLabels(prevItems => prevItems.concat(labelList.labels));
+                currentPage.current++;
+                maxPage.current = labelList.labelCount;
+                sendReq.current = false;
             })
             .catch(error => {
                 console.error(error);
@@ -42,26 +50,32 @@ const Filter = ({name, urlSearch, filterSelected, setFilterSelected}) => {
     };
 
     const doctorList = labels.map((item, index) => {
-        return <FolderOrderBy key={index} button={[item.labelName, index]}></FolderOrderBy>;
+        return <ListLabel key={index} button={[item.labelName, index]}></ListLabel>;
     });
 
-    function FolderOrderBy(info) {
+    function ListLabel(info) {
         const myElementRef = useRef();
+        console.log("filrer filterSelected:", filterSelected)
 
-        const handleButtonClick = () => {
+        const selectFilter = () => {
+            console.log("filrer2 filterSelected:", filterSelected)
+
             const element = myElementRef.current;
             if (element) {
-                if (filterSelected.includes(info.button[0]))
+                if (filterSelected.includes(info.button[0])) {
                     setFilterSelected(prevItems => prevItems.filter(item => item !== info.button[0]));
-                else
+                    console.log("filterSelected supp");
+                } else {
                     setFilterSelected(prevItems => [...prevItems, info.button[0]]);
+                    console.log("filterSelected add");
+                }
             }
         };
 
         return (
             <div ref={myElementRef}
                  className={filterSelected.includes(info.button[0]) ? "iconFolderOrderByDivPageSelected" : "iconFolderOrderByDivPage"}
-                 onClick={handleButtonClick}>
+                 onClick={selectFilter}>
                 <div className={"iconMenuLeftBot"}>
                     {filterSelected.includes(info.button[0]) ?
                         <Icon path={mdiCheckboxMarked} className={"iconMenuHeaderPage"} size={1}/>
@@ -74,7 +88,43 @@ const Filter = ({name, urlSearch, filterSelected, setFilterSelected}) => {
         );
     }
 
-    const action = () => {
+    useEffect(() => {
+        if (refInfiniteScroll.current)
+            refInfiniteScroll.current.addEventListener('scroll', test);
+        return () => {
+            if (refInfiniteScroll.current)
+                refInfiniteScroll.current.removeEventListener('scroll', test);
+        };
+    }, [showLabels]);
+
+    const test = () => {
+        console.log("useEffect Scoll: ", currentPage.current, sendReq.current)
+        if (refInfiniteScroll.current) {
+
+            const {scrollTop, scrollHeight, clientHeight} = refInfiniteScroll.current;
+            const totalScrollableDistance = scrollHeight - clientHeight;
+            const currentScrollPercentage = (scrollTop / totalScrollableDistance) * 100;
+            const currentScrollDistance = totalScrollableDistance - scrollTop
+
+            console.log("currentScrollPercentage:", currentScrollPercentage);
+            console.log("currentScrollPercentage === 100", currentScrollPercentage === 100)
+            console.log("currentScrollDistance", currentScrollDistance)
+            console.log("currentScrollDistance < 40", currentScrollDistance < 40)
+            console.log("isNaN(currentScrollPercentage)", isNaN(currentScrollPercentage))
+
+            console.log("currentPage.current", currentPage.current)
+            console.log("maxPage.current >= currentPage.current", maxPage.current >= currentPage.current)
+            console.log(" !sendReq.current", !sendReq.current)
+
+            if ((isNaN(currentScrollPercentage) || currentScrollPercentage === 100 || currentScrollDistance < 40) && maxPage.current >= currentPage.current && !sendReq.current) {
+                sendReq.current = true;
+                console.log('getAudioFilesFilter')
+                getLabels();
+            }
+        }
+    }
+
+    const showLabel = () => {
         getLabels('')
         setShowLabels(prevState => !prevState)
     }
@@ -83,7 +133,7 @@ const Filter = ({name, urlSearch, filterSelected, setFilterSelected}) => {
         <>
             <div className={"iconFolderOrderByDivPage1"}>
                 <div className={showLabels ? "iconFolderOrderByDivPageInfoOpen" : "iconFolderOrderByDivPageInfo"}
-                     onClick={action}>
+                     onClick={showLabel}>
                     <div className={"iconMenuLeftBot"}>
                         <Icon path={mdiChevronDown} className={"iconMenuHeaderPage"} size={2}/>
                     </div>
@@ -99,10 +149,9 @@ const Filter = ({name, urlSearch, filterSelected, setFilterSelected}) => {
                 }
             </div>
             {showLabels ?
-                <div className={labels.length > 5 ? "listOptionFilter" : "listOptionFilterSmall"}>
-                    {/*<div className={"optionFilter"}>*/}
+                <div ref={refInfiniteScroll}
+                     className={labels.length > 5 ? "listOptionFilter" : "listOptionFilterSmall"}>
                     {doctorList}
-                    {/*</div>*/}
                 </div>
                 : <></>
             }

@@ -97,7 +97,9 @@ exports.getFilted10Audio = async (req, res) => {
     const orConditionsLabels = [];
     const orConditionsDoctor = [];
 
-    console.log("req.body:", req.body);
+    const pageNumber = req.body.pageNumber;
+
+    console.log("req.body2:", req.body);
 
     for (let i = 0; i < req.body.length; i++) {
         if (labelList.includes(req.body[i]))

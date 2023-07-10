@@ -1,10 +1,15 @@
 const Patient = require('../models/patient');
 const Label = require("../models/label");
+const Audio = require("../models/audio");
 
 
 exports.createPatient = (req, res) => {
     const patient = new Patient({
-        firstName: req.body.firstName, lastName: req.body.lastName, height: req.body.height, weight: req.body.weight, birthDate: req.body.birthDate
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        height: req.body.height,
+        weight: req.body.weight,
+        birthDate: req.body.birthDate
     });
     patient.save()
         .then(() => res.status(201).json({message: 'Patient created !'}))
@@ -18,14 +23,25 @@ exports.getAllPatient = (req, res) => {
 }
 
 exports.getPatientByName = (req, res) => {
-    Patient.find({ $or: [{ firstName: req.body.name }, { lastName: req.body.name }] })
+    Patient.find({$or: [{firstName: req.body.name}, {lastName: req.body.name}]})
         .then(patient => res.status(200).json({patient, message: 'Patient retrieved'}))
         .catch(error => res.status(400).json({error, message: 'Error while retrieving patient'}));
 }
 
-exports.getAllPatientLabelsFilter = (req, res) => {
-    console.log("req.body:", req.body.filter)
-    const [lastName, firstName] = req.body.filter.split(' ');
+exports.getAllPatientLabelsFilter = async (req, res) => {
+    console.log("req.filter:", req.body.filter)
+    console.log("req.pageNumber:", req.body.pageNumber)
+
+    const nbLabel = 11;
+
+    let lastName;
+    let firstName;
+    try {
+        [lastName, firstName] = req.body.filter.split(' ');
+    } catch (e) {
+
+    }
+    const pageNumber = req.body.pageNumber;
 
     console.log("lastName: ", lastName, "firstName: ", firstName);
 
@@ -46,20 +62,30 @@ exports.getAllPatientLabelsFilter = (req, res) => {
         orConditionsFirstName = [{}]
     }
 
+    const patientCount = await Patient.find({
+        $and: [
+            {$or: orConditionsLastName},
+            {$or: orConditionsFirstName},
+        ]
+    }).countDocuments();
 
     Patient.find({
         $and: [
             {$or: orConditionsLastName},
             {$or: orConditionsFirstName},
         ]
-    })
+    }).skip((pageNumber - 1) * nbLabel).limit(nbLabel)
         .then(users => {
             const modifiedUsers = users.map(user => {
                 return {
                     labelName: user.lastName + ' ' + user.firstName,
                 };
             });
-            res.status(200).json({labels: modifiedUsers, message: 'All the patients have been retrieved'});
+            res.status(200).json({
+                labels: modifiedUsers,
+                labelCount: Math.ceil(patientCount / nbLabel),
+                message: 'All the patients have been retrieved'
+            });
         })
         .catch(error => res.status(400).json({error, message: 'Error while retrieving all the patients'}));
 };
