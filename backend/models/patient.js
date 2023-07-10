@@ -7,7 +7,8 @@ const patientSchema = mongoose.Schema({
     height: {type: String},
     weight: {type: String},
     birthDate: {type: Date},
+    //comorbidities, gender
 });
 
-userSchema.plugin(uniqueValidator);
+patientSchema.plugin(uniqueValidator);
 module.exports = mongoose.model('Patient', patientSchema);

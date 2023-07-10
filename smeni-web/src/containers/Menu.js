@@ -31,7 +31,7 @@ const menu = [
         link: '/model',
     },
     {
-        name: "AI",
+        name: "AIs",
         mdi: mdiContentSave,
         link: '/models',
     },

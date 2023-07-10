@@ -15,6 +15,8 @@ import Icon from "@mdi/react";
 import './Global.css';
 import './Doctors.css';
 import {Link} from "react-router-dom";
+import Background from "./component/Background";
+import HeaderSubMenu from "./component/HeaderSubMenu";
 
 
 const menuHeader = [
@@ -104,48 +106,9 @@ const Doctors = () => {
 
     return (
         <div className={"screen"}>
-            <div className={"circleArt1"}>
-                <div className="circle"></div>
-                <div className="circle1"></div>
-                <div className="circle2"></div>
-                <div className="circle3"></div>
-                <div className="circle4"></div>
-                <div className="circle5"></div>
-                <div className="circle6 "></div>
-            </div>
-
-            <div className={"circleArt2"}>
-                <div className="circle"></div>
-                <div className="circle1"></div>
-                <div className="circle2"></div>
-                <div className="circle3"></div>
-                <div className="circle4"></div>
-                <div className="circle5"></div>
-                <div className="circle6 "></div>
-            </div>
-
-            <div className={"circleArt3"}>
-                <div className="circle"></div>
-                <div className="circle1"></div>
-                <div className="circle2"></div>
-                <div className="circle3"></div>
-                <div className="circle4"></div>
-                <div className="circle5"></div>
-                <div className="circle6 "></div>
-            </div>
-
-            <div className={"headerPage"}>
-                <div className={"titlePage"}>
-                    Doctors accounts
-                </div>
-                <div className={"headerMenu"}>
-                    <ButtonMenuHeader button={menuHeader[0]}></ButtonMenuHeader>
-                    <ButtonMenuHeader button={menuHeader[1]}></ButtonMenuHeader>
-                    <ButtonMenuHeader button={menuHeader[2]}></ButtonMenuHeader>
-                    <ButtonMenuHeader button={menuHeader[3]}></ButtonMenuHeader>
-                    <ButtonMenuHeader button={menuHeader[4]}></ButtonMenuHeader>
-                </div>
-            </div>
+            <Background></Background>
+            <HeaderSubMenu
+                title={"Doctors accounts"}/>
 
             <div className={"PageGlobal"}>
                 <div className={"PageActionGlobal"}>
