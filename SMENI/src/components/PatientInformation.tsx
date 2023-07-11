@@ -1,13 +1,16 @@
 import React, { useState, useRef } from 'react';
 import { Text, View, StyleSheet, SafeAreaView, TouchableWithoutFeedback } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import { Picker } from '@react-native-picker/picker';
 import colors from '../assets/colors/colors';
+import RNPickerSelect from 'react-native-picker-select';
 
 const PatientInformation = ({ onChangeInput }) => {
   const [selectedBirthDate, setSelectedBirthDate] = useState(new Date());
   const [selectedWeight, setSelectedWeight] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const weightOptions = Array.from({ length: 301 }, (_, index) => {
+    return { label: index.toString(), value: index.toString() };
+  });
 
   const pickerRef = useRef(null);
 
@@ -61,16 +64,17 @@ const PatientInformation = ({ onChangeInput }) => {
               />
             )}
           </SafeAreaView>
-          <Text style={styles.label}>Weight:</Text>
-          <Picker
-            selectedValue={selectedWeight}
-            onValueChange={handleWeightChange}
-            style={styles.picker}
-          >
-            <Picker.Item label="Weight 1" value="weight1" />
-            <Picker.Item label="Weight 2" value="weight2" />
-            <Picker.Item label="Weight 3" value="weight3" />
-          </Picker>
+          <SafeAreaView style={styles.row}>
+            <Text style={styles.label}>Weight:</Text>
+            <SafeAreaView style={[styles.weightInput]}>
+              <RNPickerSelect
+                onValueChange={handleWeightChange}
+                style={pickerSelectStyles}
+                value={selectedWeight}
+                items={weightOptions}
+              />
+            </SafeAreaView>
+          </SafeAreaView>
         </SafeAreaView>
       </View>
     </TouchableWithoutFeedback>
@@ -86,6 +90,17 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 17,
   },
+  weightInput: {
+    borderRadius: 30,
+    backgroundColor: colors.inputBackground,
+    borderColor: colors.inputBackground,
+    color: colors.default,
+    padding:0,
+    width: '50%',
+    textAlign: 'center',
+    alignContent: 'center',
+    margin: 10,
+  },
   input: {
     borderRadius: 30,
     backgroundColor: colors.inputBackground,
@@ -96,7 +111,7 @@ const styles = StyleSheet.create({
     width: '40%',
     textAlign: 'center',
     margin: 10,
-},
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -128,7 +143,41 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 10,
     marginHorizontal: 10,
+    backgroundColor: 'black',
   },
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+		color: 'black',
+	},
+	inputAndroid: {
+    color: '#0E1012',
+    fontFamily: 'Nunito Sans',
+    fontStyle: 'normal',
+    fontWeight: '400',
+    fontSize: 16,
+    lineHeight: 32,
+    letterSpacing: 0.01,
+    marginHorizontal: 15,
+    marginVertical: -5,
+    padding: 0,
+	},
+	underline: { borderTopWidth: 0 },
+	icon: {
+		position: 'absolute',
+		backgroundColor: 'transparent',
+		borderTopWidth: 5,
+		borderTopColor: '#00000099',
+		borderRightWidth: 5,
+		borderRightColor: 'transparent',
+		borderLeftWidth: 5,
+		borderLeftColor: 'transparent',
+		width: 0,
+		height: 0,
+		top: 20,
+		right: 15,
+	},
 });
 
 export default PatientInformation;
