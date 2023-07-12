@@ -153,7 +153,7 @@ const Models = () => {
 
             <div className={"PageGlobal"}>
                 <div className={"PageActionGlobal"}>
-                    <div className={"subMenuGlobal"}>
+                    <div className={"subMenuGlobalModels"}>
                         <div className={"subMenuGlobalTitre"}>
                             <h1 className={"menuRightTopTitreDateModels menuRightTopTitreCentre menuLeftTopTitreBorder"}>Date</h1>
                             <h1 className={"menuRightTopTitreNameModels menuRightTopTitreCentre menuCenterTopTitreDateBorder"}>Name</h1>

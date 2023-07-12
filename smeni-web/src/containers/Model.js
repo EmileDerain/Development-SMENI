@@ -95,7 +95,7 @@ const Model = () => {
                 <div className={"PageActionGlobal"}>
                     <div className={"menuLeft"}>
                         <div className={"menuLeftTopBigger"}>
-                            <div className={"menuLeftTopTitre"}>
+                            <div className={"menuLeftTopTitreModel"}>
                                 <h1>Options</h1>
                             </div>
                             <div className={"optionDiv"}>

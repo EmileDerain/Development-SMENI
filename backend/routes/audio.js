@@ -15,7 +15,6 @@ router.get('/:pageNumber', audioCtrl.get10Audio);
 
 router.post('/filter/:pageNumber', audioCtrl.getFilted10Audio);
 
-router.get('/stream/:id', audioCtrl.streamAudio);
-
+router.delete('/', audioCtrl.deleteAudio);
 
 module.exports = router;

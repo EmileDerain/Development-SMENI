@@ -4,14 +4,12 @@ import {mdiTrashCanOutline} from "@mdi/js";
 import '../Models.css';
 
 const ModelsComponent = ({date, _id, modelName, loss, accuracy, modelSelected, setDialogBox, model}) => {
-    const myElementRef = useRef(null);
 
     const handleButtonClick = (action) => {
-        const element = myElementRef.current;
 
         switch (action) {
             case "select": {
-                if (element && _id !== modelSelected._id) {
+                if (_id !== modelSelected._id) {
                     setDialogBox(() => ({
                         ask: true,
                         type: "select",
@@ -22,7 +20,7 @@ const ModelsComponent = ({date, _id, modelName, loss, accuracy, modelSelected, s
                 break;
             }
             case "delete": {
-                if (element && _id !== modelSelected._id) {
+                if (_id !== modelSelected._id) {
                     setDialogBox(() => ({
                         ask: true,
                         type: "delete",
@@ -39,8 +37,7 @@ const ModelsComponent = ({date, _id, modelName, loss, accuracy, modelSelected, s
     };
 
     return (
-        <div id={_id} ref={myElementRef}
-             className={modelSelected._id === _id ? "audioDivPageSelected" : "audioDivPage"}>
+        <div id={_id} className={modelSelected._id === _id ? "audioDivPageSelected" : "audioDivPage"}>
             {accuracy === undefined ?
                 <>
                     <h1 className={"menuRightTopTitre100 menuRightTopTitreCentre"}>{modelName} : Model

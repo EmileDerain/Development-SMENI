@@ -21,6 +21,8 @@ input {
     background-color: #00cc33;
     border-top-left-radius: min(0.5vw, 1vh);
     border-top-right-radius: min(0.5vw, 1vh);
+    box-sizing: border-box;
+
     overflow: hidden;
 }
 

@@ -20,7 +20,7 @@
 
 .menuLeftTopTitre {
     width: 100%;
-    height: 12.5%;
+    height: 10%;
 
     display: flex;
     align-items: center;
@@ -42,7 +42,7 @@
 
 .menuLeftTopMenus {
     width: 100%;
-    height: 91.5%;
+    height: 90%;
 }
 
 .menuLeftTopMenusFilter {
@@ -149,12 +149,9 @@
 
     width: 100%;
 
-    font-size: min(0.5vw, 1vh);
+    font-size: var(--front_size_smaller);
 
     color: white;
-
-    /*border-bottom: solid white 1px;*/
-
 
     cursor: pointer;
 }
@@ -175,7 +172,7 @@
 
     width: 95%;
 
-    font-size: min(0.5vw, 1vh);
+    font-size: var(--front_size_smaller_2);
 
     color: white;
 
@@ -192,7 +189,7 @@
 
     width: 95%;
 
-    font-size: min(0.5vw, 1vh);
+    font-size: var(--front_size_smaller_2);
 
     color: white;
 
@@ -293,18 +290,38 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    height: 7%;
+    height: 10%;
     width: 100%;
 
     /*padding-bottom: 2%;*/
 
-    font-size: min(0.5vw, 1vh);
+    font-size: var(--front_size);
     /*font-size: 3px;*/
     /*font-size: 20px;*/
 
     color: white;
-    box-sizing: border-box;
 
+    box-sizing: border-box;
+    border-bottom: solid white 2px;
+}
+
+.menuRightTopTitreFull {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 12%;
+    width: 100%;
+
+
+    /*padding-bottom: 2%;*/
+
+    font-size: var(--front_size);
+    /*font-size: 3px;*/
+    /*font-size: 20px;*/
+
+    color: white;
+
+    box-sizing: border-box;
     border-bottom: solid white 2px;
 }
 
@@ -376,6 +393,25 @@
 
     box-sizing: border-box;
     border-bottom: solid white 1px;
+
+    cursor: pointer;
+}
+.audioDivPagFull{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 12%;
+
+    font-size: var(--front_size_smaller);
+    /*font-size: 2px;*/
+
+    color: white;
+
+    box-sizing: border-box;
+    border-bottom: solid white 1px;
+
     cursor: pointer;
 }
 
@@ -442,19 +478,32 @@
     justify-content: center;
 
     width: 100%;
-    height: 10%;
+    height: 12%;
 
     font-size: var(--front_size_smaller);
 
     color: white;
 
     border-bottom: solid white 1px;
+    box-sizing: border-box;
+
     background-color: #6BB2E6;
 
     /*cursor: pointer;*/
 
 }
 
+
+.audioDivPageSelectedInfo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 12%;
+
+    background-color: #6BB2E6;
+}
 
 /*#########################*/
 .menuRightBot {

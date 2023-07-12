@@ -1,7 +1,16 @@
 :root {
-    --front_size: min(0.7vw, 1.4vh);
-    --front_size_smaller: min(0.6vw, 1.2vh);
+    --front_size: min(0.6vw, 1.2vh);
+    --front_size_smaller: min(0.5vw, 1vh);
+    --front_size_smaller_2:min(0.4vw, 0.8vh);
+
 }
+
+/*:root {*/
+/*    --front_size: 1px;*/
+/*    --front_size_smaller:1px;*/
+/*    --front_size_smaller_2:1px;*/
+/*}*/
+
 
 body {
     font-family: Nunito Sans, sans-serif;

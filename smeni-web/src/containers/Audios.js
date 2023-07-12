@@ -1,27 +1,14 @@
-import {useDispatch, useSelector} from "react-redux";
 import React, {useEffect, useRef, useState} from "react";
-import {setAudios, setStreamAudio} from "../redux/actions/smeniActions";
 import ProgressBar from './ProgressBar';
 import AudioComponent from './component/AudioComponent.js'
-import {
-    mdiContentSave,
-    mdiDoctor,
-    mdiFolderPlayOutline,
-    mdiHomeVariantOutline,
-    mdiReload,
-    mdiFolderOutline,
-    mdiCheckboxBlankOutline,
-    mdiCheckboxMarked,
-    mdiChevronDown,
-} from "@mdi/js";
-import Icon from "@mdi/react";
 
 import './Global.css';
 import './Audios.css';
-import {Link} from "react-router-dom";
 import Background from "./component/Background";
 import HeaderSubMenu from "./component/HeaderSubMenu";
 import Filter from "./component/Filter";
+import DialogBox from "./component/DialogBox";
+import config from "../config/config";
 
 const Audios = () => {
     console.log("RENDER Audios");
@@ -34,7 +21,14 @@ const Audios = () => {
 
     const [audios, setAudios] = useState([]);
 
-    const [path, setPath] = useState(undefined);
+    const [selectedAudio, setSelectedAudio] = useState(undefined);
+
+    const [dialogBox, setDialogBox] = useState({
+        ask: false,
+        audioAsked: undefined,
+        type: undefined,
+        message: "",
+    });
 
     let currentPage = useRef(1);
     let maxPage = useRef(1);
@@ -96,33 +90,36 @@ const Audios = () => {
     }
 
     useEffect(() => {
-        refAudios.current.addEventListener('scroll', test);
+        refAudios.current.addEventListener('scroll', scroll);
 
         return () => {
             if (refAudios.current)
-                refAudios.current.removeEventListener('scroll', test);
+                refAudios.current.removeEventListener('scroll', scroll);
         };
     }, []);
 
     useEffect(() => {
         console.log("ON LOAD !! filterSelected:", filterSelected);
-        refAudios.current.addEventListener('scroll', test);
+        refAudios.current.addEventListener('scroll', scroll);
 
-        setFilterSelected(filterSelected);
-        currentPage.current = 1;
-        setAudios([]);
-        setPath(undefined);
+        if (!sendReq.current) {
+            sendReq.current = true;
+            setFilterSelected(filterSelected);
+            currentPage.current = 1;
+            setAudios([]);
+            setSelectedAudio(undefined);
 
-        getAudioFilesFilter('auto');
+            getAudioFilesFilter();
+        }
+
 
         return () => {
             if (refAudios.current)
-                refAudios.current.removeEventListener('scroll', test);
+                refAudios.current.removeEventListener('scroll', scroll);
         };
     }, [filterSelected]);
 
-    const getAudioFilesFilter = (info) => {
-        console.log("Req getAudioFilesFilter filterSelected", info, filterSelected);
+    const getAudioFilesFilter = () => {
         fetch('http://localhost:2834/api/audio/filter/' + currentPage.current, {
             method: 'POST',
             headers: {
@@ -148,13 +145,7 @@ const Audios = () => {
             });
     };
 
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-
-    function test() {
-        console.log("useEffect Scoll: ", currentPage.current, sendReq.current, filterSelected)
+    function scroll() {
         if (refAudios.current) {
 
             const {scrollTop, scrollHeight, clientHeight} = refAudios.current;
@@ -162,22 +153,52 @@ const Audios = () => {
             const currentScrollPercentage = (scrollTop / totalScrollableDistance) * 100;
             const currentScrollDistance = totalScrollableDistance - scrollTop
 
-            console.log("currentScrollPercentage:", currentScrollPercentage);
-            console.log("currentScrollPercentage === 100", currentScrollPercentage === 100)
-            console.log("currentScrollDistance", currentScrollDistance)
-            console.log("currentScrollDistance < 40", currentScrollDistance < 40)
-            console.log("isNaN(currentScrollPercentage)", isNaN(currentScrollPercentage))
-
-            console.log("currentPage.current", currentPage.current)
-            console.log("maxPage.current >= currentPage.current", maxPage.current >= currentPage.current)
-            console.log(" !sendReq.current", !sendReq.current)
-
             if ((isNaN(currentScrollPercentage) || currentScrollPercentage === 100 || currentScrollDistance < 40) && maxPage.current >= currentPage.current && !sendReq.current) {
                 sendReq.current = true;
-                console.log('getAudioFilesFilter')
-                getAudioFilesFilter('scroll');
+                getAudioFilesFilter();
             }
         }
+    }
+
+    const dialogBoxYes = () => {
+        switch (dialogBox.type) {
+            case "delete": {
+                fetch(config.serverUrl + `api/audio?id=${dialogBox.audioAsked._id}`, {
+                    method: 'DELETE',
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('An error occurred while deleting data.');
+                        }
+                        setAudios(prevState => prevState.filter(audio => audio._id !== dialogBox.audioAsked._id))
+                        if (selectedAudio._id === dialogBox.audioAsked._id)
+                            setSelectedAudio(undefined);
+                        getAudioFilesFilter();
+                        setDialogBox(() => ({
+                            ask: false,
+                            type: undefined,
+                            modelAsked: undefined,
+                            message: "",
+                        }));
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
+    const dialogBoxNo = () => {
+        setDialogBox(() => ({
+            ask: false,
+            type: undefined,
+            modelAsked: undefined,
+            message: "",
+        }));
     }
 
     return (
@@ -228,24 +249,27 @@ const Audios = () => {
 
                     <div className={"menuRight"}>
 
-                        <div className={path !== undefined ? "menuRightTop" : "menuRightTopFull"}>
-                            <div className={"menuRightTopTitre"}>
+                        <div className={selectedAudio !== undefined ? "menuRightTop" : "menuRightTopFull"}>
+                            <div
+                                className={selectedAudio !== undefined ? "menuRightTopTitreFull" : "menuRightTopTitre"}>
                                 <h1 className={"menuRightTopTitreDate menuRightTopTitreCentre menuRightTopTitreDateBorder"}>Date</h1>
                                 <h1 className={"menuRightTopTitreName menuRightTopTitreCentre menuRightTopTitreBorder"}>Name</h1>
-                                <h1 className={"menuRightTopTitreDoctor menuRightTopTitreCentre menuRightTopTitreBorder"}>Doctor</h1>
+                                <h1 className={"menuRightTopTitreDoctor menuRightTopTitreCentre menuRightTopTitreBorder"}>Label</h1>
                                 <h1 className={"menuRightTopTitreTime menuRightTopTitreCentre menuRightTopTitreBorder"}>Time</h1>
                                 <h1 className={"menuRightTopTitreAction menuRightTopTitreCentre menuRightTopTitreActionBorder"}>Action</h1>
                             </div>
                             <div ref={refAudios} className={"menuRightTopListAudio"}>
                                 {audios.map((item, index) => {
                                     return <AudioComponent key={index}
+                                                           audio={item}
                                                            date={item.date}
                                                            audioName={item.audioName}
-                                                           doctor={item.doctor}
-                                                           time={item.time}
-                                                           path={path}
-                                                           setPath={setPath}
-                                                           audioPath={item.path}/>;
+                                                           label={item.label}
+                                                           duration={item.duration}
+                                                           selectedAudio={selectedAudio}
+                                                           setSelectedAudio={setSelectedAudio}
+                                                           setDialogBox={setDialogBox}
+                                    />;
                                 })}
                                 {currentPage.current < maxPage.current ?
                                     <div className={"audioDivPage"}>
@@ -265,10 +289,10 @@ const Audios = () => {
                             </div>
                         </div>
 
-                        {path !== undefined ?
+                        {selectedAudio !== undefined ?
                             <div className={"menuRightBot"}>
                                 <ProgressBar
-                                    path={path}
+                                    audio={selectedAudio}
                                 />
                             </div> :
                             <></>}
@@ -276,6 +300,14 @@ const Audios = () => {
                     </div>
                 </div>
             </div>
+
+            <DialogBox
+                ask={dialogBox.ask}
+                message={dialogBox.message}
+                functionYes={dialogBoxYes}
+                functionNo={dialogBoxNo}
+            />
+
         </div>
     )
 }

@@ -12,10 +12,10 @@ import {
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
-const ProgressBar = (audioInfo) => {
+const ProgressBar = ({audio}) => {
     // console.log('path', audioInfo.path)
 
-    const url = "http://localhost:2834/audioFiles/" + audioInfo.path
+    const url = "http://localhost:2834/audioFiles/" + audio.path
 
     // console.log('url', url)
     // state
@@ -75,7 +75,7 @@ const ProgressBar = (audioInfo) => {
     useEffect(() => {
         console.log("audioInfo change")
         setIsPlaying(false);
-    }, [audioInfo]);
+    }, [audio]);
 
     return (
         <div className={"player"}>
@@ -94,12 +94,12 @@ const ProgressBar = (audioInfo) => {
                 </div>
 
                 <div className={"nameDiv menuRightTopTitreCentre"}>
-                    {audioInfo.path}
+                    {audio.audioName}
                 </div>
 
                 {/* current time */}
                 <div className={"currentTime menuRightTopTitreCentre"}>
-                    {calculateTime(currentTime)}/{calculateTime(duration)}
+                    {calculateTime(currentTime)}/{calculateTime(audio.duration)}
                 </div>
 
                 {/* duration */}

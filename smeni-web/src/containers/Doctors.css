@@ -1,3 +1,51 @@
+.menuRightGlobal{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    height: 100%;
+}
+
+.subMenuGlobalSearch{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 50%;
+    height: 10%;
+
+    border-radius: min(0.5vw, 1vh);
+
+    background-color: #1C6BA4;
+}
+
+.subMenuGlobalSearchIcon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: min(2vw, 4vh);
+    height: min(2vw, 4vh);
+
+    color: white;
+}
+
+.custom-input-doctor{
+    color: #000000;
+    text-align: center;
+    padding: 5px;
+    outline: none;
+
+    width: 80%;
+    height: 20%;
+
+    font-size: 100%;
+
+    border-radius: min(0.5vw, 1vh);
+}
+
 .subMenuGlobal {
     display: flex;
     flex-direction: column;
@@ -5,7 +53,7 @@
     justify-content: flex-start;
 
     width: 100%;
-    height: 100%;
+    height: 85%;
 
 
     border-radius: min(0.5vw, 1vh);
@@ -45,12 +93,7 @@
     height: 100%;
 }
 
-.menuRightTopTitrePasswordDoctors {
-    width: 10%;
-    height: 100%;
-}
-
 .menuRightTopTitreActionDoctors {
-    width: 10%;
+    width: 20%;
     height: 100%;
 }

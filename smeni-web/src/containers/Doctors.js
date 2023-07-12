@@ -1,14 +1,14 @@
 import React, {useEffect, useRef, useState} from "react";
 import {
-    mdiCog,
     mdiContentSave,
     mdiDoctor,
-    mdiExitToApp,
+    mdiMagnify,
     mdiFolderPlayOutline,
     mdiHomeVariantOutline,
     mdiReload,
-    mdiFolderOutline,
     mdiTrashCanOutline,
+    mdiPencil,
+    mdiListBoxOutline,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
@@ -86,11 +86,12 @@ const Doctors = () => {
 
     function Doctor(info) {
         return (
-            <div id={info.doctor._id} className={ "audioDivPage"}>
+            <div id={info.doctor._id} className={"audioDivPage"}>
                 <h1 className={"menuRightTopTitreNameDoctors menuRightTopTitreCentre"}>{info.doctor.firstName} {info.doctor.lastName}</h1>
                 <h1 className={"menuRightTopTitreEmailDoctors menuRightTopTitreCentre"}>{info.doctor.mail}</h1>
-                <h1 className={"menuRightTopTitrePasswordDoctors menuRightTopTitreCentre"}>****</h1>
                 <div className={"menuRightTopTitreActionDoctors menuRightTopTitreCentre"}>
+                    <Icon path={mdiListBoxOutline} className={"iconMenuHeaderPage cursorHoverPointerRed"} size={1}/>
+                    <Icon path={mdiPencil} className={"iconMenuHeaderPage cursorHoverPointerRed"} size={1}/>
                     <Icon path={mdiTrashCanOutline} className={"iconMenuHeaderPage cursorHoverPointerRed"} size={1}/>
                 </div>
             </div>
@@ -112,32 +113,35 @@ const Doctors = () => {
 
             <div className={"PageGlobal"}>
                 <div className={"PageActionGlobal"}>
-                    <div className={"subMenuGlobal"}>
-                        <div className={"subMenuGlobalTitre"}>
-                            <h1 className={"menuRightTopTitreNameDoctors menuRightTopTitreCentre menuLeftTopTitreBorder"}>Name</h1>
-                            <h1 className={"menuRightTopTitreEmailDoctors menuRightTopTitreCentre menuCenterTopTitreDateBorder"}>Email</h1>
-                            <h1 className={"menuRightTopTitrePasswordDoctors menuRightTopTitreCentre menuCenterTopTitreDateBorder"}>Password</h1>
-                            <h1 className={"menuRightTopTitreActionDoctors menuRightTopTitreCentre menuLeftTopTitreBorder"}>Action</h1>
+                    <div className={"menuRightGlobal"}>
+
+                        <div className={"subMenuGlobalSearch"}>
+                            <div className={"subMenuGlobalSearchIcon"}>
+                                <Icon path={mdiMagnify} className={"iconMenuHeaderPage"} size={2}/>
+                            </div>
+                            <input type="text" placeholder="Search" className={"custom-input-doctor"} id={"modelName"}
+                                // onChange={(event) => getLabelsInput(event.target.value)}
+                            >
+                            </input>
                         </div>
 
-                        <div className={"menuRightTopListAudio"}>
-                            {doctorList}
+                        <div className={"subMenuGlobal"}>
+                            <div className={"subMenuGlobalTitre"}>
+                                <h1 className={"menuRightTopTitreNameDoctors menuRightTopTitreCentre menuLeftTopTitreBorder"}>Name</h1>
+                                <h1 className={"menuRightTopTitreEmailDoctors menuRightTopTitreCentre menuCenterTopTitreDateBorder"}>Email</h1>
+                                <h1 className={"menuRightTopTitreActionDoctors menuRightTopTitreCentre menuLeftTopTitreBorder"}>Action</h1>
+                            </div>
+
+                            <div className={"menuRightTopListAudio"}>
+                                {doctorList}
+                            </div>
                         </div>
-
-
                     </div>
+
                 </div>
             </div>
         </div>
     )
-}
-
-function ButtonMenuHeader(info) {
-    return (
-        <Link className={"iconMenuHeaderDivPage"} to={info.button.link}>
-            <Icon path={info.button.mdi} className={"iconMenuHeaderPage"} size={2}/>
-        </Link>
-    );
 }
 
 export default Doctors;

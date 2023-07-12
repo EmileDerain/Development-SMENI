@@ -3,6 +3,7 @@ import {
     mdiCheckboxBlankOutline,
     mdiCheckboxMarked,
     mdiChevronDown,
+    mdiChevronUp,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
@@ -143,14 +144,17 @@ const Filter = ({name, urlSearch, typeFilter, filterSelectedSpecific, removeFilt
                 <div className={showLabels ? "iconFolderOrderByDivPageInfoOpen" : "iconFolderOrderByDivPageInfo"}
                      onClick={showLabel}>
                     <div className={"iconMenuLeftBot"}>
-                        <Icon path={mdiChevronDown} className={"iconMenuHeaderPage"} size={2}/>
+                        {showLabels ?
+                            <Icon path={mdiChevronUp} className={"iconMenuHeaderPage"} size={2}/>
+                            :
+                            <Icon path={mdiChevronDown} className={"iconMenuHeaderPage"} size={2}/>
+                        }
                     </div>
                     <h1>{name}</h1>
                 </div>
                 {showLabels ?
                     <div className={"iconFolderOrderByDivSearch"}>
                         <input type="text" placeholder="Search" className={"custom-input-filter"} id={"modelName"}
-                            // value={textSearched}
                                onChange={(event) => getLabelsInput(event.target.value)}>
                         </input>
                     </div> : <></>
