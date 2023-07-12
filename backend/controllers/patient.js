@@ -19,8 +19,9 @@ exports.createPatient = (req, res) => {
         .catch(error => res.status(400).json({error, message: 'Error while creating patient !'}));
 };
 
-exports.getAllPatient = (req, res) => {
-    Patient.find()
+exports.getAllPatients = (req, res) => {
+    const numberToSkip = req.body.numberPatientToSkip;
+    Patient.find().skip(numberToSkip).limit(5)
         .then(patients => res.status(200).json({"patients": patients, message: 'All the patients have been retrieved'}))
         .catch(error => res.status(400).json({error, message: 'Error while retrieving all the patients'}));
 }

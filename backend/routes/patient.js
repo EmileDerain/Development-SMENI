@@ -14,5 +14,6 @@ router.post('/', userCtrl.getAllPatientFilter);
 
 
 router.post('/createPatient', userCtrl.createPatient);
+router.post('/getAllPatients', userCtrl.getAllPatients);
 
 module.exports = router;

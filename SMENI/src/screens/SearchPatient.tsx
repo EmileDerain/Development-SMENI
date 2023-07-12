@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, TextInput} from "react-native";
+import {SafeAreaView, StyleSheet, Text, TextInput} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
 import {WithLocalSvg} from "react-native-svg";
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {URL_GET_PATIENT} from "../utils/path";
 
 
 const SearchPatient = () => {
@@ -14,6 +15,49 @@ const SearchPatient = () => {
 
     const addPatientIcon = require('../assets/images/plus-solid.svg');
     const searchIcon = require('../assets/images/magnifying-glass-solid.svg');
+
+    const [numberPatientToSkip, setNumberPatientToSkip] = useState(0);
+    //const [patients, setPatients] = useState([]);
+    let patients: any = [];
+
+    const getPatients = async () => {
+        try {
+            const response = await fetch(URL_GET_PATIENT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    numberPatientToSkip: numberPatientToSkip,
+                }),
+            });
+            const json = await response.json();
+            //setNumberPatientToSkip(numberPatientToSkip + json.patients.length);
+            setNumberPatientToSkip(0);
+            return json.patients;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    getPatients().then(r => {
+        r.forEach((element: { _id: any; __v: any; birthDate:any; height:any; weight:any}) => {
+            delete element._id;
+            delete element.__v;
+            delete element.birthDate;
+            delete element.height;
+            delete element.weight;
+        })
+        console.log(r);
+        const array = r.map((patient: any) => {
+            return JSON.stringify(patient);
+        });
+        console.log(array);
+        patients = r;
+        //setPatients(array);
+    }).catch(e => console.log(e));
+
+    console.log("coucou", patients);
 
     return (// KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.
         <KeyboardAwareScrollView style={styles.container}>
@@ -34,8 +78,18 @@ const SearchPatient = () => {
                               }
                               }/>
             </SafeAreaView>
+            <Text>All Patients</Text>
             <SafeAreaView style={styles.content}>
-                {/*    */}
+                <Text>{numberPatientToSkip}</Text>
+                {patients.map((patient) => {
+                        return (
+                            <SafeAreaView>
+                                <Text>{patient}</Text>
+                            </SafeAreaView>
+                        )
+                    }
+                )}
+
             </SafeAreaView>
         </KeyboardAwareScrollView>
     )
