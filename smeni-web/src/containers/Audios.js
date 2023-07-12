@@ -23,37 +23,14 @@ import Background from "./component/Background";
 import HeaderSubMenu from "./component/HeaderSubMenu";
 import Filter from "./component/Filter";
 
-const menuHeader = [
-    {
-        name: "Home",
-        mdi: mdiHomeVariantOutline,
-        link: '/',
-    },
-    {
-        name: "Reload AI",
-        mdi: mdiReload,
-        link: '/model',
-    }, {
-        name: "AI",
-        mdi: mdiContentSave,
-        link: '/models',
-    },
-    {
-        name: "Health sounds",
-        mdi: mdiFolderPlayOutline,
-        link: '/audios',
-    },
-    {
-        name: "Doctor accounts",
-        mdi: mdiDoctor,
-        link: '/doctors',
-    },
-]
-
 const Audios = () => {
     console.log("RENDER Audios");
 
-    const [filterSelected, setFilterSelected] = useState([]);
+    const [filterSelected, setFilterSelected] = useState({
+        label: [],
+        doctor: [],
+        patient: [],
+    });
 
     const [audios, setAudios] = useState([]);
 
@@ -65,9 +42,61 @@ const Audios = () => {
 
     const refAudios = useRef(null);
 
+    const removeFilter = (type, filterName) => {
+        console.log("removeFilter", filterName);
+
+        switch (type) {
+            case "label":
+                setFilterSelected(prevState => ({
+                    ...prevState,
+                    label: prevState.label.filter(item => item !== filterName)
+                }));
+                break;
+            case "doctor":
+                setFilterSelected(prevState => ({
+                    ...prevState,
+                    doctor: prevState.doctor.filter(item => item !== filterName)
+                }));
+                break;
+            case "patient":
+                setFilterSelected(prevState => ({
+                    ...prevState,
+                    patient: prevState.patient.filter(item => item !== filterName)
+                }));
+                break;
+            default:
+                console.log("filterName doesn't exist: ", filterName);
+        }
+    }
+
+    const addFilter = (type, filterName) => {
+        console.log("addFilter", filterName);
+        switch (type) {
+            case "label":
+                setFilterSelected(prevState => ({
+                    ...prevState,
+                    label: [...prevState.label, filterName]
+                }));
+                break;
+            case "doctor":
+                setFilterSelected(prevState => ({
+                    ...prevState,
+                    doctor: [...prevState.doctor, filterName]
+                }));
+                break;
+            case "patient":
+                setFilterSelected(prevState => ({
+                    ...prevState,
+                    patient: [...prevState.patient, filterName]
+                }));
+                break;
+            default:
+                console.log("filterName doesn't exist: ", filterName);
+        }
+    }
+
     useEffect(() => {
         refAudios.current.addEventListener('scroll', test);
-        setFilterSelected([]);
 
         return () => {
             if (refAudios.current)
@@ -77,20 +106,29 @@ const Audios = () => {
 
     useEffect(() => {
         console.log("ON LOAD !! filterSelected:", filterSelected);
+        refAudios.current.addEventListener('scroll', test);
+
         setFilterSelected(filterSelected);
         currentPage.current = 1;
         setAudios([]);
-        getAudioFilesFilter();
+        setPath(undefined);
+
+        getAudioFilesFilter('auto');
+
+        return () => {
+            if (refAudios.current)
+                refAudios.current.removeEventListener('scroll', test);
+        };
     }, [filterSelected]);
 
-    const getAudioFilesFilter = () => {
-        console.log("Req getAudioFilesFilter filterSelected", filterSelected);
+    const getAudioFilesFilter = (info) => {
+        console.log("Req getAudioFilesFilter filterSelected", info, filterSelected);
         fetch('http://localhost:2834/api/audio/filter/' + currentPage.current, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(filterSelected)
+            body: JSON.stringify({filter: filterSelected, pageNumber: currentPage.current})
         })
             .then(response => {
                 if (!response.ok) {
@@ -115,8 +153,8 @@ const Audios = () => {
     }
 
 
-    const test = () => {
-        console.log("useEffect Scoll: ", currentPage.current, sendReq.current)
+    function test() {
+        console.log("useEffect Scoll: ", currentPage.current, sendReq.current, filterSelected)
         if (refAudios.current) {
 
             const {scrollTop, scrollHeight, clientHeight} = refAudios.current;
@@ -137,7 +175,7 @@ const Audios = () => {
             if ((isNaN(currentScrollPercentage) || currentScrollPercentage === 100 || currentScrollDistance < 40) && maxPage.current >= currentPage.current && !sendReq.current) {
                 sendReq.current = true;
                 console.log('getAudioFilesFilter')
-                getAudioFilesFilter();
+                getAudioFilesFilter('scroll');
             }
         }
     }
@@ -160,20 +198,26 @@ const Audios = () => {
                                     <Filter
                                         name={"Label"}
                                         urlSearch={'http://localhost:2834/api/cnn/labels'}
-                                        filterSelected={filterSelected}
-                                        setFilterSelected={setFilterSelected}
+                                        typeFilter={"label"}
+                                        filterSelectedSpecific={filterSelected.label}
+                                        removeFilterSelected={removeFilter}
+                                        addFilterSelected={addFilter}
                                     />
                                     <Filter
                                         name={"Doctor"}
                                         urlSearch={'http://localhost:2834/api/user/labels'}
-                                        filterSelected={filterSelected}
-                                        setFilterSelected={setFilterSelected}
+                                        typeFilter={"doctor"}
+                                        filterSelectedSpecific={filterSelected.doctor}
+                                        removeFilterSelected={removeFilter}
+                                        addFilterSelected={addFilter}
                                     />
                                     <Filter
                                         name={"Patient"}
                                         urlSearch={'http://localhost:2834/api/patient/labels'}
-                                        filterSelected={filterSelected}
-                                        setFilterSelected={setFilterSelected}
+                                        typeFilter={"patient"}
+                                        filterSelectedSpecific={filterSelected.patient}
+                                        removeFilterSelected={removeFilter}
+                                        addFilterSelected={addFilter}
                                     />
                                 </div>
                             </div>
@@ -184,7 +228,7 @@ const Audios = () => {
 
                     <div className={"menuRight"}>
 
-                        <div className={"menuRightTop"}>
+                        <div className={path !== undefined ? "menuRightTop" : "menuRightTopFull"}>
                             <div className={"menuRightTopTitre"}>
                                 <h1 className={"menuRightTopTitreDate menuRightTopTitreCentre menuRightTopTitreDateBorder"}>Date</h1>
                                 <h1 className={"menuRightTopTitreName menuRightTopTitreCentre menuRightTopTitreBorder"}>Name</h1>

@@ -6,6 +6,7 @@ const config = require("../CNN/config/config");
 const fs = require("fs");
 const Label = require("../models/label");
 const Model = require("../models/model");
+const Audio = require("../models/audio");
 
 exports.renameFile = (req, res, next) => {
     console.log("renameFile predict")
@@ -45,6 +46,24 @@ exports.getAllModel = (req, res) => {
             "selectedModel": JSON.parse(fs.readFileSync('./CNN/config/selectedModel.json', 'utf-8'))
         }))
         .catch(error => res.status(400).json({"status": 400, reason: error}));
+};
+
+exports.getAllModelBySection = async (req, res) => {
+    const sectionSize = config.sizeOfSection;
+    const {page} = req.query;
+
+    const count = await Model.find().countDocuments();
+
+    Model.find().skip((page - 1) * sectionSize).limit(sectionSize)
+        .then(models => res.status(200).json({
+            "count": Math.ceil(count / sectionSize),
+            "models": models,
+            "selectedModel": JSON.parse(fs.readFileSync('./CNN/config/selectedModel.json', 'utf-8'))
+        }))
+        .catch(error => {
+            console.log(error);
+            res.status(400).json({"status": 400, reason: error})
+        });
 };
 
 exports.selectModel = (req, res) => {
@@ -138,8 +157,6 @@ exports.train = async (req, res) => {
             serverConf.IO.emit("receive_cnn_logs", dataToSendTab[i]);
         }
 
-        // serverConf.IO.emit("receive_cnn_logs", dataToSend);
-        // console.log(dataToSend);
         console.log("serverConf.IO.emit");
     });
 
@@ -187,6 +204,26 @@ exports.train = async (req, res) => {
     });
 };
 
+exports.init100Models = async (req, res) => {
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois sont indexés à partir de 0
+    const year = date.getFullYear();
+
+    const formattedDate = `${day}/${month}/${year}`;
+
+    for (let i = 0; i < 100; i++) {
+        const model = new Model({
+            modelName: "name" + i,
+            path: 'name' + i + '.h5',
+            date: formattedDate,
+            loss: 0,
+            accuracy: 1,
+        });
+        await model.save()
+    }
+}
+
 
 exports.predict = async (req, res) => {
     console.log("Predict: ", req.file.path);
@@ -229,7 +266,9 @@ exports.predict = async (req, res) => {
 };
 
 exports.deleteModel = (req, res) => {
-    Model.findByIdAndDelete(req.params.id)
+    const {id} = req.query;
+
+    Model.findByIdAndDelete(id)
         .then(() => res.status(200).json({message: 'Model delete !'}))
         .catch(error => res.status(400).json({error}));
 };

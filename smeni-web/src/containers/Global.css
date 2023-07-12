@@ -1,3 +1,8 @@
+:root {
+    --front_size: min(0.7vw, 1.4vh);
+    --front_size_smaller: min(0.6vw, 1.2vh);
+}
+
 body {
     font-family: Nunito Sans, sans-serif;
 }
@@ -156,7 +161,7 @@ a {
     border-width: 0px 0px 0px 1px;
 }
 
-.cursorHoverPointerRed:hover{
+.cursorHoverPointerRed:hover {
     cursor: pointer;
     color: #9C1A1C;
 }
@@ -211,14 +216,14 @@ a {
 
 .iconMenuHeaderPage {
     z-index: 2;
-
-    /*background-color: red;*/
-    /*opacity: 0.5;*/
-
     cursor: pointer;
 }
 
-.noCursor{
+/*.iconMenuHeaderPage:hover {*/
+/*    border-bottom: white solid 3px;*/
+/*}*/
+
+.noCursor {
     cursor: default;
 }
 
@@ -283,6 +288,6 @@ a {
 
 /*#########################*/
 
-.displayNone{
+.displayNone {
     display: none;
 }

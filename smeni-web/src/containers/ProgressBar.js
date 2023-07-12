@@ -31,9 +31,14 @@ const ProgressBar = (audioInfo) => {
 
     useEffect(() => {
         const seconds = Math.floor(audioPlayer.current.duration);
-        setDuration(seconds);
         progressBar.current.max = seconds;
     }, [audioPlayer?.current?.loadedmetadata, audioPlayer?.current?.readyState]);
+
+
+    const onLoadedMetadata = ()=>{
+        const seconds = Math.floor(audioPlayer.current.duration);
+        setDuration(seconds);
+    }
 
     const calculateTime = (time) => `${(`0${Math.floor(time / 60)}`).slice(-2)}:${(`0${Math.floor(time % 60)}`).slice(-2)}`;
 
@@ -74,7 +79,7 @@ const ProgressBar = (audioInfo) => {
 
     return (
         <div className={"player"}>
-            <audio ref={audioPlayer} src={url}/>
+            <audio ref={audioPlayer} src={url} onLoadedMetadata={onLoadedMetadata}/>
 
             {/* progress bar */}
             <div className={"progressBarDiv"}>
@@ -94,7 +99,7 @@ const ProgressBar = (audioInfo) => {
 
                 {/* current time */}
                 <div className={"currentTime menuRightTopTitreCentre"}>
-                    {calculateTime(currentTime)}
+                    {calculateTime(currentTime)}/{calculateTime(duration)}
                 </div>
 
                 {/* duration */}

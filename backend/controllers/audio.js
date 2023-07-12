@@ -26,7 +26,7 @@ exports.saveAudio = async (req, res) => {
     console.log("req.file:", req.file);
 
     const duration = await getAudioDurationInSeconds("./CNN/dataStemoscope/Test/" + req.file.path).then((duration) => {
-        return duration;
+        return duration - 1;  //Difference of lib in the front and the back
     })
 
     const date = new Date();
@@ -91,25 +91,30 @@ exports.get10Audio = async (req, res) => {
 
 
 exports.getFilted10Audio = async (req, res) => {
+    console.log("req.body2:", req.body);
+
     const nbAudio = 11;
 
-    const labelList = ["Murmur", "Normal", "Artifact", "Extrastole", "Extrahls"]
     const orConditionsLabels = [];
     const orConditionsDoctor = [];
+    const orConditionsPatient = [];
 
     const pageNumber = req.body.pageNumber;
 
-    console.log("req.body2:", req.body);
 
-    for (let i = 0; i < req.body.length; i++) {
-        if (labelList.includes(req.body[i]))
-            orConditionsLabels.push({label: req.body[i].toLowerCase()})
-        else
-            orConditionsDoctor.push({doctor: req.body[i]})
+    for (let i = 0; i < req.body.filter.label.length; i++) {
+        const regex = new RegExp(`\\b${req.body.filter.label[i]}`, "i");
+        orConditionsLabels.push({label:{$regex: regex}})
     }
 
-    console.log(orConditionsLabels);
-    console.log(orConditionsDoctor);
+    for (let i = 0; i < req.body.filter.doctor.length; i++) {
+        const regex = new RegExp(`\\b${req.body.filter.doctor[i]}`, "i");
+        orConditionsLabels.push({doctor:{$regex: regex}})
+    }
+    for (let i = 0; i < req.body.filter.patient.length; i++) {
+        const regex = new RegExp(`\\b${req.body.filter.patient[i]}`, "i");
+        orConditionsLabels.push({patient:{$regex: regex}})
+    }
 
     if (orConditionsLabels.length === 0)
         orConditionsLabels.push({})
@@ -117,19 +122,30 @@ exports.getFilted10Audio = async (req, res) => {
     if (orConditionsDoctor.length === 0)
         orConditionsDoctor.push({})
 
+    if (orConditionsPatient.length === 0)
+        orConditionsPatient.push({})
+
+    console.log(orConditionsLabels);
+    console.log(orConditionsDoctor);
+    console.log(orConditionsPatient);
+
     const audioCount = await Audio.find({
         $and: [
             {$or: orConditionsLabels},
             {$or: orConditionsDoctor},
+            {$or: orConditionsPatient},
         ]
     }).countDocuments();
+
+    console.log('Nb audioCount: ', audioCount)
 
     Audio.find({
         $and: [
             {$or: orConditionsLabels},
             {$or: orConditionsDoctor},
+            {$or: orConditionsPatient},
         ]
-    }).skip((req.params.pageNumber - 1) * nbAudio).limit(nbAudio)
+    }).skip((pageNumber - 1) * nbAudio).limit(nbAudio)
         .then(audios => res.status(200).json({
             "status": 200,
             "audioCount": Math.ceil(audioCount / nbAudio),

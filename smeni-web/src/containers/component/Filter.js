@@ -10,7 +10,7 @@ import '../Global.css';
 import '../Audios.css';
 import './Filter.css';
 
-const Filter = ({name, urlSearch, filterSelected, setFilterSelected}) => {
+const Filter = ({name, urlSearch, typeFilter, filterSelectedSpecific, removeFilterSelected, addFilterSelected}) => {
     console.log("RENDER DoctorFilter");
 
     const [labels, setLabels] = useState([]);
@@ -55,29 +55,29 @@ const Filter = ({name, urlSearch, filterSelected, setFilterSelected}) => {
 
     function ListLabel(info) {
         const myElementRef = useRef();
-        console.log("filrer filterSelected:", filterSelected)
+        console.log("filrer filterSelected:", filterSelectedSpecific)
 
         const selectFilter = () => {
-            console.log("filrer2 filterSelected:", filterSelected)
+            console.log("filrer2 filterSelected:", filterSelectedSpecific)
 
             const element = myElementRef.current;
             if (element) {
-                if (filterSelected.includes(info.button[0])) {
-                    setFilterSelected(prevItems => prevItems.filter(item => item !== info.button[0]));
-                    console.log("filterSelected supp");
+                if (filterSelectedSpecific.includes(info.button[0])) {
+                    removeFilterSelected(typeFilter, info.button[0]);
+                    console.log("filterSelectedSpecific supp");
                 } else {
-                    setFilterSelected(prevItems => [...prevItems, info.button[0]]);
-                    console.log("filterSelected add");
+                    addFilterSelected(typeFilter, info.button[0]);
+                    console.log("filterSelectedSpecific add");
                 }
             }
         };
 
         return (
             <div ref={myElementRef}
-                 className={filterSelected.includes(info.button[0]) ? "iconFolderOrderByDivPageSelected" : "iconFolderOrderByDivPage"}
+                 className={filterSelectedSpecific.includes(info.button[0]) ? "iconFolderOrderByDivPageSelected" : "iconFolderOrderByDivPage"}
                  onClick={selectFilter}>
                 <div className={"iconMenuLeftBot"}>
-                    {filterSelected.includes(info.button[0]) ?
+                    {filterSelectedSpecific.includes(info.button[0]) ?
                         <Icon path={mdiCheckboxMarked} className={"iconMenuHeaderPage"} size={1}/>
                         :
                         <Icon path={mdiCheckboxBlankOutline} className={"iconMenuHeaderPage"} size={1}/>
@@ -125,8 +125,16 @@ const Filter = ({name, urlSearch, filterSelected, setFilterSelected}) => {
     }
 
     const showLabel = () => {
+        setLabels([]);
+        currentPage.current = 1;
         getLabels('')
         setShowLabels(prevState => !prevState)
+    }
+
+    const getLabelsInput = (filter) => {
+        setLabels([]);
+        currentPage.current = 1;
+        getLabels(filter);
     }
 
     return (
@@ -143,7 +151,7 @@ const Filter = ({name, urlSearch, filterSelected, setFilterSelected}) => {
                     <div className={"iconFolderOrderByDivSearch"}>
                         <input type="text" placeholder="Search" className={"custom-input-filter"} id={"modelName"}
                             // value={textSearched}
-                               onChange={(event) => getLabels(event.target.value)}>
+                               onChange={(event) => getLabelsInput(event.target.value)}>
                         </input>
                     </div> : <></>
                 }
