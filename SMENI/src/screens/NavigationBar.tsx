@@ -6,9 +6,26 @@ import DiagnoHelpScreen from "./DiagnoHelpScreen";
 import Home from "./Home";
 import Settings from "./Settings";
 import Chat from "./Chat";
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import NewPatient from "./NewPatient";
 
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+const Patient = () => {
+
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name={'SearchPatient'} component={SearchPatient} options={{
+                headerShown: false
+            }}/>
+            <Stack.Screen name={'NewPatient'} component={NewPatient} options={{
+                headerShown: false
+            }}/>
+        </Stack.Navigator>
+    )
+}
 
 const NavigationBar = () => {
 
@@ -53,9 +70,9 @@ const NavigationBar = () => {
             <Tab.Screen name={'Home_Bar'} component={Home} options={{
                 headerShown: false
             }}/>
-            <Tab.Screen name={'Search_Screen_Bar'} component={SearchPatient} options={{
+            <Tab.Screen name={'Search_Screen_Bar'} options={{
                 headerShown: false
-            }}/>
+            }} component={Patient}/>
             <Tab.Screen name={'Diagno_Bar'} component={DiagnoHelpScreen} options={{
                 headerShown: false
             }}/>

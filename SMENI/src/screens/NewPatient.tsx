@@ -3,12 +3,9 @@ import {SafeAreaView, StyleSheet, TextInput} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
 import {WithLocalSvg} from "react-native-svg";
-import {useNavigation} from '@react-navigation/native';
 
 
-const SearchPatient = () => {
-
-    const navigation = useNavigation();
+const NewPatient = () => {
 
     const [searchPatient, setSearchPatient] = useState('');
 
@@ -28,11 +25,7 @@ const SearchPatient = () => {
                         onChangeText={(text) => setSearchPatient(text)}
                     />
                 </SafeAreaView>
-                <WithLocalSvg asset={addPatientIcon} width={25} height={25} style={[styles.icon, styles.iconNew]}
-                              onPress={() => {
-                                  navigation.navigate('NewPatient')
-                              }
-                              }/>
+                <WithLocalSvg asset={addPatientIcon} width={25} height={25} style={[styles.icon, styles.iconNew]}/>
             </SafeAreaView>
             <SafeAreaView style={styles.content}>
                 {/*    */}
@@ -69,4 +62,4 @@ const styles = StyleSheet.create({
         marginRight: 15,
     }
 });
-export default SearchPatient;
+export default NewPatient;
