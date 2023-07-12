@@ -39,7 +39,7 @@ const SignUp = () => {
     CheckToken();
 
     const [firstName, setFirstName] = useState('');
-    const [fistNameError, setFirstNameError] = useState(''); //TODO : faire un style pour les erreurs
+    const [firstNameError, setFirstNameError] = useState(''); //TODO : faire un style pour les erreurs
     const [lastName, setLastName] = useState('');
     const [lastNameError, setLastNameError] = useState('');
     const [mail, setMail] = useState('');
@@ -167,7 +167,7 @@ const SignUp = () => {
                         placeholder={'First Name'}
                         onChangeText={(text) => setFirstName(text)}
                     />
-                    <Text style={styles.errorInput}>{fistNameError}</Text>
+                    <Text style={styles.errorInput}>{firstNameError}</Text>
                 </SafeAreaView>
                 {/*Last Name*/}
                 <SafeAreaView style={styles.labelWrapper}>

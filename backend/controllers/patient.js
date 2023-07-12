@@ -6,6 +6,7 @@ const {ObjectId} = require("mongodb");
 
 
 exports.createPatient = (req, res) => {
+    console.log("req.body: ", req.body);
     const patient = new Patient({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
