@@ -53,7 +53,7 @@ const AudioComponent = ({date, audio, audioName, label, duration, selectedAudio,
 
             {selectedAudio?._id === audio._id ?
                 <div className={"audioDivPageSelectedInfo"}>
-                    More INFO
+                    More INFO about : {audioName}
                 </div>
                 :
                 <></>
