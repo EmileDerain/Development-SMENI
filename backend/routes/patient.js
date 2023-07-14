@@ -9,8 +9,13 @@ router.post('/login', userCtrl.login);
 
 router.get('/', userCtrl.getAllUser);*/
 
+router.get('/', userCtrl.getPatient);
+
+
 router.post('/init', userCtrl.init100Patient);
 
 router.post('/labels', userCtrl.getAllPatientLabelsFilter);
+router.post('/', userCtrl.getAllPatientFilter);
+
 
 module.exports = router;

@@ -22,15 +22,17 @@ const Filter = ({name, urlSearch, typeFilter, filterSelectedSpecific, removeFilt
     let sendReq = useRef(false);
 
     const refInfiniteScroll = useRef(null);
+    let filterSave = useRef("");
 
-    const getLabels = (filter) => {
-        console.log("Req getDoctorLabels: ", filter);
-        fetch(urlSearch, {
+
+    const getLabels = () => {
+        console.log("aabb", urlSearch + `?page=${currentPage.current}`)
+        fetch(urlSearch + `?page=${currentPage.current}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({filter: filter, pageNumber: currentPage.current})
+            body: JSON.stringify({filter: filterSave.current})
         })
             .then(response => {
                 if (!response.ok) {
@@ -132,14 +134,15 @@ const Filter = ({name, urlSearch, typeFilter, filterSelectedSpecific, removeFilt
     const showLabel = () => {
         setLabels([]);
         currentPage.current = 1;
-        getLabels('')
+        getLabels()
         setShowLabels(prevState => !prevState)
     }
 
     const getLabelsInput = (filter) => {
         setLabels([]);
         currentPage.current = 1;
-        getLabels(filter);
+        filterSave.current = filter;
+        getLabels();
     }
 
     return (

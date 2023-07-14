@@ -175,6 +175,11 @@ a {
     color: #9C1A1C;
 }
 
+.cursorHoverPointerBlue:hover{
+    cursor: pointer;
+    color: #78C7FF;
+}
+
 /*#########################*/
 
 .headerPage {

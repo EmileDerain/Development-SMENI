@@ -11,6 +11,9 @@ import Menu from "./containers/Menu";
 import Audios from "./containers/Audios";
 import Model from "./containers/Model";
 import Doctors from "./containers/Doctors";
+import Patients from "./containers/Patients";
+import PatientDetails from "./containers/PatientDetails";
+
 
 function App() {
     return (
@@ -22,7 +25,9 @@ function App() {
                     <Route path="/models" element={<Models/>}/>
                     <Route path="/doctors" element={<Doctors/>}/>
                     <Route path="/model" element={<Model/>}/>
-                    <Route>404 Not Found!</Route>
+                    <Route path="/patients" element={<Patients/>}/>
+                    <Route path="/patient/:id" element={<PatientDetails/>}/>
+                    <Route path="/404">404 Not Found!</Route>
                 </Routes>
             </Router>
         </div>

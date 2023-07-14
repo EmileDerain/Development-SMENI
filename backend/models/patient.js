@@ -7,6 +7,8 @@ const patientSchema = mongoose.Schema({
     height: {type: String},
     weight: {type: String},
     birthDate: {type: Date},
+    medicalID: {type: Number},
+    gender: {type: Number},
     //comorbidities, gender
 });
 

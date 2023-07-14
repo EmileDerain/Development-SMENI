@@ -7,6 +7,7 @@ let ObjectId = require('mongodb').ObjectId;
 
 
 const {getAudioDurationInSeconds} = require('get-audio-duration')
+const config = require("../CNN/config/config");
 
 exports.renameFile = async (req, res, next) => {
     const label = await Label.findById(new ObjectId(req.body.labelId))
@@ -223,4 +224,30 @@ exports.deleteAudio = (req, res) => {
     Audio.findByIdAndDelete(id)
         .then(() => res.status(200).json({message: 'Audio delete !'}))
         .catch(error => res.status(400).json({error}));
+};
+
+exports.getPatientAudio = async (req, res) => {
+    const sectionSize = config.sizeOfSection;
+    const {id, page} = req.query;
+
+    console.log("req.getPatientAudio:", id, page);
+
+
+    const count = await Audio.find({
+        patientId: new ObjectId(id)
+    }).countDocuments();
+
+
+    Audio.find({
+        patientId: new ObjectId(id)
+    }).skip((page - 1) * sectionSize).limit(sectionSize)
+        .then(audios => res.status(200).json({
+            "status": 200,
+            "count": Math.ceil(count / sectionSize),
+            "audios": audios
+        }))
+        .catch(error => {
+            console.log(error);
+            res.status(400).json({"status": 400, reason: error})
+        });
 };

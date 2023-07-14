@@ -1,31 +1,25 @@
 import React, {useEffect, useRef, useState} from "react";
 import ProgressBar from './ProgressBar';
 import AudioComponent from './component/AudioComponent.js'
+import {useNavigate, useParams} from 'react-router-dom';
 
 import './Global.css';
 import './Audios.css';
+import './PatientDetails.css';
+
 import Background from "./component/Background";
 import HeaderSubMenu from "./component/HeaderSubMenu";
-import Filter from "./component/Filter";
 import DialogBox from "./component/DialogBox";
 import config from "../config/config";
-import FilterSearch from "./component/FilterSearch";
-import FilterGender from "./component/FilterGender";
+import Icon from "@mdi/react";
+import {mdiChevronDown, mdiChevronUp, mdiGenderFemale, mdiGenderMale} from "@mdi/js";
 
-const Audios = () => {
-    console.log("RENDER Audios");
-
-    const [filterSelected, setFilterSelected] = useState({
-        age: "",
-        weight: "",
-        height: "",
-        gender: "",
-        label: [],
-        doctor: [],
-        patient: [],
-    });
+const PatientDetails = () => {
+    const {id} = useParams();
 
     const [audios, setAudios] = useState([]);
+    const [patient, setPatient] = useState([]);
+
 
     const [selectedAudio, setSelectedAudio] = useState(undefined);
 
@@ -42,79 +36,7 @@ const Audios = () => {
 
     const refAudios = useRef(null);
 
-    const removeFilter = (type, filterName) => {
-        switch (type) {
-            case "label":
-                setFilterSelected(prevState => ({
-                    ...prevState,
-                    label: prevState.label.filter(item => item !== filterName)
-                }));
-                break;
-            case "doctor":
-                setFilterSelected(prevState => ({
-                    ...prevState,
-                    doctor: prevState.doctor.filter(item => item !== filterName)
-                }));
-                break;
-            case "patient":
-                setFilterSelected(prevState => ({
-                    ...prevState,
-                    patient: prevState.patient.filter(item => item !== filterName)
-                }));
-                break;
-            default:
-                console.log("filterName doesn't exist: ", filterName);
-        }
-    }
-
-    const addFilter = (type, filterName) => {
-        switch (type) {
-            case "age":
-                setFilterSelected(prevState => ({
-                    ...prevState,
-                    age: filterName
-                }));
-                break;
-            case "weight":
-                setFilterSelected(prevState => ({
-                    ...prevState,
-                    weight: filterName
-                }));
-                break;
-            case "height":
-                setFilterSelected(prevState => ({
-                    ...prevState,
-                    height: filterName
-                }));
-                break;
-            case "gender":
-                setFilterSelected(prevState => ({
-                    ...prevState,
-                    gender: filterName
-                }));
-                break;
-            case "label":
-                setFilterSelected(prevState => ({
-                    ...prevState,
-                    label: [...prevState.label, filterName]
-                }));
-                break;
-            case "doctor":
-                setFilterSelected(prevState => ({
-                    ...prevState,
-                    doctor: [...prevState.doctor, filterName]
-                }));
-                break;
-            case "patient":
-                setFilterSelected(prevState => ({
-                    ...prevState,
-                    patient: [...prevState.patient, filterName]
-                }));
-                break;
-            default:
-                console.log("filterName doesn't exist: ", filterName);
-        }
-    }
+    const navigate = useNavigate();
 
     useEffect(() => {
         refAudios.current.addEventListener('scroll', scroll);
@@ -126,33 +48,48 @@ const Audios = () => {
     }, []);
 
     useEffect(() => {
-        console.log("ON LOAD !! filterSelected:", filterSelected);
         refAudios.current.addEventListener('scroll', scroll);
 
         if (!sendReq.current) {
             sendReq.current = true;
-            setFilterSelected(filterSelected);
             currentPage.current = 1;
             setAudios([]);
             setSelectedAudio(undefined);
-
             getAudioFilesFilter();
+            getPatientDetails();
         }
 
         return () => {
             if (refAudios.current)
                 refAudios.current.removeEventListener('scroll', scroll);
         };
-    }, [filterSelected]);
+    }, []);
+
+    const getPatientDetails = () => {
+        fetch(`http://localhost:2834/api/patient?id=${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    console.log("response.status", response.status)
+                    if (response.status === 404) {
+                        navigate('/404'); // Redirection vers la page "404"
+                    } else {
+                        throw new Error('Une erreur s\'est produite lors de l\'envoi des données.');
+                    }
+                }
+                return response.json();
+            })
+            .then(patientData => {
+                console.log(patientData);
+                setPatient((patientData.patient));
+            })
+            .catch(error => {
+                console.error("errorerrorerror", error);
+            });
+    };
 
     const getAudioFilesFilter = () => {
-        fetch('http://localhost:2834/api/audio/filter/' + currentPage.current, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({filter: filterSelected, pageNumber: currentPage.current})
-        })
+        console.log("Request patient", `http://localhost:2834/api/audio/patient?id=${id}&page=${currentPage.current}`);
+        fetch(`http://localhost:2834/api/audio/patient?id=${id}&page=${currentPage.current}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Une erreur s\'est produite lors de l\'envoi des données.');
@@ -231,69 +168,60 @@ const Audios = () => {
         <div className={"screen"}>
             <Background></Background>
             <HeaderSubMenu
-                title={"List Health Sounds"}/>
+                title={`${patient.lastName} ${patient.firstName}`}/>
 
             <div className={"PageGlobal"}>
                 <div className={"PageActionGlobal"}>
-                    <div className={"menuLeft"}>
+                    <div className={"menuLeftSmaller"}>
                         <div className={"menuLeft100"}>
                             <div className={"menuLeftTopTitre"}>
-                                <h1>Filter</h1>
+                                <h1>Patient information</h1>
                             </div>
                             <div className={"menuLeftTopMenus"}>
                                 <div className={"menuLeftTopMenusFilter"}>
-                                    <FilterSearch
-                                        name={"Age"}
-                                        typeFilter={"age"}
-                                        addFilterSelected={addFilter}
-                                    />
-                                    <FilterSearch
-                                        name={"Height"}
-                                        typeFilter={"height"}
-                                        addFilterSelected={addFilter}
-                                    />
-                                    <FilterSearch
-                                        name={"Weight"}
-                                        typeFilter={"weight"}
-                                        addFilterSelected={addFilter}
-                                    />
-                                    <FilterGender
-                                        name={"Gender"}
-                                        typeFilter={"gender"}
-                                        addFilterSelected={addFilter}
-                                    />
-                                    <Filter
-                                        name={"Label"}
-                                        urlSearch={'http://localhost:2834/api/cnn/labels'}
-                                        typeFilter={"label"}
-                                        filterSelectedSpecific={filterSelected.label}
-                                        removeFilterSelected={removeFilter}
-                                        addFilterSelected={addFilter}
-                                    />
-                                    <Filter
-                                        name={"Doctor"}
-                                        urlSearch={'http://localhost:2834/api/user/labels'}
-                                        typeFilter={"doctor"}
-                                        filterSelectedSpecific={filterSelected.doctor}
-                                        removeFilterSelected={removeFilter}
-                                        addFilterSelected={addFilter}
-                                    />
-                                    <Filter
-                                        name={"Patient"}
-                                        urlSearch={'http://localhost:2834/api/patient/labels'}
-                                        typeFilter={"patient"}
-                                        filterSelectedSpecific={filterSelected.patient}
-                                        removeFilterSelected={removeFilter}
-                                        addFilterSelected={addFilter}
-                                    />
+                                    <div className={"menuLeftTopMenusFilterInformation"}>
+                                        <h1>Lastname : {patient.lastName}</h1>
+                                    </div>
+                                    <div className={"menuLeftTopMenusFilterInformation"}>
+                                        <h1>FirstName : {patient.firstName}</h1>
+                                    </div>
+                                    <div className={"menuLeftTopMenusFilterInformation"}>
+                                        <h1>Gender : </h1>
+                                        {patient.gender === 1 ?
+                                            <Icon path={mdiGenderFemale} className={"iconMenuHeaderPage"} size={1}/>
+                                            :
+                                            <Icon path={mdiGenderMale} className={"iconMenuHeaderPage"} size={1}/>
+                                        }
+                                    </div>
+                                    <div className={"menuLeftTopMenusFilterInformation"}>
+                                        <h1>Height : {patient.height} cm</h1>
+                                    </div>
+                                    <div className={"menuLeftTopMenusFilterInformation"}>
+                                        <h1>Weight : {patient.weight} kg</h1>
+                                    </div>
+                                    <div className={"menuLeftTopMenusFilterInformation"}>
+                                        <h1>BirthDate : {(() => {
+                                            const date = new Date(patient.birthDate);
+                                            const day = String(date.getDate()).padStart(2, '0');
+                                            const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois sont indexés à partir de 0
+                                            const year = date.getFullYear();
+
+                                            return `${day}/${month}/${year}`;
+                                        })()}</h1>
+                                    </div>
+                                    <div className={"menuLeftTopMenusFilterInformation"}>
+                                        <h1>MedicalID : {patient.medicalID}</h1>
+                                    </div>
+                                    <div className={"menuLeftTopMenusFilterInformation"}>
+                                        <h1>Comorbidities : ***</h1>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
 
                     </div>
 
-                    <div className={"menuRight"}>
+                    <div className={"menuRightSmaller"}>
 
                         <div className={selectedAudio !== undefined ? "menuRightTop" : "menuRightTopFull"}>
                             <div
@@ -362,4 +290,4 @@ const Audios = () => {
     )
 }
 
-export default Audios;
+export default PatientDetails;

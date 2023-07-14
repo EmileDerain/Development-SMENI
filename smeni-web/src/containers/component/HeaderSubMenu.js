@@ -1,6 +1,13 @@
 import React from "react";
 import '../Global.css';
-import {mdiContentSave, mdiDoctor, mdiFolderPlayOutline, mdiHomeVariantOutline, mdiReload} from "@mdi/js";
+import {
+    mdiContentSave,
+    mdiDoctor,
+    mdiFolderPlayOutline,
+    mdiHomeVariantOutline,
+    mdiReload,
+    mdiFolderAccountOutline
+} from "@mdi/js";
 import {Link} from "react-router-dom";
 import Icon from "@mdi/react";
 
@@ -30,6 +37,11 @@ const menuHeader = [
         mdi: mdiDoctor,
         link: '/doctors',
     },
+    {
+        name: "Patient folders",
+        mdi: mdiFolderAccountOutline,
+        link: '/patients',
+    },
 ]
 
 
@@ -46,6 +58,7 @@ const HeaderSubMenu = ({title}) => {
                     <ButtonMenuHeader button={menuHeader[2]}></ButtonMenuHeader>
                     <ButtonMenuHeader button={menuHeader[3]}></ButtonMenuHeader>
                     <ButtonMenuHeader button={menuHeader[4]}></ButtonMenuHeader>
+                    <ButtonMenuHeader button={menuHeader[5]}></ButtonMenuHeader>
                 </div>
             </div>
 

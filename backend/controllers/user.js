@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const config = require("../CNN/config/config");
 
 exports.signup = (req, res) => {
     bcrypt.hash(req.body.password, 10)
@@ -15,7 +16,7 @@ exports.signup = (req, res) => {
         .catch(error => res.status(500).json({error, message: 'Error while hashing password !'}));
 };
 
-exports.login = (req, res, next) => {
+exports.login = (req, res) => {
     User.findOne({mail: req.body.mail})
         .then(user => {
             if (!user) {
@@ -50,7 +51,7 @@ exports.getAllUserLabels = (req, res) => {
         .then(users => {
             const modifiedUsers = users.map(user => {
                 return {
-                    _id : user._id,
+                    _id: user._id,
                     labelName: user.lastName + ' ' + user.firstName,
                 };
             });
@@ -60,11 +61,13 @@ exports.getAllUserLabels = (req, res) => {
 };
 
 
-exports.getAllUserLabelsFilter = (req, res) => {
-    console.log("req.body3:", req.body.filter)
-    const [lastName, firstName] = req.body.filter.split(' ');
+exports.getAllUserLabelsFilter = async (req, res) => {
+    const sectionSize = config.sizeOfSection;
+    const {page} = req.query;
 
-    console.log("lastName: ", lastName, "firstName: ", firstName);
+    console.log("req.body.filter", req.body.filter);
+
+    [lastName, firstName] = req.body.filter.split(' ');
 
     let orConditionsLastName;
     let orConditionsFirstName;
@@ -83,21 +86,85 @@ exports.getAllUserLabelsFilter = (req, res) => {
         orConditionsFirstName = [{}]
     }
 
+    const count = await User.find({
+        $and: [
+            {$or: orConditionsLastName},
+            {$or: orConditionsFirstName},
+        ]
+    }).countDocuments();
 
     User.find({
         $and: [
             {$or: orConditionsLastName},
             {$or: orConditionsFirstName},
         ]
-    }).select('lastName firstName _id').sort('labelName')
+    }).skip((page - 1) * sectionSize)
+        .limit(sectionSize)
+        .select('lastName firstName _id')
+        .sort('labelName')
         .then(users => {
             const modifiedUsers = users.map(user => {
                 return {
-                    _id : user._id,
-                    labelName: user.lastName + ' ' + user.firstName,
+                    "_id": user._id,
+                    "labelName": user.lastName + ' ' + user.firstName,
                 };
             });
-            res.status(200).json({labels: modifiedUsers, message: 'All the users have been retrieved'});
+            res.status(200).json({
+                labels: modifiedUsers,
+                "count": Math.ceil(count / sectionSize),
+                message: 'All the users have been retrieved'
+            });
+        })
+        .catch(error => res.status(400).json({error, message: 'Error while retrieving all the users'}));
+};
+
+exports.getAllUserFilter = async (req, res) => {
+    const sectionSize = config.sizeOfSection;
+    const {page} = req.query;
+
+    console.log("req.body.filter", req.body.filter);
+
+    [lastName, firstName] = req.body.filter.split(' ');
+
+    let orConditionsLastName;
+    let orConditionsFirstName;
+
+    if (lastName !== undefined) {
+        const regexLastName = new RegExp(`\\b${lastName}`, "i");
+        orConditionsLastName = [{lastName: {$regex: regexLastName}}, {firstName: {$regex: regexLastName}}];
+    } else {
+        orConditionsLastName = [{}]
+    }
+
+    if (firstName !== undefined) {
+        const regexFirstName = new RegExp(`\\b${firstName}`, "i");
+        orConditionsFirstName = [{lastName: {$regex: regexFirstName}}, {firstName: {$regex: regexFirstName}}];
+    } else {
+        orConditionsFirstName = [{}]
+    }
+
+    const count = await User.find({
+        $and: [
+            {$or: orConditionsLastName},
+            {$or: orConditionsFirstName},
+        ]
+    }).countDocuments();
+
+    User.find({
+        $and: [
+            {$or: orConditionsLastName},
+            {$or: orConditionsFirstName},
+        ]
+    }).skip((page - 1) * sectionSize)
+        .limit(sectionSize)
+        .select('lastName firstName mail _id')
+        .sort('lastName')
+        .then(users => {
+            res.status(200).json({
+                labels: users,
+                "count": Math.ceil(count / sectionSize),
+                message: 'All the users have been retrieved'
+            });
         })
         .catch(error => res.status(400).json({error, message: 'Error while retrieving all the users'}));
 };

@@ -6,7 +6,6 @@ const config = require("../CNN/config/config");
 const fs = require("fs");
 const Label = require("../models/label");
 const Model = require("../models/model");
-const Audio = require("../models/audio");
 
 exports.renameFile = (req, res, next) => {
     console.log("renameFile predict")

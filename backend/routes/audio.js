@@ -10,10 +10,12 @@ router.get('/', audioCtrl.getAllAudio);
 
 router.get('/Label/:label', audioCtrl.getAllAudioOfALabel);
 router.get('/Doctor/:doctor', audioCtrl.getAllAudioOfADoctor);
+router.get('/patient', audioCtrl.getPatientAudio);
 
 router.get('/:pageNumber', audioCtrl.get10Audio);
 
 router.post('/filter/:pageNumber', audioCtrl.getFilted10Audio);
+
 
 router.delete('/', audioCtrl.deleteAudio);
 

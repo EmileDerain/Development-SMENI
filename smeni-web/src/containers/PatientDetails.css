@@ -1,0 +1,39 @@
+.menuLeftSmaller{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 26%;
+    height: 100%;
+}
+
+
+.menuRightSmaller{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 70%;
+    height: 100%;
+}
+
+
+.menuLeftTopMenusFilterInformation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: row;
+
+    width: 100%;
+
+    font-size: var(--front_size_smaller);
+
+    color: white;
+
+    cursor: pointer;
+
+    border-bottom: solid white 1px;
+}
