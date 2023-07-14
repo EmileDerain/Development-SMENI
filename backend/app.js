@@ -51,6 +51,7 @@ initUsers();
 const config = require("./CNN/config/config");
 const Model = require("./models/model");
 const fs = require("fs");
+const Audio = require("./models/audio");
 
 // Model.findById('64944200e4ad6121e4e182a8')
 //     .then(model => {
@@ -60,7 +61,5 @@ const fs = require("fs");
 //         fs.writeFileSync('./CNN/config/selectedModel.json', json);
 //     })
 //
-
-
 
 module.exports = app;

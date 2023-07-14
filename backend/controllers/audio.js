@@ -1,13 +1,21 @@
 const Audio = require('../models/audio');
+const Label = require('../models/label');
+
 const fs = require("fs");
-const Model = require("../models/model");
-const wav = require('node-wav');
+
+let ObjectId = require('mongodb').ObjectId;
+
 
 const {getAudioDurationInSeconds} = require('get-audio-duration')
 
-exports.renameFile = (req, res, next) => {
+exports.renameFile = async (req, res, next) => {
+    const label = await Label.findById(new ObjectId(req.body.labelId))
+        .select('labelName -_id');
+
+    req.body.label = label.labelName;
+
     const date = Date.now();
-    const path = req.body.label + "/" + req.body.filename.replace(" ", "_") + "_" + req.body.label + "_" + date + ".wav";
+    const path = label.labelName + "/" + req.body.filename.replace(" ", "_") + "_" + label.labelName + "_" + date + ".wav";
 
     fs.rename(req.file.path, "./CNN/dataStemoscope/Test/" + path, (err) => {
         if (err) {
@@ -42,9 +50,17 @@ exports.saveAudio = async (req, res) => {
         path: req.file.path,
         date: formattedDate,
         label: req.body.label,
-        doctor: req.body.doctor,
-        patient: req.body.patient,
+
+        labelId: new ObjectId(req.body.labelId),
+        doctorId: new ObjectId(req.body.doctorId),
         duration: Math.ceil(duration),
+
+        patientId: new ObjectId(req.body.patientId),
+        height: req.body.height,
+        weight: req.body.weight,
+        age: req.body.age,
+        gender: req.body.gender,
+        // comorbidities: req.body.comorbidities,
     });
 
     audioFile.save()
@@ -83,59 +99,99 @@ exports.get10Audio = async (req, res) => {
 
 exports.getFilted10Audio = async (req, res) => {
     console.log("req.body2:", req.body);
-
     const nbAudio = 11;
 
-    const orConditionsLabels = [];
-    const orConditionsDoctor = [];
-    const orConditionsPatient = [];
+    const conditions = [
+        {
+            list: true,
+            tabCondition: [],
+            filterList: req.body.filter.label,
+            key: "labelId",
+        },
+        {
+            list: true,
+            tabCondition: [],
+            filterList: req.body.filter.doctor,
+            key: "doctorId",
+        },
+        {
+            list: true,
+            tabCondition: [],
+            filterList: req.body.filter.patient,
+            key: "patientId",
+        },
+        {
+            list: false,
+            oneCondition: "",
+            filterList: req.body.filter.age,
+            key: "age",
+        },
+        {
+            list: false,
+            oneCondition: "",
+            filterList: req.body.filter.weight,
+            key: "weight",
+        },
+        {
+            list: false,
+            oneCondition: "",
+            filterList: req.body.filter.height,
+            key: "height",
+        },
+        {
+            list: false,
+            oneCondition: "",
+            filterList: req.body.filter.gender,
+            key: "gender",
+        }
+    ]
 
     const pageNumber = req.body.pageNumber;
 
 
-    for (let i = 0; i < req.body.filter.label.length; i++) {
-        const regex = new RegExp(`\\b${req.body.filter.label[i]}`, "i");
-        orConditionsLabels.push({label: {$regex: regex}})
+    for (let i = 0; i < conditions.length; i++) {
+        const condition = conditions[i];
+        const {key, filterList} = condition;
+
+        if (condition.list) {
+            console.log(condition.key)
+            for (let j = 0; j < filterList.length; j++) {
+                const filterItem = filterList[j];
+                condition.tabCondition.push({[key]: new ObjectId(filterItem)});
+            }
+        } else {
+            if (filterList !== '')
+                condition.oneCondition = {[key]: filterList};
+            else
+                condition.oneCondition = {};
+        }
     }
 
-    for (let i = 0; i < req.body.filter.doctor.length; i++) {
-        const regex = new RegExp(`\\b${req.body.filter.doctor[i]}`, "i");
-        orConditionsDoctor.push({doctor: {$regex: regex}})
+    const allConditions = [];
+
+    for (let i = 0; i < conditions.length; i++) {
+        const condition = conditions[i]; // Get the current condition object
+        console.log(i, condition);
+        if (!condition.list)
+            allConditions.push(condition.oneCondition)
+        else if (condition.tabCondition.length === 0)
+            allConditions.push({})
+        else
+            allConditions.push({$or: condition.tabCondition})
     }
-    for (let i = 0; i < req.body.filter.patient.length; i++) {
-        const regex = new RegExp(`\\b${req.body.filter.patient[i]}`, "i");
-        orConditionsPatient.push({patient: {$regex: regex}})
-    }
 
-    if (orConditionsLabels.length === 0)
-        orConditionsLabels.push({})
-
-    if (orConditionsDoctor.length === 0)
-        orConditionsDoctor.push({})
-
-    if (orConditionsPatient.length === 0)
-        orConditionsPatient.push({})
-
-    console.log(orConditionsLabels);
-    console.log(orConditionsDoctor);
-    console.log(orConditionsPatient);
+    console.log(conditions[0].tabCondition);
+    console.log(conditions[1].tabCondition);
+    console.log(conditions[2].tabCondition);
 
     const audioCount = await Audio.find({
-        $and: [
-            {$or: orConditionsLabels},
-            {$or: orConditionsDoctor},
-            {$or: orConditionsPatient},
-        ]
+        $and: allConditions
     }).countDocuments();
 
     console.log('Nb audioCount: ', audioCount)
 
     Audio.find({
-        $and: [
-            {$or: orConditionsLabels},
-            {$or: orConditionsDoctor},
-            {$or: orConditionsPatient},
-        ]
+        $and: allConditions
     }).skip((pageNumber - 1) * nbAudio).limit(nbAudio)
         .then(audios => res.status(200).json({
             "status": 200,

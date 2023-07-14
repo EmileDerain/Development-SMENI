@@ -1,0 +1,34 @@
+.iconGender {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: min(2.5vw, 5vh);
+    height: min(2.5vw, 5vh);
+
+    border: none;
+    background: transparent;
+    color: white;
+
+    border-radius: min(0.5vw, 1vh);
+}
+
+.iconGender:hover {
+    color: #78C7FF;
+}
+
+.iconGenderSelected {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: min(2.5vw, 5vh);
+    height: min(2.5vw, 5vh);
+
+    border: none;
+    color: white;
+
+    border-radius: min(0.5vw, 1vh);
+    background-color: #78C7FF;
+}
+

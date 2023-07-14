@@ -51,10 +51,14 @@ const Filter = ({name, urlSearch, typeFilter, filterSelectedSpecific, removeFilt
     };
 
     const doctorList = labels.map((item, index) => {
-        return <ListLabel key={index} button={[item.labelName, index]}></ListLabel>;
+        console.log("item", item)
+        return <ListLabel key={index}
+                          labelName={item.labelName}
+                          _id={item._id}
+        />;
     });
 
-    function ListLabel(info) {
+    function ListLabel({labelName, _id}) {
         const myElementRef = useRef();
         console.log("filrer filterSelected:", filterSelectedSpecific)
 
@@ -63,11 +67,11 @@ const Filter = ({name, urlSearch, typeFilter, filterSelectedSpecific, removeFilt
 
             const element = myElementRef.current;
             if (element) {
-                if (filterSelectedSpecific.includes(info.button[0])) {
-                    removeFilterSelected(typeFilter, info.button[0]);
+                if (filterSelectedSpecific.includes(_id)) {
+                    removeFilterSelected(typeFilter, _id);
                     console.log("filterSelectedSpecific supp");
                 } else {
-                    addFilterSelected(typeFilter, info.button[0]);
+                    addFilterSelected(typeFilter, _id);
                     console.log("filterSelectedSpecific add");
                 }
             }
@@ -75,16 +79,16 @@ const Filter = ({name, urlSearch, typeFilter, filterSelectedSpecific, removeFilt
 
         return (
             <div ref={myElementRef}
-                 className={filterSelectedSpecific.includes(info.button[0]) ? "iconFolderOrderByDivPageSelected" : "iconFolderOrderByDivPage"}
+                 className={filterSelectedSpecific.includes(_id) ? "iconFolderOrderByDivPageSelected" : "iconFolderOrderByDivPage"}
                  onClick={selectFilter}>
                 <div className={"iconMenuLeftBot"}>
-                    {filterSelectedSpecific.includes(info.button[0]) ?
+                    {filterSelectedSpecific.includes(_id) ?
                         <Icon path={mdiCheckboxMarked} className={"iconMenuHeaderPage"} size={1}/>
                         :
                         <Icon path={mdiCheckboxBlankOutline} className={"iconMenuHeaderPage"} size={1}/>
                     }
                 </div>
-                <h1>{info.button[0]}</h1>
+                <h1>{labelName}</h1>
             </div>
         );
     }

@@ -9,11 +9,17 @@ import HeaderSubMenu from "./component/HeaderSubMenu";
 import Filter from "./component/Filter";
 import DialogBox from "./component/DialogBox";
 import config from "../config/config";
+import FilterSearch from "./component/FilterSearch";
+import FilterGender from "./component/FilterGender";
 
 const Audios = () => {
     console.log("RENDER Audios");
 
     const [filterSelected, setFilterSelected] = useState({
+        age: "",
+        weight: "",
+        height: "",
+        gender: "",
         label: [],
         doctor: [],
         patient: [],
@@ -66,6 +72,30 @@ const Audios = () => {
     const addFilter = (type, filterName) => {
         console.log("addFilter", filterName);
         switch (type) {
+            case "age":
+                setFilterSelected(prevState => ({
+                    ...prevState,
+                    age: filterName
+                }));
+                break;
+            case "weight":
+                setFilterSelected(prevState => ({
+                    ...prevState,
+                    weight: filterName
+                }));
+                break;
+            case "height":
+                setFilterSelected(prevState => ({
+                    ...prevState,
+                    height: filterName
+                }));
+                break;
+            case "gender":
+                setFilterSelected(prevState => ({
+                    ...prevState,
+                    gender: filterName
+                }));
+                break;
             case "label":
                 setFilterSelected(prevState => ({
                     ...prevState,
@@ -216,6 +246,26 @@ const Audios = () => {
                             </div>
                             <div className={"menuLeftTopMenus"}>
                                 <div className={"menuLeftTopMenusFilter"}>
+                                    <FilterSearch
+                                        name={"Age"}
+                                        typeFilter={"age"}
+                                        addFilterSelected={addFilter}
+                                    />
+                                    <FilterSearch
+                                        name={"Height"}
+                                        typeFilter={"height"}
+                                        addFilterSelected={addFilter}
+                                    />
+                                    <FilterSearch
+                                        name={"Weight"}
+                                        typeFilter={"weight"}
+                                        addFilterSelected={addFilter}
+                                    />
+                                    <FilterGender
+                                        name={"Gender"}
+                                        typeFilter={"gender"}
+                                        addFilterSelected={addFilter}
+                                    />
                                     <Filter
                                         name={"Label"}
                                         urlSearch={'http://localhost:2834/api/cnn/labels'}
@@ -269,6 +319,10 @@ const Audios = () => {
                                                            selectedAudio={selectedAudio}
                                                            setSelectedAudio={setSelectedAudio}
                                                            setDialogBox={setDialogBox}
+                                                           gender={item.gender}
+                                                           height={item.height}
+                                                           weight={item.weight}
+                                                           age={item.age}
                                     />;
                                 })}
                                 {currentPage.current < maxPage.current ?

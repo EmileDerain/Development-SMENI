@@ -74,11 +74,14 @@ exports.getAllPatientLabelsFilter = async (req, res) => {
             {$or: orConditionsLastName},
             {$or: orConditionsFirstName},
         ]
-    }).skip((pageNumber - 1) * nbLabel).limit(nbLabel)
-        .then(users => {
-            const modifiedUsers = users.map(user => {
+    }).select('lastName firstName _id')
+        .sort('lastName')
+        .skip((pageNumber - 1) * nbLabel).limit(nbLabel)
+        .then(patients => {
+            const modifiedUsers = patients.map(patient => {
                 return {
-                    labelName: user.lastName + ' ' + user.firstName,
+                    _id : patient._id,
+                    labelName: patient.lastName + ' ' + patient.firstName,
                 };
             });
             res.status(200).json({

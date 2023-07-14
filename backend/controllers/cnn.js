@@ -108,7 +108,7 @@ exports.getAllLabelsFilter = (req, res) => {
 
     Label.find({
         labelName: {$regex: regexLabel}
-    }).select('labelName -_id').sort('labelName')
+    }).select('labelName _id').sort('labelName')
         // Label.find().select('labelName')
         .then(labels => res.status(200).json({"status": 200, "labels": labels}))
         .catch(error => res.status(400).json({"status": 400, reason: error}));

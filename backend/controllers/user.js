@@ -46,10 +46,11 @@ exports.getAllUser = (req, res) => {
 };
 
 exports.getAllUserLabels = (req, res) => {
-    User.find()
+    User.find().select('lastName firstName _id').sort('labelName')
         .then(users => {
             const modifiedUsers = users.map(user => {
                 return {
+                    _id : user._id,
                     labelName: user.lastName + ' ' + user.firstName,
                 };
             });
@@ -60,7 +61,7 @@ exports.getAllUserLabels = (req, res) => {
 
 
 exports.getAllUserLabelsFilter = (req, res) => {
-    console.log("req.body:", req.body.filter)
+    console.log("req.body3:", req.body.filter)
     const [lastName, firstName] = req.body.filter.split(' ');
 
     console.log("lastName: ", lastName, "firstName: ", firstName);
@@ -88,10 +89,11 @@ exports.getAllUserLabelsFilter = (req, res) => {
             {$or: orConditionsLastName},
             {$or: orConditionsFirstName},
         ]
-    })
+    }).select('lastName firstName _id').sort('labelName')
         .then(users => {
             const modifiedUsers = users.map(user => {
                 return {
+                    _id : user._id,
                     labelName: user.lastName + ' ' + user.firstName,
                 };
             });

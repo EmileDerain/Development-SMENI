@@ -161,9 +161,13 @@
     align-items: center;
     justify-content: center;
 
+    cursor: default;
+
     width: 100%;
     /*height: 100%;*/
     /*background-color: #9C1A1C;*/
+
+    border-bottom: solid 1px white;
 }
 
 .iconFolderOrderByDivPage {
@@ -500,10 +504,13 @@
     align-items: center;
     justify-content: center;
 
+    font-size: var(--front_size_smaller);
+
     width: 100%;
     height: 12%;
 
     background-color: #6BB2E6;
+    color: white;
 }
 
 /*#########################*/

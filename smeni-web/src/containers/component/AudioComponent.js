@@ -4,7 +4,20 @@ import Icon from "@mdi/react";
 import {mdiTrashCanOutline} from "@mdi/js";
 
 
-const AudioComponent = ({date, audio, audioName, label, duration, selectedAudio, setSelectedAudio, setDialogBox}) => {
+const AudioComponent = ({
+                            date,
+                            audio,
+                            audioName,
+                            label,
+                            duration,
+                            selectedAudio,
+                            setSelectedAudio,
+                            setDialogBox,
+                            gender,
+                            height,
+                            weight,
+                            age
+                        }) => {
     const myElementRef = useRef(null);
 
     const handleButtonClick = () => {
@@ -53,7 +66,10 @@ const AudioComponent = ({date, audio, audioName, label, duration, selectedAudio,
 
             {selectedAudio?._id === audio._id ?
                 <div className={"audioDivPageSelectedInfo"}>
-                    More INFO about : {audioName}
+                    <h1>Gender: {gender}</h1>
+                    <h1> Height:{height} cm</h1>
+                    <h1>Weight:{weight} kg</h1>
+                    <h1>Age:{age} years old</h1>
                 </div>
                 :
                 <></>
