@@ -6,6 +6,7 @@ import {WithLocalSvg} from "react-native-svg";
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {URL_GET_PATIENT} from "../utils/path";
 
+
 const GetPatients = async () => {
     try {
         const response = await fetch(URL_GET_PATIENT, {
@@ -35,61 +36,14 @@ const SearchPatient = () => {
 
     const [numberPatientToSkip, setNumberPatientToSkip] = useState(0);
     const [patients, setPatients] = useState([]);
-    //let patients: any = [];
+
+    const folderIcon = require('../assets/images/folder-open-solid.svg');
 
     const isScreenFocused = useIsFocused();
 
-    /*const getPatients = async () => {
-        try {
-            const response = await fetch(URL_GET_PATIENT, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    numberPatientToSkip: numberPatientToSkip,
-                }),
-            });
-            const json = await response.json();
-            setNumberPatientToSkip(numberPatientToSkip + json.patients.length);
-            setNumberPatientToSkip(0);
-            return json.patients;
-        } catch (error) {
-            console.log(error);
-        }
-    };*/
-
-    /*getPatients().then(r => {
-        r.forEach((element: { _id: any; __v: any; birthDate:any; height:any; weight:any}) => {
-            delete element._id;
-            delete element.__v;
-            delete element.birthDate;
-            delete element.height;
-            delete element.weight;
-        })
-        console.log(r);
-        const array = r.map((patient: any) => {
-            return JSON.stringify(patient);
-        });
-        console.log(array);
-        patients = r;
-        //setPatients(array);
-    }).catch(e => console.log(e));*/
-
     useEffect(() => {
         GetPatients().then(r => {
-            /*r.forEach((element: { _id: any; __v: any; birthDate:any; height:any; weight:any}) => {
-                delete element._id;
-                delete element.__v;
-                delete element.birthDate;
-                delete element.height;
-                delete element.weight;
-            })*/
             console.log(r);
-            /*const array = r.map((patient: any) => {
-                return JSON.stringify(patient);
-            });
-            console.log(array);*/
             setPatients(r);
             setNumberPatientToSkip(0+r.length);
         }).catch(e => console.log(e));
@@ -116,13 +70,15 @@ const SearchPatient = () => {
                               }
                               }/>
             </SafeAreaView>
-            <Text>All Patients</Text>
-            <SafeAreaView style={styles.content}>
+            <SafeAreaView style={styles.patients}>
                 {patients.map((patient) => {
                         return (
-                            <SafeAreaView>
-                                <Text>{patient.firstName}</Text>
-                                <Text>Coucou</Text>
+                            <SafeAreaView style={styles.patient}>
+                                <WithLocalSvg asset={folderIcon} width={25} height={25} style={[styles.icon, styles.folder]}/>
+                                <SafeAreaView style={styles.patientDetails}>
+                                    <Text>{patient.firstName} {patient.lastName}</Text>
+                                    <Text>X files</Text>
+                                </SafeAreaView>
                             </SafeAreaView>
                         )
                     }
@@ -159,6 +115,26 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     }, iconNew: {
         marginRight: 15,
+    }, patients:{
+        flexDirection: 'column',
+        marginTop: 20,
+    }, patient:{
+        flexDirection: 'row',
+        margin: 10,
+        borderColor: colors.default,
+        borderWidth: 1,
+        borderRadius: 15,
+        padding: 10,
+    }, folder:{
+        borderColor: colors.default,
+        borderWidth: 1,
+        borderRadius: 15,
+        padding: 30,
+        backgroundColor: "lightblue",
+    }, patientDetails:{
+        flexDirection: 'column',
+        marginLeft: 10,
+        justifyContent: 'space-around',
     }
 });
 export default SearchPatient;

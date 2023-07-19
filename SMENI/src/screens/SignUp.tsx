@@ -1,4 +1,4 @@
-import {useFocusEffect, useIsFocused, useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
@@ -8,8 +8,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {isTokenValid} from "../utils/jwtCheck";
 import {WithLocalSvg} from 'react-native-svg';
 import NetInfo from "@react-native-community/netinfo";
-import {err} from "react-native-svg/lib/typescript/xml";
-
 
 
 const CheckToken = async () => {
@@ -278,11 +276,11 @@ const styles = StyleSheet.create({
         color: 'red',
         marginTop: 5,
     },
-    passwordWrapper:{
+    passwordWrapper: {
         flexDirection: 'row',
-        alignItems:'center',
-        justifyContent:'space-between',
-        width:'90%'
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '90%'
     },
     button: {
         borderColor: '#96D3FE',
@@ -299,10 +297,10 @@ const styles = StyleSheet.create({
     }, buttonContent: {
         flex: 1, opacity: 1, // Default opacity when the button is enabled
     }, buttonText: {
-        color:'white'
+        color: 'white'
     }, navigateWrapper: {
         flexDirection: 'row', alignItems: 'center', marginTop: 15,
-        justifyContent:'center'
+        justifyContent: 'center'
     }
 });
 
