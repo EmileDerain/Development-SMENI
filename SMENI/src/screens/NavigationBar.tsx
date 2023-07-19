@@ -8,6 +8,7 @@ import Settings from "./Settings";
 import Chat from "./Chat";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import NewPatient from "./NewPatient";
+import PatientDetails from "./PatientDetails";
 
 
 const Tab = createBottomTabNavigator();
@@ -21,6 +22,9 @@ const Patient = () => {
                 headerShown: false
             }}/>
             <Stack.Screen name={'NewPatient'} component={NewPatient} options={{
+                headerShown: false
+            }}/>
+            <Stack.Screen name={'PatientDetails'} component={PatientDetails} options={{
                 headerShown: false
             }}/>
         </Stack.Navigator>
