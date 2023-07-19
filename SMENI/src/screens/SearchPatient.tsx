@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
@@ -6,6 +6,23 @@ import {WithLocalSvg} from "react-native-svg";
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {URL_GET_PATIENT} from "../utils/path";
 
+const GetPatients = async () => {
+    try {
+        const response = await fetch(URL_GET_PATIENT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                numberPatientToSkip: 0,
+            }),
+        });
+        const json = await response.json();
+        return json.patients;
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 const SearchPatient = () => {
 
@@ -17,10 +34,12 @@ const SearchPatient = () => {
     const searchIcon = require('../assets/images/magnifying-glass-solid.svg');
 
     const [numberPatientToSkip, setNumberPatientToSkip] = useState(0);
-    //const [patients, setPatients] = useState([]);
-    let patients: any = [];
+    const [patients, setPatients] = useState([]);
+    //let patients: any = [];
 
-    const getPatients = async () => {
+    const isScreenFocused = useIsFocused();
+
+    /*const getPatients = async () => {
         try {
             const response = await fetch(URL_GET_PATIENT, {
                 method: 'POST',
@@ -32,15 +51,15 @@ const SearchPatient = () => {
                 }),
             });
             const json = await response.json();
-            //setNumberPatientToSkip(numberPatientToSkip + json.patients.length);
+            setNumberPatientToSkip(numberPatientToSkip + json.patients.length);
             setNumberPatientToSkip(0);
             return json.patients;
         } catch (error) {
             console.log(error);
         }
-    };
+    };*/
 
-    getPatients().then(r => {
+    /*getPatients().then(r => {
         r.forEach((element: { _id: any; __v: any; birthDate:any; height:any; weight:any}) => {
             delete element._id;
             delete element.__v;
@@ -55,7 +74,26 @@ const SearchPatient = () => {
         console.log(array);
         patients = r;
         //setPatients(array);
-    }).catch(e => console.log(e));
+    }).catch(e => console.log(e));*/
+
+    useEffect(() => {
+        GetPatients().then(r => {
+            /*r.forEach((element: { _id: any; __v: any; birthDate:any; height:any; weight:any}) => {
+                delete element._id;
+                delete element.__v;
+                delete element.birthDate;
+                delete element.height;
+                delete element.weight;
+            })*/
+            console.log(r);
+            /*const array = r.map((patient: any) => {
+                return JSON.stringify(patient);
+            });
+            console.log(array);*/
+            setPatients(r);
+            setNumberPatientToSkip(0+r.length);
+        }).catch(e => console.log(e));
+    }, [isScreenFocused]);
 
     console.log("coucou", patients);
 
@@ -80,11 +118,11 @@ const SearchPatient = () => {
             </SafeAreaView>
             <Text>All Patients</Text>
             <SafeAreaView style={styles.content}>
-                <Text>{numberPatientToSkip}</Text>
                 {patients.map((patient) => {
                         return (
                             <SafeAreaView>
-                                <Text>{patient}</Text>
+                                <Text>{patient.firstName}</Text>
+                                <Text>Coucou</Text>
                             </SafeAreaView>
                         )
                     }
