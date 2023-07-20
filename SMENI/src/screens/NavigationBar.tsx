@@ -17,7 +17,7 @@ const Stack = createNativeStackNavigator();
 const Patient = () => {
 
     return (
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName="SearchPatient">
             <Stack.Screen name={'SearchPatient'} component={SearchPatient} options={{
                 headerShown: false
             }}/>

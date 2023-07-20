@@ -75,7 +75,7 @@ const SearchPatient = () => {
                             <TouchableOpacity
                                 key={patient._id}
                                 onPress={() =>
-                                navigation.navigate(PAGE_PATIENTDETAILS)}>
+                                navigation.navigate(PAGE_PATIENTDETAILS, patient)}>
                                 <SafeAreaView style={styles.patient}>
                                     <WithLocalSvg asset={folderIcon} width={25} height={25}
                                                   style={[styles.icon, styles.folder]}/>

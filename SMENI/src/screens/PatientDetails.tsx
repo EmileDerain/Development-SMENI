@@ -4,8 +4,7 @@ import {StyleSheet} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 
-const PatientDetails = () => {
-    const navigation = useNavigation();
+const PatientDetails = ({patient} : {patient: []}) => {
 
 
     return (// KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.
