@@ -1,18 +1,24 @@
 import React, {useEffect, useRef, useState} from "react";
+import {useNavigate, useParams} from 'react-router-dom';
+import {
+    mdiGenderFemale,
+    mdiGenderMale,
+    mdiTrashCanOutline,
+    mdiPencil,
+} from "@mdi/js";
+import Icon from "@mdi/react";
+
+import Background from "./component/Background";
+import HeaderSubMenu from "./component/HeaderSubMenu";
+import DialogBox from "./component/DialogBox";
 import ProgressBar from './ProgressBar';
 import AudioComponent from './component/AudioComponent.js'
-import {useNavigate, useParams} from 'react-router-dom';
+import config from "../config/config";
 
 import './Global.css';
 import './Audios.css';
 import './PatientDetails.css';
 
-import Background from "./component/Background";
-import HeaderSubMenu from "./component/HeaderSubMenu";
-import DialogBox from "./component/DialogBox";
-import config from "../config/config";
-import Icon from "@mdi/react";
-import {mdiChevronDown, mdiChevronUp, mdiGenderFemale, mdiGenderMale} from "@mdi/js";
 
 const PatientDetails = () => {
     const {id} = useParams();
@@ -25,7 +31,7 @@ const PatientDetails = () => {
 
     const [dialogBox, setDialogBox] = useState({
         ask: false,
-        audioAsked: undefined,
+        whatAsked: undefined,
         type: undefined,
         message: "",
     });
@@ -66,7 +72,11 @@ const PatientDetails = () => {
     }, []);
 
     const getPatientDetails = () => {
-        fetch(`http://localhost:2834/api/patient?id=${id}`)
+        fetch(`http://localhost:2834/api/patient?id=${id}`, {
+            headers: {
+                'authorization': localStorage.getItem('token'),
+            },
+        })
             .then(response => {
                 if (!response.ok) {
                     console.log("response.status", response.status)
@@ -89,7 +99,11 @@ const PatientDetails = () => {
 
     const getAudioFilesFilter = () => {
         console.log("Request patient", `http://localhost:2834/api/audio/patient?id=${id}&page=${currentPage.current}`);
-        fetch(`http://localhost:2834/api/audio/patient?id=${id}&page=${currentPage.current}`)
+        fetch(`http://localhost:2834/api/audio/patient?id=${id}&page=${currentPage.current}`, {
+            headers: {
+                'authorization': localStorage.getItem('token'),
+            },
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Une erreur s\'est produite lors de l\'envoi des données.');
@@ -126,23 +140,40 @@ const PatientDetails = () => {
     const dialogBoxYes = () => {
         switch (dialogBox.type) {
             case "delete": {
-                fetch(config.serverUrl + `api/audio?id=${dialogBox.audioAsked._id}`, {
+                fetch(config.serverUrl + `/api/audio?id=${dialogBox.whatAsked._id}`, {
                     method: 'DELETE',
+                    headers: {
+                        'authorization': localStorage.getItem('token'),
+                    },
                 })
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('An error occurred while deleting data.');
                         }
-                        setAudios(prevState => prevState.filter(audio => audio._id !== dialogBox.audioAsked._id))
-                        if (selectedAudio._id === dialogBox.audioAsked._id)
+                        setAudios(prevState => prevState.filter(audio => audio._id !== dialogBox.whatAsked._id))
+                        if (selectedAudio._id === dialogBox.whatAsked._id)
                             setSelectedAudio(undefined);
                         getAudioFilesFilter();
-                        setDialogBox(() => ({
-                            ask: false,
-                            type: undefined,
-                            modelAsked: undefined,
-                            message: "",
-                        }));
+                        resetDialogBox();
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+                break;
+            }
+            case "deletePatient": {
+                fetch(config.serverUrl + `/api/patient?id=${dialogBox.whatAsked._id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'authorization': localStorage.getItem('token'),
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('An error occurred while deleting data.');
+                        } else {
+                            navigate("/patients")
+                        }
                     })
                     .catch(error => {
                         console.error(error);
@@ -155,14 +186,35 @@ const PatientDetails = () => {
         }
     }
 
-    const dialogBoxNo = () => {
+    const resetDialogBox = () => {
         setDialogBox(() => ({
             ask: false,
             type: undefined,
-            modelAsked: undefined,
+            whatAsked: undefined,
             message: "",
         }));
     }
+
+    const dialogBoxNo = () => {
+        resetDialogBox();
+    }
+
+    const openDialogBox = (action) => {
+        switch (action) {
+            case "deletePatient": {
+                setDialogBox(() => ({
+                    ask: true,
+                    type: "deletePatient",
+                    whatAsked: patient,
+                    message: "Are you sure you want to delete this patient folder ?",
+                }));
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    };
 
     return (
         <div className={"screen"}>
@@ -174,8 +226,23 @@ const PatientDetails = () => {
                 <div className={"PageActionGlobal"}>
                     <div className={"menuLeftSmaller"}>
                         <div className={"menuLeft100"}>
-                            <div className={"menuLeftTopTitre"}>
-                                <h1>Patient information</h1>
+                            <div className={"menuLeftTopTitreRight"}>
+                                <div className={"menuLeftTopTitreH1"}>
+                                    <h1>Patient information</h1>
+                                </div>
+                                <div className={"menuLeftTopTitreOption"}>
+                                    {/*<div className={"menuLeftTopTitreOption2"}>*/}
+                                    {/*    <Icon path={mdiPencil} className={"iconMenuHeaderPage cursorHoverPointerBlue"}*/}
+                                    {/*          size={1}/>*/}
+                                    {/*</div>*/}
+                                    <div className={"menuLeftTopTitreOption2"}>
+                                        <Icon path={mdiTrashCanOutline}
+                                              className={"iconMenuHeaderPage cursorHoverPointerRed"}
+                                              onClick={() => openDialogBox("deletePatient")} size={1}/>
+                                    </div>
+                                </div>
+
+
                             </div>
                             <div className={"menuLeftTopMenus"}>
                                 <div className={"menuLeftTopMenusFilter"}>

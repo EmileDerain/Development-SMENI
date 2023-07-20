@@ -36,7 +36,7 @@
 
     font-size: min(1.5vw, 3vh);
 
-    background-color: #1C6BA4;
+    background-color: var(--bleu_theme);
     color: white;
 
     border-radius:  min(0.5vw, 1vh);

@@ -26,7 +26,8 @@ const Patient = () => {
         fetch(`http://localhost:2834/api/patient?page=${currentPage.current}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'authorization': localStorage.getItem('token'),
             },
             body: JSON.stringify({filter: filterSave.current})
         })
@@ -65,7 +66,6 @@ const Patient = () => {
                 <h1 className={"menuRightTopTitreNameDoctors menuRightTopTitreCentre"}>{firstName} {lastName}</h1>
                 <h1 className={"menuRightTopTitreEmailDoctors menuRightTopTitreCentre"}>{medicalID}</h1>
                 <div className={"menuRightTopTitreActionDoctors menuRightTopTitreCentre"}>
-                    {/*<Icon path={mdiListBoxOutline} className={"iconMenuHeaderPage cursorHoverPointerRed"} size={1}/>*/}
                     <div onClick={() => {
                         navigate(`/patient/${id}`)
                     }}>

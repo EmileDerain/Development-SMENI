@@ -3,14 +3,18 @@ import {
     mdiMagnify,
     mdiTrashCanOutline,
     mdiPencil,
-    mdiListBoxOutline,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
-import './Global.css';
-import './Doctors.css';
 import Background from "./component/Background";
 import HeaderSubMenu from "./component/HeaderSubMenu";
+import config from "../config/config";
+
+import './Global.css';
+import './Doctors.css';
+
+import DialogBoxDoctor from "./component/DialogBoxDoctor";
+
 
 const Doctors = () => {
     const [doctors, setDoctors] = useState([]);
@@ -22,18 +26,23 @@ const Doctors = () => {
     const refInfiniteScroll = useRef(null);
     let filterSave = useRef("");
 
+    const [dialogBoxDoctor, setDialogBoxDoctor] = useState({
+        ask: false,
+        account: undefined,
+    });
 
     const getDoctors = () => {
-        fetch(`http://localhost:2834/api/user?page=${currentPage.current}`, {
+        fetch(`${config.serverUrl}/api/user?page=${currentPage.current}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'authorization': localStorage.getItem('token'),
             },
             body: JSON.stringify({filter: filterSave.current})
         })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Une erreur s\'est produite lors de la récupération des données.');
+                    throw new Error('An error occurred while retrieving data.');
                 }
                 return response.json();
             })
@@ -54,14 +63,33 @@ const Doctors = () => {
     });
 
     function Doctor(info) {
+
+        const openDialogBox = (action, account) => {
+            console.log("tion, accoun", action, account)
+            switch (action) {
+                case "patch": {
+                    setDialogBoxDoctor(() => ({
+                        ask: true,
+                        account: account,
+                    }));
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        };
+
+
         return (
-            <div id={info.doctor._id} className={"audioDivPage"}>
+            <div id={info.doctor._id} className={"doctorDivPage"}>
                 <h1 className={"menuRightTopTitreNameDoctors menuRightTopTitreCentre"}>{info.doctor.firstName} {info.doctor.lastName}</h1>
                 <h1 className={"menuRightTopTitreEmailDoctors menuRightTopTitreCentre"}>{info.doctor.mail}</h1>
                 <div className={"menuRightTopTitreActionDoctors menuRightTopTitreCentre"}>
                     {/*<Icon path={mdiListBoxOutline} className={"iconMenuHeaderPage cursorHoverPointerRed"} size={1}/>*/}
                     <div>
-                        <Icon path={mdiPencil} className={"iconMenuHeaderPage cursorHoverPointerBlue"} size={1}/>
+                        <Icon path={mdiPencil} className={"iconMenuHeaderPage cursorHoverPointerBlue"}
+                              onClick={() => openDialogBox("patch", info.doctor)} size={1}/>
                     </div>
                     <div>
                         <Icon path={mdiTrashCanOutline} className={"iconMenuHeaderPage cursorHoverPointerRed"}
@@ -108,11 +136,32 @@ const Doctors = () => {
         getDoctors();
     }
 
+    const resetDialogBox = () => {
+        setDialogBoxDoctor(() => ({
+            ask: false,
+            account: undefined,
+        }));
+    }
+
+    const updateAfterPatch = (mail) => {
+        console.log("mail", mail)
+        setDoctors(prevItems =>
+            prevItems.map(doctor => {
+                if (doctor._id === dialogBoxDoctor.account._id) {
+                    return { ...doctor, mail: mail };
+                } else {
+                    return doctor;
+                }
+            })
+        );
+    }
+
+
     return (
         <div className={"screen"}>
             <Background></Background>
             <HeaderSubMenu
-                title={"Doctors accounts"}/>
+                title={"Doctor accounts"}/>
 
             <div className={"PageGlobal"}>
                 <div className={"PageActionGlobal"}>
@@ -143,6 +192,14 @@ const Doctors = () => {
 
                 </div>
             </div>
+
+            <DialogBoxDoctor
+                ask={dialogBoxDoctor.ask}
+                account={dialogBoxDoctor.account}
+                functionUpdate={updateAfterPatch}
+                functionClose={resetDialogBox}
+            />
+
         </div>
     )
 }

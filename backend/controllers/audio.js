@@ -76,6 +76,7 @@ exports.saveAudio = async (req, res) => {
 };
 
 exports.getAllAudio = (req, res) => {
+    console.log('use ?? getAllAudio')
     Audio.find()
         .then(audios => res.status(200).json({"status": 200, "audios": audios}))
         .catch(error => res.status(400).json({"status": 400, reason: error}));
@@ -83,6 +84,8 @@ exports.getAllAudio = (req, res) => {
 
 
 exports.get10Audio = async (req, res) => {
+    console.log('use ?? get10Audio')
+
     const nbAudio = 11;
     const audioCount = await Audio.countDocuments();
     console.log("min", (parseInt(req.params.pageNumber) - 1) * nbAudio);
@@ -98,8 +101,11 @@ exports.get10Audio = async (req, res) => {
 };
 
 
-exports.getFilted10Audio = async (req, res) => {
-    console.log("req.body2:", req.body);
+exports.getAudioFiltedBySection = async (req, res) => {
+    console.log('use ?? getFilted10Audio')
+
+
+    // console.log("req.body2:", req.body);
     const nbAudio = 11;
 
     const conditions = [
@@ -181,15 +187,15 @@ exports.getFilted10Audio = async (req, res) => {
             allConditions.push({$or: condition.tabCondition})
     }
 
-    console.log(conditions[0].tabCondition);
-    console.log(conditions[1].tabCondition);
-    console.log(conditions[2].tabCondition);
+    // console.log(conditions[0].tabCondition);
+    // console.log(conditions[1].tabCondition);
+    // console.log(conditions[2].tabCondition);
 
     const audioCount = await Audio.find({
         $and: allConditions
     }).countDocuments();
 
-    console.log('Nb audioCount: ', audioCount)
+    // console.log('Nb audioCount: ', audioCount)
 
     Audio.find({
         $and: allConditions
@@ -206,12 +212,18 @@ exports.getFilted10Audio = async (req, res) => {
 };
 
 exports.getAllAudioOfALabel = (req, res) => {
+    console.log('use ?? getAllAudioOfALabel')
+
+
     Audio.find({label: req.params.label.toLowerCase()})
         .then(audios => res.status(200).json({"status": 200, "audios": audios}))
         .catch(error => res.status(400).json({"status": 400, reason: error}));
 };
 
 exports.getAllAudioOfADoctor = (req, res) => {
+    console.log('use ?? getAllAudioOfADoctor')
+
+
     Audio.find({doctor: req.params.doctor})
         .then(audios => res.status(200).json({"status": 200, "audios": audios}))
         .catch(error => res.status(400).json({"status": 400, reason: error}));
@@ -227,6 +239,9 @@ exports.deleteAudio = (req, res) => {
 };
 
 exports.getPatientAudio = async (req, res) => {
+    console.log('use ?? getAllAudioOfALabel')
+
+
     const sectionSize = config.sizeOfSection;
     const {id, page} = req.query;
 

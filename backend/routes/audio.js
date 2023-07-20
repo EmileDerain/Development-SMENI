@@ -4,19 +4,22 @@ const router = express.Router();
 const audioCtrl = require('../controllers/audio');
 const multer = require('../middleware/multer-config')
 
-// TODO : rajouter les middlewares d'authentification quand le front sera prêt
-router.post('/', multer, audioCtrl.renameFile, audioCtrl.saveAudio);
-router.get('/', audioCtrl.getAllAudio);
-
-router.get('/Label/:label', audioCtrl.getAllAudioOfALabel);
-router.get('/Doctor/:doctor', audioCtrl.getAllAudioOfADoctor);
-router.get('/patient', audioCtrl.getPatientAudio);
-
-router.get('/:pageNumber', audioCtrl.get10Audio);
-
-router.post('/filter/:pageNumber', audioCtrl.getFilted10Audio);
+const doctorMid = require('../middleware/authDoctor');
+const authAdminDoctor = require('../middleware/authAdminDoctor');
 
 
-router.delete('/', audioCtrl.deleteAudio);
+router.post('/', doctorMid, multer, audioCtrl.renameFile, audioCtrl.saveAudio);
+router.get('/', audioCtrl.getAllAudio); //TODO : use ??
+
+router.get('/Label/:label', audioCtrl.getAllAudioOfALabel); //TODO : use ??
+router.get('/Doctor/:doctor', audioCtrl.getAllAudioOfADoctor); //TODO : use ??
+router.get('/patient', audioCtrl.getPatientAudio); //use
+
+router.get('/:pageNumber', audioCtrl.get10Audio); //TODO : use ??
+
+router.post('/filter/:pageNumber', authAdminDoctor, audioCtrl.getAudioFiltedBySection);  //use a refaire ()
+
+
+router.delete('/', authAdminDoctor, audioCtrl.deleteAudio);  //use
 
 module.exports = router;

@@ -47,7 +47,7 @@ exports.getAllModel = (req, res) => {
         .catch(error => res.status(400).json({"status": 400, reason: error}));
 };
 
-exports.getAllModelBySection = async (req, res) => {
+exports.getModelBySection = async (req, res) => {
     const sectionSize = config.sizeOfSection;
     const {page} = req.query;
 

@@ -1,7 +1,11 @@
-import React, {useRef} from "react";
+import React from "react";
 import Icon from "@mdi/react";
 import {mdiTrashCanOutline} from "@mdi/js";
+
+import '../Global.css';
 import '../Models.css';
+import '../Audios.css';
+
 
 const ModelsComponent = ({date, _id, modelName, loss, accuracy, modelSelected, setDialogBox, model}) => {
 
@@ -13,7 +17,7 @@ const ModelsComponent = ({date, _id, modelName, loss, accuracy, modelSelected, s
                     setDialogBox(() => ({
                         ask: true,
                         type: "select",
-                        modelAsked: model,
+                        whatAsked: model,
                         message: "Are you sure you want to change the Model ?",
                     }));
                 }
@@ -24,7 +28,7 @@ const ModelsComponent = ({date, _id, modelName, loss, accuracy, modelSelected, s
                     setDialogBox(() => ({
                         ask: true,
                         type: "delete",
-                        modelAsked: model,
+                        whatAsked: model,
                         message: "Are you sure you want to delete the Model ?",
                     }));
                 }
@@ -37,12 +41,10 @@ const ModelsComponent = ({date, _id, modelName, loss, accuracy, modelSelected, s
     };
 
     return (
-        <div id={_id} className={modelSelected._id === _id ? "audioDivPageSelected" : "audioDivPage"}>
+        <div id={_id} className={modelSelected._id === _id ? "optionDivPageSelected" : "optionDivPagFull"}>
             {accuracy === undefined ?
-                <>
-                    <h1 className={"menuRightTopTitre100 menuRightTopTitreCentre"}>{modelName} : Model
-                        building</h1>
-                </>
+                <h1 className={"menuRightTopTitre100 menuRightTopTitreCentre"}>{modelName} : Model
+                    building</h1>
                 :
                 <>
                     <h1 className={"menuRightTopTitreDateModels menuRightTopTitreCentre"}

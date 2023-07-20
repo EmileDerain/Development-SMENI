@@ -1,0 +1,76 @@
+.titlePage {
+    font-size: min(5vw, 10vh);
+    margin-left: 1%;
+
+    color: white;
+}
+
+.iconMenuHeaderPageDiv{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 16%;
+    height: 100%;
+    color: white;
+}
+
+.iconMenuHeaderPageDivSelected{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 16%;
+    height: 100%;
+    color: white;
+
+    border-radius: min(0.5vw, 1vh);
+    background-color: #6BB2E6;
+}
+
+.iconMenuHeaderPageDivDoctor{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32%;
+    height: 100%;
+    color: white;
+}
+
+.iconMenuHeaderPageDivSelectedDoctor{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32%;
+    height: 100%;
+    color: white;
+
+    border-radius: min(0.5vw, 1vh);
+    background-color: #6BB2E6;
+}
+
+.headerSubMenu {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 20%;
+    height: 40%;
+
+    margin-right: 0.5%;
+}
+
+.headerSubMenuDoctor{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 10%;
+    height: 40%;
+
+    margin-right: 0.5%;
+}

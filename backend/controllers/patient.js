@@ -166,6 +166,14 @@ exports.getPatient = async (req, res) => {
         .catch(error => res.status(400).json({error, message: 'Error while retrieving all the patients'}));
 };
 
+exports.deletePatient = (req, res) => {
+    const {id} = req.query;
+
+    Patient.findByIdAndDelete(id)
+        .then(() => res.status(200).json({message: 'Patient delete !'}))
+        .catch(error => res.status(400).json({error}));
+};
+
 exports.init100Patient = async (req, res) => {
     for (let i = 0; i < 100; i++) {
         const patientSave = new Patient({
@@ -181,3 +189,5 @@ exports.init100Patient = async (req, res) => {
     }
     res.status(200).json({"status": 200});
 }
+
+

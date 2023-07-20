@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useState} from "react";
 import {
     mdiChevronDown,
     mdiChevronUp,
@@ -10,7 +10,6 @@ import '../Audios.css';
 import './Filter.css';
 
 const FilterSearch = ({name, typeFilter, addFilterSelected}) => {
-    console.log("RENDER DoctorFilter");
 
     const [showLabels, setShowLabels] = useState(false);
     const [valueSearch, setValueSearch] = useState('');
@@ -22,7 +21,6 @@ const FilterSearch = ({name, typeFilter, addFilterSelected}) => {
     const getLabelsInput = (value) => {
         addFilterSelected(typeFilter, value);
         setValueSearch(value);
-        console.log(valueSearch);
     }
 
     return (

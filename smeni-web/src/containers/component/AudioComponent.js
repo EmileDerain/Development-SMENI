@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import './AudioComponent.css';
 import Icon from "@mdi/react";
-import {mdiTrashCanOutline} from "@mdi/js";
+import {mdiGenderFemale, mdiGenderMale, mdiTrashCanOutline} from "@mdi/js";
 
 
 const AudioComponent = ({
@@ -49,7 +49,7 @@ const AudioComponent = ({
     return (
         <>
             <div id={audioName} ref={myElementRef}
-                 className={selectedAudio?._id === audio._id ? "audioDivPageSelected" : selectedAudio !== undefined ? "audioDivPagFull" : "audioDivPage"}>
+                 className={selectedAudio?._id === audio._id ? "optionDivPageSelected" : selectedAudio !== undefined ? "optionDivPagFull" : "audioDivPage"}>
                 <h1 className={"menuRightTopTitreDate menuRightTopTitreCentre"}
                     onClick={() => handleButtonClick()}>{date}</h1>
                 <h1 className={"menuRightTopTitreName menuRightTopTitreCentre"}
@@ -66,10 +66,18 @@ const AudioComponent = ({
 
             {selectedAudio?._id === audio._id ?
                 <div className={"audioDivPageSelectedInfo"}>
-                    <h1>Gender: {gender}</h1>
-                    <h1> Height:{height} cm</h1>
-                    <h1>Weight:{weight} kg</h1>
-                    <h1>Age:{age} years old</h1>
+                    <div className={"audioDivPageSelectedInfoSpace"}>
+                        <h1>Gender: {gender === 1 ?
+                            <div className={"subMenuGlobalSearchIcon"}>
+                                <Icon path={mdiGenderFemale} className={"iconMenuHeaderPage"} size={1}/>
+                            </div>
+                            :
+                            <Icon path={mdiGenderMale} className={"iconMenuHeaderPage"} size={1}/>
+                        }</h1>
+                        <h1>Height:{height} cm</h1>
+                        <h1>Weight:{weight} kg</h1>
+                        <h1>Age:{age} years old</h1>
+                    </div>
                 </div>
                 :
                 <></>

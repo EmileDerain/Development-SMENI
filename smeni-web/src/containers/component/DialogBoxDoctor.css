@@ -1,0 +1,182 @@
+.askScreen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    height: 100vh;
+    width: 100vw;
+}
+
+.askScreenBack {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    height: 100vh;
+    width: 100vw;
+
+    background-color: white;
+    opacity: 0.5;
+}
+
+
+.askScreenDivBigger {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    flex-direction: column;
+
+    height: 30vh;
+    width: 20vw;
+
+    font-size: min(1.5vw, 3vh);
+
+    background-color: var(--bleu_theme);
+    color: white;
+
+    border-radius: min(0.5vw, 1vh);
+}
+
+.askScreenDiv100 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    height: 100%;
+    width: 100%;
+
+    font-size: min(1.5vw, 3vh);
+
+    color: white;
+
+    border-radius: min(0.5vw, 1vh);
+}
+
+.askScreenDivClose {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    height: 10%;
+    width: 100%;
+
+    font-size: min(1.5vw, 3vh);
+    /*background-color: red;*/
+    color: white;
+}
+
+.askScreenFeedback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    height: 20%;
+    width: 100%;
+
+    font-size: var(--front_size_big);
+    /*background-color: red;*/
+    color: white;
+}
+
+
+.askScreenSubDivClose {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: min(2vw, 4vh);
+    height: min(2vw, 4vh);
+
+    color: white;
+}
+
+.menuSettinEmailDoctor {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+
+    width: 80%;
+    height: 30%;
+
+    /*background-color: red;*/
+}
+
+.menuDoctorUpdate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 20%;
+    height: 50%;
+
+    font-size: var(--front_size_big);
+    background-color: white;
+    border-radius: min(0.5vw, 1vh);
+    color: #555555;
+
+
+    border: none;
+    outline: none;
+}
+
+.menuDoctorUpdate:hover {
+
+    color: white;
+    background-color: var(--bleu_theme_select);
+}
+
+.askScreenTopDiv {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+
+    height: 60%;
+    width: 100%;
+}
+
+.askScreenBotDiv {
+    display: flex;
+    justify-content: space-between;
+
+
+    height: 40%;
+    width: 70%;
+}
+
+.askScreenButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: min(3.5vw, 7vh);
+    height: min(2.5vw, 5vh);
+
+    border-radius: min(0.5vw, 1vh);
+    font-size: min(1.5vw, 3vh);
+
+    background-color: #6BB2E6;
+    color: white;
+
+    border: none;
+
+    cursor: pointer;
+}
+
+.askScreenButtonYes:hover {
+    color: #1E8738;
+    background-color: #78C7FF;
+}
+
+.askScreenButtonNo:hover {
+    color: #9C1A1C;
+    background-color: #78C7FF;
+}
