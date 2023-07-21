@@ -95,8 +95,10 @@ const NewPatient = () => {
     const saveNewPatient = async () => {
         const url = URL_CREATE_PATIENT;
 
-        setGender("1");
-        const n = Math.random();
+        if(!(gender=='2' || gender=='1')){
+            setGender("2");
+        }
+        const n = Math.floor(Math.random() * 10000);
         //TODO change birthdate, gender and medical id parameters
         const params = {
             firstName: firstName,

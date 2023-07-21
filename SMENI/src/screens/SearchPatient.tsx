@@ -44,6 +44,9 @@ const SearchPatient = () => {
     useEffect(() => {
         GetPatients().then(r => {
             console.log(r);
+            if(r==undefined){
+                return;
+            }
             setPatients(r);
             setNumberPatientToSkip(numberPatientToSkip + r.length);
         }).catch(e => console.log(e));
@@ -69,7 +72,7 @@ const SearchPatient = () => {
                               }/>
             </SafeAreaView>
             <SafeAreaView style={styles.patients}>
-                {patients.map((patient) => {
+                {patients.length != 0 ? patients.map((patient) => {
 
                         return (
                             <TouchableOpacity
@@ -88,7 +91,7 @@ const SearchPatient = () => {
                             </TouchableOpacity>
                         );
                     }
-                )}
+                ) : <Text>No patients</Text>}
 
             </SafeAreaView>
         </KeyboardAwareScrollView>
