@@ -187,7 +187,7 @@ const SignIn = () => {
                 <TouchableOpacity
                     onPress={() => {
                         clearForm();
-                        navigation.navigate("SearchPatient");
+                        navigation.navigate(PAGE_SIGNUP);
                     }}>
                     <Text style={[styles.text, styles.subtitle, styles.navigate]}>Create One !</Text>
                 </TouchableOpacity>

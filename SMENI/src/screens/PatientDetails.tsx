@@ -43,7 +43,7 @@ const PatientDetails = ({route}) => {
                 </SafeAreaView>
                 <SafeAreaView style={styles.field}>
                     <WithLocalSvg asset={medicalIDPicture} width={25} height={25} style={styles.icon}/>
-                    <Text style={styles.text}>MedicalID {patient.medicalID}</Text>
+                    <Text style={styles.text}>Medical ID {patient.medicalID}</Text>
                 </SafeAreaView>
                 <SafeAreaView style={styles.field}>
                     <WithLocalSvg asset={genderPicture} width={25} height={25} style={styles.icon}/>

@@ -103,7 +103,7 @@ const NewPatient = () => {
         const params = {
             firstName: firstName,
             lastName: lastName,
-            birthDate: Date.now(),
+            birthDate: new Date('1998-12-31T23:00:00.000Z'),
             height: height,
             weight: weight,
             gender:Number(gender),
