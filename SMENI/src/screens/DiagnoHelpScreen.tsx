@@ -32,7 +32,12 @@ const DiagnoHelpScreen = () => {
     const navigation = useNavigation();
 
     const [hasToken, setHasToken] = useState(true);
-    const [patientInputs, setPatientInputs] = useState({});
+    const [patientData, setPatientData] = useState({
+        selectedBirthDate: new Date(),
+        selectedWeight: '',
+        selectedHeight: '',
+        selectedGender: 'male',
+      });
 
     CheckToken().then((tokenIsValid) => {
         setHasToken(tokenIsValid);
@@ -73,13 +78,10 @@ const DiagnoHelpScreen = () => {
         setIsInputValid(suggestions.includes(text));
     };
 
-    const handlePatientInputChange = ({ age, weight }) => {
-        setPatientInputs({ age, weight });
-        console.log("inputAge: ", age);
-        console.log("inputWeight: ", weight);
-        console.log("patientInformation: ",patientInputs);
-        
-    };
+    const handlePatientDataChange = (data) => {
+        setPatientData({ ...patientData, ...data });
+        console.log("patientData: ", patientData);
+      };
 
     const findSuggestions = (query) => {
         if (query === '') {
@@ -215,7 +217,7 @@ const DiagnoHelpScreen = () => {
             </SafeAreaView>
             
             {/*{sharedFile !== undefined &&<PatientInformation onChangeInput={handlePatientInputChange} />}*/}
-            <PatientInformation onChangeInput={handlePatientInputChange} />
+            <PatientInformation onChangeInput={handlePatientDataChange} />
             <SafeAreaView>
                 {hasToken ? <TouchableOpacity
                         onPress={() => saveLabeledRecording(selectedValue)}

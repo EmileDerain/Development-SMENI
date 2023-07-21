@@ -28,20 +28,45 @@ const PatientInformation = ({ onChangeInput }) => {
 
     if (date >= minDate && date <= today) {
       setSelectedBirthDate(date);
-      onChangeInput({ selectedBirthDate: date, text: selectedWeight });
+      onChangeInput({
+        selectedBirthDate: date,
+        selectedWeight,
+        selectedHeight,
+        selectedGender,
+      });
     }
   };
 
   const handleWeightChange = (text) => {
     const weight = text.replace(/[^0-9]/g, '');
     setSelectedWeight(weight);
-    onChangeInput({ text: selectedBirthDate, selectedBirthDate: weight });
+    onChangeInput({
+      selectedBirthDate,
+      selectedWeight: weight,
+      selectedHeight,
+      selectedGender,
+    });
   };
 
   const handleHeightChange = (text) => {
     const height = text.replace(/[^0-9]/g, '');
     setSelectedHeight(height);
-    // Handle the height value as needed
+    onChangeInput({
+      selectedBirthDate,
+      selectedWeight,
+      selectedHeight: height,
+      selectedGender,
+    });
+  };
+
+  const handleGenderChange = (value) => {
+    setSelectedGender(value);
+    onChangeInput({
+      selectedBirthDate,
+      selectedWeight,
+      selectedHeight,
+      selectedGender: value,
+    });
   };
 
   const toggleDatePicker = () => {
@@ -104,7 +129,7 @@ const PatientInformation = ({ onChangeInput }) => {
               items={genderOptions}
               value = {selectedGender}
               setOpen={setOpen}
-              setValue={setSelectedGender}
+              setValue={handleGenderChange}
               setItems={setGenderOptions}
               style={ [styles.dropdownPicker, styles.input]}
               dropDownDirection='TOP'
