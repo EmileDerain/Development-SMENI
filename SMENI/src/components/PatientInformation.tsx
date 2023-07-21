@@ -15,7 +15,7 @@ const PatientInformation = ({ onChangeInput }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedWeight, setSelectedWeight] = useState('');
   const [selectedHeight, setSelectedHeight] = useState('');
-  const [selectedGender, setSelectedGender] = useState('male');
+  const [selectedGender, setSelectedGender] = useState('');
   const [open, setOpen] = useState(false);
   const [genderOptions, setGenderOptions] = useState([
     { label: 'Male', value: 'male' },
@@ -206,12 +206,14 @@ const PatientInformation = ({ onChangeInput }) => {
               open={open}
               items={genderOptions}
               value = {selectedGender}
+              placeholder='Select a Gender'
+              placeholderStyle={{color: colors.icons}}
               setOpen={setOpen}
               setValue={setSelectedGender}
               setItems={setGenderOptions}
               onChangeValue={handleGenderChange}
               style={ [styles.dropdownPicker, styles.input]}
-              dropDownDirection='TOP'
+              dropDownDirection='BOTTOM'
               dropDownContainerStyle={styles.dropdownContainer}
             />
 

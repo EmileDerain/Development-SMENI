@@ -33,10 +33,13 @@ const DiagnoHelpScreen = () => {
 
     const [hasToken, setHasToken] = useState(true);
     const [patientData, setPatientData] = useState({
+        selectedMedicalID: '',
+        selectedName: '',
+        selectedSurname: '',
         selectedBirthDate: new Date(),
         selectedWeight: '',
         selectedHeight: '',
-        selectedGender: 'male',
+        selectedGender: '',
       });
 
     CheckToken().then((tokenIsValid) => {
@@ -80,7 +83,7 @@ const DiagnoHelpScreen = () => {
 
     const handlePatientDataChange = (data) => {
         setPatientData({ ...patientData, ...data });
-        console.log("patientData: ", patientData);
+        console.log("patientData: ", data);
       };
 
     const findSuggestions = (query) => {
