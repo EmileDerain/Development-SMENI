@@ -1,16 +1,24 @@
 import React, { useState, useRef } from 'react';
-import { Text, View, StyleSheet, SafeAreaView, TouchableWithoutFeedback } from 'react-native';
+import { Text, View, StyleSheet, SafeAreaView, TouchableWithoutFeedback, TextInput } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import colors from '../assets/colors/colors';
-import RNPickerSelect from 'react-native-picker-select';
+import DropDownPicker from 'react-native-dropdown-picker'; // Import DropDownPicker
+
+
 
 const PatientInformation = ({ onChangeInput }) => {
+  DropDownPicker.setListMode("SCROLLVIEW");
   const [selectedBirthDate, setSelectedBirthDate] = useState(new Date());
-  const [selectedWeight, setSelectedWeight] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const weightOptions = Array.from({ length: 301 }, (_, index) => {
-    return { label: index.toString(), value: index.toString() };
-  });
+  const [selectedWeight, setSelectedWeight] = useState('');
+  const [selectedHeight, setSelectedHeight] = useState('');
+  const [selectedGender, setSelectedGender] = useState('male');
+  const [open, setOpen] = useState(false);
+  const [genderOptions, setGenderOptions] = useState([
+    { label: 'Male', value: 'male' },
+    { label: 'Female', value: 'female' },
+    { label: 'Other', value: 'other' },
+  ]);
 
   const pickerRef = useRef(null);
 
@@ -24,9 +32,16 @@ const PatientInformation = ({ onChangeInput }) => {
     }
   };
 
-  const handleWeightChange = (itemValue) => {
-    setSelectedWeight(itemValue);
-    onChangeInput({ text: selectedBirthDate, selectedBirthDate: itemValue });
+  const handleWeightChange = (text) => {
+    const weight = text.replace(/[^0-9]/g, '');
+    setSelectedWeight(weight);
+    onChangeInput({ text: selectedBirthDate, selectedBirthDate: weight });
+  };
+
+  const handleHeightChange = (text) => {
+    const height = text.replace(/[^0-9]/g, '');
+    setSelectedHeight(height);
+    // Handle the height value as needed
   };
 
   const toggleDatePicker = () => {
@@ -65,15 +80,37 @@ const PatientInformation = ({ onChangeInput }) => {
             )}
           </SafeAreaView>
           <SafeAreaView style={styles.row}>
-            <Text style={styles.label}>Weight:</Text>
-            <SafeAreaView style={[styles.weightInput]}>
-              <RNPickerSelect
-                onValueChange={handleWeightChange}
-                style={pickerSelectStyles}
-                value={selectedWeight}
-                items={weightOptions}
-              />
-            </SafeAreaView>
+            <Text style={styles.label}>Weight (kg):</Text>
+            <TextInput
+              style={styles.input}
+              keyboardType="numeric"
+              value={selectedWeight}
+              onChangeText={handleWeightChange}
+            />
+          </SafeAreaView>
+          <SafeAreaView style={styles.row}>
+            <Text style={styles.label}>Height (cm):</Text>
+            <TextInput
+              style={styles.input}
+              keyboardType="numeric"
+              value={selectedHeight}
+              onChangeText={handleHeightChange}
+            />
+          </SafeAreaView>
+          <SafeAreaView style={styles.row}>
+            <Text style={styles.label}>Gender:</Text>
+            <DropDownPicker
+              open={open}
+              items={genderOptions}
+              value = {selectedGender}
+              setOpen={setOpen}
+              setValue={setSelectedGender}
+              setItems={setGenderOptions}
+              style={ [styles.dropdownPicker, styles.input]}
+              dropDownDirection='TOP'
+              dropDownContainerStyle={styles.dropdownContainer}
+            />
+
           </SafeAreaView>
         </SafeAreaView>
       </View>
@@ -90,26 +127,25 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 17,
   },
-  weightInput: {
-    borderRadius: 30,
+  dropdownPicker: {
     backgroundColor: colors.inputBackground,
+    borderWidth: 0,
+    borderRadius: 30,
     borderColor: colors.inputBackground,
     color: colors.default,
-    padding:0,
+    padding: 0,
     width: '50%',
     textAlign: 'center',
     alignContent: 'center',
     margin: 10,
   },
-  input: {
-    borderRadius: 30,
+  dropdownContainer: {
     backgroundColor: colors.inputBackground,
     borderColor: colors.inputBackground,
     color: colors.default,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    width: '40%',
+    width: '50%',
     textAlign: 'center',
+    alignContent: 'center',
     margin: 10,
   },
   row: {
@@ -117,6 +153,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     width: '100%',
+    marginBottom: 10,
+  },
+  label: {
+    //flex: 1,
+    fontSize: 16,
+    fontWeight: '500',
+    margin: 10,
+    color: colors.textLight,
+  },
+  input: {
+    flex: 0.5, 
+    borderRadius: 30,
+    backgroundColor: colors.inputBackground,
+    borderColor: colors.inputBackground,
+    color: colors.default,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    margin: 10,
   },
   text: {
     color: '#0E1012',
@@ -133,25 +187,21 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingLeft: 30,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: '500',
-    margin: 10,
-    color: colors.textLight,
-  },
   picker: {
-    flex: 1,
+    flex: 2,
     marginTop: 10,
     marginHorizontal: 10,
-    backgroundColor: 'black',
+    //position: 'absolute',
+
+    backgroundColor: colors.background,
   },
 });
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
-		color: 'black',
-	},
-	inputAndroid: {
+    color: 'black',
+  },
+  inputAndroid: {
     color: '#0E1012',
     fontFamily: 'Nunito Sans',
     fontStyle: 'normal',
@@ -162,22 +212,22 @@ const pickerSelectStyles = StyleSheet.create({
     marginHorizontal: 15,
     marginVertical: -5,
     padding: 0,
-	},
-	underline: { borderTopWidth: 0 },
-	icon: {
-		position: 'absolute',
-		backgroundColor: 'transparent',
-		borderTopWidth: 5,
-		borderTopColor: '#00000099',
-		borderRightWidth: 5,
-		borderRightColor: 'transparent',
-		borderLeftWidth: 5,
-		borderLeftColor: 'transparent',
-		width: 0,
-		height: 0,
-		top: 20,
-		right: 15,
-	},
+  },
+  underline: { borderTopWidth: 0 },
+  icon: {
+    position: 'absolute',
+    backgroundColor: 'transparent',
+    borderTopWidth: 5,
+    borderTopColor: '#00000099',
+    borderRightWidth: 5,
+    borderRightColor: 'transparent',
+    borderLeftWidth: 5,
+    borderLeftColor: 'transparent',
+    width: 0,
+    height: 0,
+    top: 20,
+    right: 15,
+  },
 });
 
 export default PatientInformation;
