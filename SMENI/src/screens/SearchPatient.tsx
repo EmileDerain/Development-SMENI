@@ -45,7 +45,7 @@ const SearchPatient = () => {
         GetPatients().then(r => {
             console.log(r);
             setPatients(r);
-            setNumberPatientToSkip(0 + r.length);
+            setNumberPatientToSkip(numberPatientToSkip + r.length);
         }).catch(e => console.log(e));
     }, [isScreenFocused]);
 

@@ -12,7 +12,9 @@ exports.createPatient = (req, res) => {
         lastName: req.body.lastName,
         height: req.body.height,
         weight: req.body.weight,
-        birthDate: req.body.birthDate
+        birthDate: req.body.birthDate,
+        medicalID: req.body.medicalID,
+        gender: req.body.gender,
     });
     patient.save()
         .then(() => res.status(201).json({message: 'Patient created !'}))
@@ -64,25 +66,18 @@ exports.getAllPatientLabelsFilter = async (req, res) => {
     }
 
     const patientCount = await Patient.find({
-        $and: [
-            {$or: orConditionsLastName},
-            {$or: orConditionsFirstName},
-        ]
+        $and: [{$or: orConditionsLastName}, {$or: orConditionsFirstName},]
     }).countDocuments();
 
     Patient.find({
-        $and: [
-            {$or: orConditionsLastName},
-            {$or: orConditionsFirstName},
-        ]
+        $and: [{$or: orConditionsLastName}, {$or: orConditionsFirstName},]
     }).select('lastName firstName _id')
         .sort('lastName')
         .skip((page - 1) * nbLabel).limit(nbLabel)
         .then(patients => {
             const modifiedUsers = patients.map(patient => {
                 return {
-                    _id: patient._id,
-                    labelName: patient.lastName + ' ' + patient.firstName,
+                    _id: patient._id, labelName: patient.lastName + ' ' + patient.firstName,
                 };
             });
             res.status(200).json({
@@ -126,17 +121,11 @@ exports.getAllPatientFilter = async (req, res) => {
     }
 
     const count = await Patient.find({
-        $and: [
-            {$or: orConditionsLastName},
-            {$or: orConditionsFirstName},
-        ]
+        $and: [{$or: orConditionsLastName}, {$or: orConditionsFirstName},]
     }).countDocuments();
 
     Patient.find({
-        $and: [
-            {$or: orConditionsLastName},
-            {$or: orConditionsFirstName},
-        ]
+        $and: [{$or: orConditionsLastName}, {$or: orConditionsFirstName},]
     }).sort('lastName')
         .skip((page - 1) * sectionSize).limit(sectionSize)
         .then(patients => {
@@ -160,8 +149,7 @@ exports.getPatient = async (req, res) => {
                 res.status(404).json({message: 'Patient not found'}); // Statut 404 si le patient n'est pas trouvé
             } else {
                 res.status(200).json({
-                    patient: patient,
-                    message: 'The patient has been retrieved'
+                    patient: patient, message: 'The patient has been retrieved'
                 });
             }
         })

@@ -23,7 +23,8 @@ const NewPatient = () => {
     const [weightError, setWeightError] = useState('');
     const [gender, setGender] = useState('');
     const [genderError, setGenderError] = useState('');
-
+    const [medicalID, setMedicalID] = useState('');
+    const [medicalIDError, setMedicalIDError] = useState('');
 
     const goBack = require('../assets/images/arrow-left-solid.svg');
 
@@ -87,14 +88,24 @@ const NewPatient = () => {
         setDateOfBirth('');
         setHeight('');
         setWeight('');
+        setMedicalID('');
+        setGender('');
     }
 
     const saveNewPatient = async () => {
         const url = URL_CREATE_PATIENT;
 
-        //TODO change birthdate parameter
+        setGender("0");
+        const n = Math.random();
+        //TODO change birthdate, gender and medical id parameters
         const params = {
-            firstName: firstName, lastName: lastName, birthDate: Date.now(), height: height, weight: weight//, gender:gender
+            firstName: firstName,
+            lastName: lastName,
+            birthDate: Date.now(),
+            height: height,
+            weight: weight,
+            gender:Number(gender),
+            medicalID: n,
         };
 
         const formData = new URLSearchParams();
@@ -181,7 +192,7 @@ const NewPatient = () => {
                     />
                     <Text style={styles.errorInput}>{weightError}</Text>
                 </SafeAreaView>
-                {/*<SafeAreaView style={styles.inputWrapper}>
+                <SafeAreaView style={styles.inputWrapper}>
                     <Text style={styles.text}>Gender : </Text>
                     <TextInput style={styles.input}
                         value={gender}
@@ -189,7 +200,15 @@ const NewPatient = () => {
                         onChangeText={(text) => setGender(text)}
                     />
                     <Text style={styles.errorInput}>{genderError}</Text>
-                </SafeAreaView>*/}
+                </SafeAreaView><SafeAreaView style={styles.inputWrapper}>
+                <Text style={styles.text}>Medical ID : </Text>
+                <TextInput style={styles.input}
+                           value={medicalID}
+                           placeholder={'Medical ID'}
+                           onChangeText={(text) => setMedicalID(text)}
+                />
+                <Text style={styles.errorInput}>{medicalIDError}</Text>
+            </SafeAreaView>
             </SafeAreaView>
             <SafeAreaView style={styles.content}>
                 {/*Comprehensive Overview */}
