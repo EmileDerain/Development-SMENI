@@ -95,7 +95,7 @@ const NewPatient = () => {
     const saveNewPatient = async () => {
         const url = URL_CREATE_PATIENT;
 
-        setGender("0");
+        setGender("1");
         const n = Math.random();
         //TODO change birthdate, gender and medical id parameters
         const params = {
@@ -137,7 +137,6 @@ const NewPatient = () => {
 
     return (// KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.
         <KeyboardAwareScrollView style={styles.container}>
-            {/*contenu*/}
             <SafeAreaView style={styles.content}>
                 <WithLocalSvg asset={goBack} width={25} height={25} style={styles.icon} onPress={() => {
                     navigation.goBack();
