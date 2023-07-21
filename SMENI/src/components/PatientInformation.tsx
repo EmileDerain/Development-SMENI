@@ -8,6 +8,9 @@ import DropDownPicker from 'react-native-dropdown-picker'; // Import DropDownPic
 
 const PatientInformation = ({ onChangeInput }) => {
   DropDownPicker.setListMode("SCROLLVIEW");
+  const [selectedMedicalID, setSelectedMedicalID] = useState(''); 
+  const [selectedName, setSelectedName] = useState('');
+  const [selectedSurname, setSelectedSurname] = useState('');
   const [selectedBirthDate, setSelectedBirthDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedWeight, setSelectedWeight] = useState('');
@@ -17,10 +20,48 @@ const PatientInformation = ({ onChangeInput }) => {
   const [genderOptions, setGenderOptions] = useState([
     { label: 'Male', value: 'male' },
     { label: 'Female', value: 'female' },
-    { label: 'Other', value: 'other' },
   ]);
 
   const pickerRef = useRef(null);
+  const handleMedicalIDChange = (text) => {
+    const medicalID = text.replace(/[^0-9]/g, '');
+    setSelectedMedicalID(medicalID);
+    onChangeInput({
+      selectedMedicalID: medicalID,
+      selectedName,
+      selectedSurname,
+      selectedBirthDate,
+      selectedWeight,
+      selectedHeight,
+      selectedGender,
+    });
+  };
+
+  const handleNameChange = (text) => {
+    setSelectedName(text);
+    onChangeInput({
+      selectedMedicalID,
+      selectedName: text,
+      selectedSurname,
+      selectedBirthDate,
+      selectedWeight,
+      selectedHeight,
+      selectedGender,
+    });
+  };
+
+  const handleSurnameChange = (text) => {
+    setSelectedSurname(text);
+    onChangeInput({
+      selectedMedicalID,
+      selectedName,
+      selectedSurname: text,
+      selectedBirthDate,
+      selectedWeight,
+      selectedHeight,
+      selectedGender,
+    });
+  };
 
   const handleDateChange = (date) => {
     const today = new Date();
@@ -29,18 +70,24 @@ const PatientInformation = ({ onChangeInput }) => {
     if (date >= minDate && date <= today) {
       setSelectedBirthDate(date);
       onChangeInput({
+        selectedMedicalID,
+        selectedName,
+        selectedSurname,
         selectedBirthDate: date,
         selectedWeight,
         selectedHeight,
         selectedGender,
-      });
-    }
+    });
+    };
   };
 
   const handleWeightChange = (text) => {
     const weight = text.replace(/[^0-9]/g, '');
     setSelectedWeight(weight);
     onChangeInput({
+      selectedMedicalID,
+      selectedName,
+      selectedSurname,
       selectedBirthDate,
       selectedWeight: weight,
       selectedHeight,
@@ -52,6 +99,9 @@ const PatientInformation = ({ onChangeInput }) => {
     const height = text.replace(/[^0-9]/g, '');
     setSelectedHeight(height);
     onChangeInput({
+      selectedMedicalID,
+      selectedName,
+      selectedSurname,
       selectedBirthDate,
       selectedWeight,
       selectedHeight: height,
@@ -62,6 +112,9 @@ const PatientInformation = ({ onChangeInput }) => {
   const handleGenderChange = (value) => {
     setSelectedGender(value);
     onChangeInput({
+      selectedMedicalID,
+      selectedName,
+      selectedSurname,
       selectedBirthDate,
       selectedWeight,
       selectedHeight,
@@ -84,6 +137,31 @@ const PatientInformation = ({ onChangeInput }) => {
       <View style={styles.container}>
         <SafeAreaView style={styles.informationWrapper}>
           <Text style={[styles.text, styles.subtitle]}>Patient Information :</Text>
+          <SafeAreaView style={styles.row}>
+            <Text style={styles.label}>Medical ID:</Text>
+            <TextInput
+              style={styles.input}
+              value={selectedMedicalID}
+              keyboardType="numeric"
+              onChangeText={handleMedicalIDChange}
+            />  
+          </SafeAreaView>
+          <SafeAreaView style={styles.row}>
+            <Text style={styles.label}>Name:</Text>
+            <TextInput
+              style={styles.input}
+              value={selectedName}
+              onChangeText={handleNameChange}
+            />
+          </SafeAreaView>
+          <SafeAreaView style={styles.row}>
+            <Text style={styles.label}>Surname:</Text>
+            <TextInput
+              style={styles.input}
+              value={selectedSurname}
+              onChangeText={handleSurnameChange}
+            />
+          </SafeAreaView>
           <SafeAreaView style={styles.row}>
             <Text style={styles.label}>Birth date:</Text>
             {!showDatePicker && (
@@ -129,8 +207,9 @@ const PatientInformation = ({ onChangeInput }) => {
               items={genderOptions}
               value = {selectedGender}
               setOpen={setOpen}
-              setValue={handleGenderChange}
+              setValue={setSelectedGender}
               setItems={setGenderOptions}
+              onChangeValue={handleGenderChange}
               style={ [styles.dropdownPicker, styles.input]}
               dropDownDirection='TOP'
               dropDownContainerStyle={styles.dropdownContainer}
