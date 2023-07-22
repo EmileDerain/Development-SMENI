@@ -440,6 +440,12 @@
     height: 100%;
 }
 
+.genderInfo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /*#########################*/
 .menuRightBot {
     display: flex;

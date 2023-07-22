@@ -40,6 +40,7 @@ const Filter = ({name, urlSearch, typeFilter, filterSelectedSpecific, removeFilt
             })
             .then(labelList => {
                 setLabels(prevItems => prevItems.concat(labelList.labels));
+                console.log("New Filter : ", labelList)
                 currentPage.current++;
                 maxPage.current = labelList.labelCount;
                 sendReq.current = false;

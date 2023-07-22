@@ -216,6 +216,10 @@ a {
     cursor: pointer;
 }
 
+.iconMenuHeaderPageDefault {
+    cursor: default;
+}
+
 .iconMenuHeaderPageNoCursor {
     z-index: 2;
     cursor: default;

@@ -14,6 +14,7 @@ import './Global.css';
 import './Doctors.css';
 
 import DialogBoxDoctor from "./component/DialogBoxDoctor";
+import DialogBox from "./component/DialogBox";
 
 
 const Doctors = () => {
@@ -29,6 +30,13 @@ const Doctors = () => {
     const [dialogBoxDoctor, setDialogBoxDoctor] = useState({
         ask: false,
         account: undefined,
+    });
+
+    const [dialogBox, setDialogBox] = useState({
+        ask: false,
+        whatAsked: undefined,
+        type: undefined,
+        message: "",
     });
 
     const getDoctors = () => {
@@ -65,12 +73,20 @@ const Doctors = () => {
     function Doctor(info) {
 
         const openDialogBox = (action, account) => {
-            console.log("tion, accoun", action, account)
             switch (action) {
                 case "patch": {
                     setDialogBoxDoctor(() => ({
                         ask: true,
                         account: account,
+                    }));
+                    break;
+                }
+                case "delete": {
+                    setDialogBox(() => ({
+                        ask: true,
+                        type: "delete",
+                        whatAsked: info.doctor,
+                        message: "Are you sure you want to delete this doctor ?",
                     }));
                     break;
                 }
@@ -93,7 +109,7 @@ const Doctors = () => {
                     </div>
                     <div>
                         <Icon path={mdiTrashCanOutline} className={"iconMenuHeaderPage cursorHoverPointerRed"}
-                              size={1}/>
+                              onClick={() => openDialogBox("delete")} size={1}/>
                     </div>
                 </div>
             </div>
@@ -136,7 +152,7 @@ const Doctors = () => {
         getDoctors();
     }
 
-    const resetDialogBox = () => {
+    const resetDialogBoxDoctor = () => {
         setDialogBoxDoctor(() => ({
             ask: false,
             account: undefined,
@@ -154,6 +170,48 @@ const Doctors = () => {
                 }
             })
         );
+    }
+
+    const dialogBoxYes = () => {
+        switch (dialogBox.type) {
+            case "delete": {
+                console.log(dialogBox)
+                fetch(`${config.serverUrl}/api/user?id=${dialogBox.whatAsked._id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'authorization': localStorage.getItem('token'),
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('An error occurred while deleting data.');
+                        }
+                        setDoctors(prevState => prevState.filter(doc => doc._id !== dialogBox.whatAsked._id))
+                        resetDialogBox();
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
+    const resetDialogBox = () => {
+        setDialogBox(() => ({
+            ask: false,
+            type: undefined,
+            whatAsked: undefined,
+            message: "",
+        }));
+    }
+
+
+    const dialogBoxNo = () => {
+        resetDialogBox();
     }
 
 
@@ -197,7 +255,14 @@ const Doctors = () => {
                 ask={dialogBoxDoctor.ask}
                 account={dialogBoxDoctor.account}
                 functionUpdate={updateAfterPatch}
-                functionClose={resetDialogBox}
+                functionClose={resetDialogBoxDoctor}
+            />
+
+            <DialogBox
+                ask={dialogBox.ask}
+                message={dialogBox.message}
+                functionYes={dialogBoxYes}
+                functionNo={dialogBoxNo}
             />
 
         </div>

@@ -1,10 +1,9 @@
 import React, {useEffect, useRef, useState} from "react";
-import {useNavigate, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {
     mdiGenderFemale,
     mdiGenderMale,
     mdiTrashCanOutline,
-    mdiPencil,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
@@ -41,8 +40,6 @@ const PatientDetails = () => {
     let sendReq = useRef(false);
 
     const refAudios = useRef(null);
-
-    const navigate = useNavigate();
 
     useEffect(() => {
         refAudios.current.addEventListener('scroll', scroll);
@@ -81,7 +78,7 @@ const PatientDetails = () => {
                 if (!response.ok) {
                     console.log("response.status", response.status)
                     if (response.status === 404) {
-                        navigate('/404'); // Redirection vers la page "404"
+                        window.location.href = '/404';
                     } else {
                         throw new Error('Une erreur s\'est produite lors de l\'envoi des données.');
                     }
@@ -172,7 +169,8 @@ const PatientDetails = () => {
                         if (!response.ok) {
                             throw new Error('An error occurred while deleting data.');
                         } else {
-                            navigate("/patients")
+                            window.location.href = '/patients';
+
                         }
                     })
                     .catch(error => {

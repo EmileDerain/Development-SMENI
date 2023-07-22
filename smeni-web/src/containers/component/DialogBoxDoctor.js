@@ -37,6 +37,41 @@ const DialogBoxDoctor = ({ask, account, functionUpdate, functionClose}) => {
 
     const update = (patchData) => {
 
+        if (patchData.key === "password") {
+            if (patchData.old.length === 0) {
+                setFeedBack('Password is required');
+                return;
+            } else if (patchData.old.length < 8) {
+                setFeedBack('Password must be at least 8 characters long');
+                return;
+            } else if (patchData.old.length > 20) {
+                setFeedBack('Password must be at most 20 characters long');
+                return;
+            } else if (!patchData.old.match(/[a-z]/g)) {
+                setFeedBack('Password must contain at least one lowercase letter');
+                return;
+            } else if (!patchData.old.match(/[A-Z]/g)) {
+                setFeedBack('Password must contain at least one uppercase letter');
+                return;
+            } else if (!patchData.old.match(/[0-9]/g)) {
+                setFeedBack('Password must contain at least one number');
+                return;
+            } else if (!patchData.old.match(/[^a-zA-Z\d]/g)) {
+                setFeedBack('Password must contain at least one special character');
+                return;
+            }
+        } else if (patchData.key === "mail") {
+            const mailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (patchData.old.length === 0) {
+                setFeedBack('Mail is required');
+                return;
+            } else if (!mailValidator.test(String(patchData.old).toLowerCase())) {
+                setFeedBack('Mail is not valid, it should be like : example@xyz.com');
+                return;
+            }
+        }
+
+
         fetch(`${config.serverUrl}${patchData.url}`, {
             method: 'PATCH',
             headers: {
@@ -95,7 +130,7 @@ const DialogBoxDoctor = ({ask, account, functionUpdate, functionClose}) => {
                         {settingOption.map((so, index) => (
                             <div className={"menuSettinEmailDoctor"}>
                                 <input type={so.type} placeholder={so.default} id={"email"} value={so.old}
-                                       className={"custom-input-setting"}
+                                       className={"custom-input-setting-doctor"}
                                        onChange={(event) => {
                                            const newSettingOption = [...settingOption];
                                            newSettingOption[index] = {

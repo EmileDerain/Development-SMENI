@@ -74,9 +74,11 @@ exports.getAllPatientLabelsFilter = async (req, res) => {
             {$or: orConditionsFirstName},
         ]
     }).select('lastName firstName _id')
-        .sort('lastName')
+        // .sort('lastName')
         .skip((page - 1) * nbLabel).limit(nbLabel)
         .then(patients => {
+            // console.log('patients SEND ----------', patients);
+
             const modifiedUsers = patients.map(patient => {
                 return {
                     _id: patient._id,
@@ -174,18 +176,59 @@ exports.deletePatient = (req, res) => {
         .catch(error => res.status(400).json({error}));
 };
 
+function random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
 exports.init100Patient = async (req, res) => {
-    for (let i = 0; i < 100; i++) {
-        const patientSave = new Patient({
-            firstName: "emile" + i,
-            lastName: "nom" + i,
-            height: 1.7,
-            weight: 65,
-            gender: i % 2 + 1,
-            birthDate: new Date(),
-            medicalID: 12342412 + i
-        });
-        await patientSave.save()
+
+    const firstName = ["Anh", "Hông", "Kim", "Lôc", "Duong", "An"]
+    const lastName = ["Nguyen", "Tran", "Le", "Pham", "Vu", "Ngo", "Do", "Hoang", "Dao", "Dang", "Duong", "Dinh"]
+
+    const heightM = [76, 88, 96, 103, 110, 116, 122, 127, 133, 138, 143, 149, 156, 163, 169, 173, 175, 176]
+    const weightM = [10, 12, 14, 16, 18, 21, 23, 25, 28, 31, 35, 39, 45, 51, 57, 62, 65, 67]
+
+    const heightF = [74, 87, 95, 103, 109, 115, 121, 127, 133, 139, 145, 152, 157, 160, 162, 163, 163, 163]
+    const weightF = [9, 12, 14, 16, 18, 20, 22, 25, 28, 32, 36, 42, 47, 51, 53, 55, 55, 56]
+
+
+    for (let i = 0; i < 6; i++) {
+        for (let j = 0; j < 12; j++) {
+            const year = random(1, 17);
+            const gender = random(1, 2);
+            const date = new Date(2023 - year, random(1, 12) - 1, random(1, 31));
+
+            let factMul;
+            let patientSave;
+
+            if (gender === 1) {
+                factMul = random(90, 15) / 100
+
+                patientSave = new Patient({
+                    firstName: firstName[i],
+                    lastName: lastName[j],
+                    height: heightF[year] * factMul,
+                    weight: weightF[year] * factMul,
+                    gender: gender,
+                    birthDate: date,
+                    medicalID: random(100000000, 999999999)
+                });
+            } else {
+                factMul = random(95, 115) / 100
+
+                patientSave = new Patient({
+                    firstName: firstName[i],
+                    lastName: lastName[j],
+                    height: heightM[year] * factMul,
+                    weight: weightM[year] * factMul,
+                    gender: gender,
+                    birthDate: date,
+                    medicalID: random(100000000, 999999999)
+                });
+            }
+            await patientSave.save()
+        }
     }
     res.status(200).json({"status": 200});
 }

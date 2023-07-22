@@ -134,6 +134,40 @@ const Menu = ({account}) => {
     }, []);
 
     const update = (patchData) => {
+        if (patchData.key === "password") {
+            if (patchData.old.length === 0) {
+                setFeedBack('Password is required');
+                return;
+            } else if (patchData.old.length < 8) {
+                setFeedBack('Password must be at least 8 characters long');
+                return;
+            } else if (patchData.old.length > 20) {
+                setFeedBack('Password must be at most 20 characters long');
+                return;
+            } else if (!patchData.old.match(/[a-z]/g)) {
+                setFeedBack('Password must contain at least one lowercase letter');
+                return;
+            } else if (!patchData.old.match(/[A-Z]/g)) {
+                setFeedBack('Password must contain at least one uppercase letter');
+                return;
+            } else if (!patchData.old.match(/[0-9]/g)) {
+                setFeedBack('Password must contain at least one number');
+                return;
+            } else if (!patchData.old.match(/[^a-zA-Z\d]/g)) {
+                setFeedBack('Password must contain at least one special character');
+                return;
+            }
+        }else if(patchData.key === "mail"){
+            const mailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (patchData.old.length === 0) {
+                setFeedBack('Mail is required');
+                return;
+            } else if (!mailValidator.test(String(patchData.old).toLowerCase())) {
+                setFeedBack('Mail is not valid, it should be like : example@xyz.com');
+                return;
+            }
+        }
+
 
         fetch(`${config.serverUrl}${patchData.url}`, {
             method: 'PATCH',
@@ -189,8 +223,8 @@ const Menu = ({account}) => {
                     SMENI
                 </div>
                 <div className={"headerMenu"}>
-                    {menuHeader.map((mh) => (
-                        <ButtonMenuHeader button={mh}></ButtonMenuHeader>
+                    {menuHeader.map((mh, index) => (
+                        <ButtonMenuHeader key={index} button={mh}></ButtonMenuHeader>
                     ))}
                 </div>
             </div>
@@ -225,8 +259,8 @@ const Menu = ({account}) => {
                 :
                 <div className={"menuGlobal"}>
                     <div className={accountType === "doctor" ? "menuDoctor" : "menu"}>
-                        {menu.map((m) => (
-                            <ButtonMenu button={m}></ButtonMenu>
+                        {menu.map((m, index) => (
+                            <ButtonMenu key={index} button={m}></ButtonMenu>
                         ))}
                     </div>
                 </div>

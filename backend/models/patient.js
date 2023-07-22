@@ -9,7 +9,6 @@ const patientSchema = mongoose.Schema({
     birthDate: {type: Date},
     medicalID: {type: Number},
     gender: {type: Number},
-    //comorbidities, gender
 });
 
 patientSchema.plugin(uniqueValidator);

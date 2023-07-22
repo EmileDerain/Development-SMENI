@@ -147,7 +147,7 @@ const Audios = () => {
                             throw new Error('An error occurred while deleting data.');
                         }
                         setAudios(prevState => prevState.filter(audio => audio._id !== dialogBox.whatAsked._id))
-                        if (selectedAudio._id === dialogBox.whatAsked._id)
+                        if (selectedAudio?._id === dialogBox.whatAsked._id)
                             setSelectedAudio(undefined);
                         getAudioFilesFilter();
                         resetDialogBox();

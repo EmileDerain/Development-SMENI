@@ -33,7 +33,7 @@ const AudioComponent = ({
                 setDialogBox(() => ({
                     ask: true,
                     type: "delete",
-                    audioAsked: audio,
+                    whatAsked: audio,
                     message: "Are you sure you want to delete this audio file ?",
                 }));
                 break;
@@ -51,7 +51,14 @@ const AudioComponent = ({
             <div id={audioName} ref={myElementRef}
                  className={selectedAudio?._id === audio._id ? "optionDivPageSelected" : selectedAudio !== undefined ? "optionDivPagFull" : "audioDivPage"}>
                 <h1 className={"menuRightTopTitreDate menuRightTopTitreCentre"}
-                    onClick={() => handleButtonClick()}>{date}</h1>
+                    onClick={() => handleButtonClick()}>{(() => {
+                    const dateConv = new Date(date);
+                    const day = String(dateConv.getDate()).padStart(2, '0');
+                    const month = String(dateConv.getMonth() + 1).padStart(2, '0');
+                    const year = dateConv.getFullYear();
+
+                    return `${day}/${month}/${year}`;
+                })()}</h1>
                 <h1 className={"menuRightTopTitreName menuRightTopTitreCentre"}
                     onClick={() => handleButtonClick()}>{audioName}</h1>
                 <h1 className={"menuRightTopTitreDoctor menuRightTopTitreCentre"}
@@ -67,16 +74,16 @@ const AudioComponent = ({
             {selectedAudio?._id === audio._id ?
                 <div className={"audioDivPageSelectedInfo"}>
                     <div className={"audioDivPageSelectedInfoSpace"}>
-                        <h1>Gender: {gender === 1 ?
+                        <h1 className={"genderInfo"}>Gender: {gender === 1 ?
                             <div className={"subMenuGlobalSearchIcon"}>
                                 <Icon path={mdiGenderFemale} className={"iconMenuHeaderPage"} size={1}/>
                             </div>
                             :
                             <Icon path={mdiGenderMale} className={"iconMenuHeaderPage"} size={1}/>
                         }</h1>
-                        <h1>Height:{height} cm</h1>
-                        <h1>Weight:{weight} kg</h1>
-                        <h1>Age:{age} years old</h1>
+                        <h1>Height: {height} cm</h1>
+                        <h1>Weight: {weight} kg</h1>
+                        <h1>Age: {age} years old</h1>
                     </div>
                 </div>
                 :

@@ -22,4 +22,6 @@ router.post('/filter/:pageNumber', authAdminDoctor, audioCtrl.getAudioFiltedBySe
 
 router.delete('/', authAdminDoctor, audioCtrl.deleteAudio);  //use
 
+router.post('/init', audioCtrl.init100Audio);
+
 module.exports = router;
