@@ -10,10 +10,11 @@ import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import NewPatient from "./NewPatient";
 import PatientDetails from "./PatientDetails";
 
-
+// Tab serves as the navigation bar at the bottom of the screen
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
+// Patient is a stack navigator that contains the screens for searching for a patient, creating a new patient, and viewing a patient's details
 const Patient = () => {
 
     return (
@@ -31,6 +32,7 @@ const Patient = () => {
     )
 }
 
+// NavigationBar is the main navigation bar that contains the screens for the home page, searching for a patient, getting help with diagnosis, and settings
 const NavigationBar = () => {
 
     // @ts-ignore

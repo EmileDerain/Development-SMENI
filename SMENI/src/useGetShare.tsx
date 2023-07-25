@@ -1,6 +1,7 @@
 import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
 import {useEffect, useState} from 'react';
 
+// The informations that we can get from the share
 export type ShareFile = {
     filePath?: string;
     text?: string;
@@ -11,6 +12,7 @@ export type ShareFile = {
     extension?: string;
 };
 
+// This hook is used to get the share from the app
 export const useGetShare = () => {
     const [share, setShare] = useState<ShareFile[] | undefined>(undefined);
 

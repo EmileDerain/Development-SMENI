@@ -5,12 +5,15 @@ import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import moment from 'moment';
 import {WithLocalSvg} from "react-native-svg";
 
+// PatientDetails component
 const PatientDetails = ({route}) => {
+    // Extract the patient object from the route parameters
     const {patient} = route.params;
     console.log("coucou", patient);
 
     const navigation = useNavigation();
 
+    // Load icons from assets
     const goBack = require('../assets/images/arrow-left-solid.svg');
     const weightPicture = require('../assets/images/weight-scale-solid.svg');
     const heightPicture = require('../assets/images/ruler-vertical-solid.svg');
@@ -48,9 +51,7 @@ const PatientDetails = ({route}) => {
                 <SafeAreaView style={styles.field}>
                     <WithLocalSvg asset={genderPicture} width={25} height={25} style={styles.icon}/>
                     <Text style={styles.text}>Gender
-                        {patient.gender != 1 ? <Text> Male</Text> :
-                            <Text> Female</Text>
-                        }
+                        {patient.gender != 1 ? <Text> Male</Text> : <Text> Female</Text>}
                     </Text>
                 </SafeAreaView>
 
@@ -64,13 +65,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1, backgroundColor: '#fff'
     }, content: {
-        flexDirection: 'row',
-        marginTop: 20,
-        marginLeft: 10,
-        marginBottom: 20,
+        flexDirection: 'row', marginTop: 20, marginLeft: 10, marginBottom: 20,
     }, back: {
-        marginRight: 10,
-        alignSelf: 'center',
+        marginRight: 10, alignSelf: 'center',
     }, title: {
         fontWeight: '700', fontSize: 30,
     }, subtitle: {
@@ -84,12 +81,9 @@ const styles = StyleSheet.create({
         lineHeight: 32,
         letterSpacing: 0.01,
     }, icon: {
-        marginLeft:10,
-        alignSelf: 'center',
-        marginRight: 10,
-    }, field:{
-        flexDirection: 'row',
-        marginBottom: 15,
+        marginLeft: 10, alignSelf: 'center', marginRight: 10,
+    }, field: {
+        flexDirection: 'row', marginBottom: 15,
     }
 });
 
