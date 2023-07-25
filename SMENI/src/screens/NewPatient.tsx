@@ -47,8 +47,38 @@ const NewPatient = () => {
             lastNameValid = true;
         }
 
-        // Additional form validation code for other fields (commented out)
-        // ...
+        // Additional form validation code for other fields
+        /*let dateOfBirthValid = false;
+       if (dateOfBirth.length == 0) {
+           setDateOfBirthError('Date of Birth is required');
+       } else {
+           setDateOfBirthError('');
+           dateOfBirthValid = true;
+       }
+
+       let heightValid = false;
+       if (height.length == 0) {
+           setHeightError('Height is required');
+       } else {
+           setHeightError('');
+           heightValid = true;
+       }
+
+       let weightValid = false;
+       if (weight.length == 0) {
+           setWeightError('Weight is required');
+       } else {
+           setWeightError('');
+           weightValid = true;
+       }
+
+       let genderValid = false;
+       if (gender.length == 0) {
+           setGenderError('Gender is required');
+       } else {
+           setGenderError('');
+           genderValid = true;
+       }*/
 
         if (firstNameValid && lastNameValid) {// && dateOfBirthValid && heightValid && weightValid && genderValid) {
             saveNewPatient();
