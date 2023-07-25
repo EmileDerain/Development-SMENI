@@ -9,7 +9,7 @@ import {isTokenValid} from "../utils/jwtCheck";
 import {WithLocalSvg} from 'react-native-svg';
 import NetInfo from "@react-native-community/netinfo";
 
-
+// Function to check if the token is valid and navigate to the appropriate page
 const CheckToken = async () => {
     const navigation = useNavigation();
     const tokenFromStorage = await AsyncStorage.getItem('token');
@@ -19,11 +19,13 @@ const CheckToken = async () => {
     }
 }
 
+// SignUp component
 const SignUp = () => {
     const navigation = useNavigation();
 
     const isScreenFocused = useIsFocused();
 
+    // useEffect to listen for network connectivity changes
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
             if (!(state.isConnected)) {
@@ -34,10 +36,12 @@ const SignUp = () => {
         return unsubscribe;
     }, [isScreenFocused]);
 
+    // Check the token validity
     CheckToken();
 
+    // State variables to hold form data and their respective errors
     const [firstName, setFirstName] = useState('');
-    const [firstNameError, setFirstNameError] = useState(''); //TODO : faire un style pour les erreurs
+    const [firstNameError, setFirstNameError] = useState('');
     const [lastName, setLastName] = useState('');
     const [lastNameError, setLastNameError] = useState('');
     const [mail, setMail] = useState('');
@@ -46,11 +50,13 @@ const SignUp = () => {
     const [passwordError, setPasswordError] = useState('');
     const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 
-
+    // Icons for password visibility toggle
     const visibilityIcon = require('../assets/images/eye-solid.svg');
     const visibilityOffIcon = require('../assets/images/eye-slash-solid.svg');
 
+    // Function to handle form submission
     const handleSubmit = () => {
+        // Validation checks for each form field
         let firstNameValid = false;
         if (firstName.length == 0) {
             setFirstNameError('First Name is required');
@@ -98,11 +104,13 @@ const SignUp = () => {
             passwordValid = true;
         }
 
+        // If all fields are valid, proceed to register the account
         if (firstNameValid && lastNameValid && mailValid && passwordValid) {
             registerAccount();
         }
     }
 
+    // Function to clear the form fields
     const clearForm = () => {
         setFirstName('');
         setLastName('');
@@ -110,13 +118,16 @@ const SignUp = () => {
         setPassword('');
     }
 
+    // Function to register a new account
     const registerAccount = async () => {
         const url = URL_SIGNUP;
 
+        // Parameters to be sent in the request body
         const params = {
             firstName: firstName, lastName: lastName, mail: mail, password: password
         };
 
+        // Create a URLSearchParams object and append the parameters to it
         const formData = new URLSearchParams();
         for (const key in params) {
             // @ts-ignore
@@ -124,6 +135,7 @@ const SignUp = () => {
         }
 
         try {
+            // Send a POST request to the server with the form data
             const response = await fetch(url, {
                 method: 'POST', headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -132,14 +144,14 @@ const SignUp = () => {
 
             if (response.ok) {
                 console.log('response ok');
+                // If registration is successful, clear the form and navigate to the sign-in page
                 clearForm();
                 navigation.navigate(PAGE_SIGNIN);
             } else {
-                // get the error message from response
-                const error = await response.json()
+                // If there is an error in the response, display the error message
+                const error = await response.json();
                 console.log('first:', error.message);
-                setMailError(error.message); //TODO voir si on met une alerte à la place
-
+                setMailError(error.message); // TODO: Consider showing an alert instead
             }
         } catch (error) {
             console.log('error:', error);
@@ -147,7 +159,7 @@ const SignUp = () => {
         }
     };
 
-
+// SignUp component
     return (// KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.
         <KeyboardAwareScrollView style={styles.container}>
             {/*header*/}
@@ -273,16 +285,10 @@ const styles = StyleSheet.create({
     }, invalidInput: {
         borderColor: 'red', // Couleur de la bordure en cas d'input invalide
     }, errorInput: {
-        color: 'red',
-        marginTop: 5,
-    },
-    passwordWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '90%'
-    },
-    button: {
+        color: 'red', marginTop: 5,
+    }, passwordWrapper: {
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '90%'
+    }, button: {
         borderColor: '#96D3FE',
         borderWidth: 1,
         borderRadius: 30,
@@ -299,8 +305,7 @@ const styles = StyleSheet.create({
     }, buttonText: {
         color: 'white'
     }, navigateWrapper: {
-        flexDirection: 'row', alignItems: 'center', marginTop: 15,
-        justifyContent: 'center'
+        flexDirection: 'row', alignItems: 'center', marginTop: 15, justifyContent: 'center'
     }
 });
 
