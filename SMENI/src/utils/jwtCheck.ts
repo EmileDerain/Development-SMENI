@@ -1,6 +1,7 @@
 import {decode as base64Decode} from 'base-64';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// Function to parse JWT
 function parseJwt(token: string | null) {
     if (token === null || token.indexOf('.') === -1) {
         return null;
@@ -20,6 +21,7 @@ function parseJwt(token: string | null) {
     }
 }
 
+// Function to check if JWT is valid
 function isTokenValid(token: string | null) {
     if(token === null) return false;
     let parsedJwt = parseJwt(token);
