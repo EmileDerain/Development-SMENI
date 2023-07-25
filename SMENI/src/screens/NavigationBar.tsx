@@ -6,10 +6,33 @@ import DiagnoHelpScreen from "./DiagnoHelpScreen";
 import Home from "./Home";
 import Settings from "./Settings";
 import Chat from "./Chat";
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import NewPatient from "./NewPatient";
+import PatientDetails from "./PatientDetails";
 
-
+// Tab serves as the navigation bar at the bottom of the screen
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
+// Patient is a stack navigator that contains the screens for searching for a patient, creating a new patient, and viewing a patient's details
+const Patient = () => {
+
+    return (
+        <Stack.Navigator initialRouteName="SearchPatient">
+            <Stack.Screen name={'SearchPatient'} component={SearchPatient} options={{
+                headerShown: false
+            }}/>
+            <Stack.Screen name={'NewPatient'} component={NewPatient} options={{
+                headerShown: false
+            }}/>
+            <Stack.Screen name={'PatientDetails'} component={PatientDetails} options={{
+                headerShown: false
+            }}/>
+        </Stack.Navigator>
+    )
+}
+
+// NavigationBar is the main navigation bar that contains the screens for the home page, searching for a patient, getting help with diagnosis, and settings
 const NavigationBar = () => {
 
     // @ts-ignore
@@ -53,9 +76,9 @@ const NavigationBar = () => {
             <Tab.Screen name={'Home_Bar'} component={Home} options={{
                 headerShown: false
             }}/>
-            <Tab.Screen name={'Search_Screen_Bar'} component={SearchPatient} options={{
+            <Tab.Screen name={'Search_Screen_Bar'} options={{
                 headerShown: false
-            }}/>
+            }} component={Patient}/>
             <Tab.Screen name={'Diagno_Bar'} component={DiagnoHelpScreen} options={{
                 headerShown: false
             }}/>

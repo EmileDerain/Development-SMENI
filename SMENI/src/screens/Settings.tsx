@@ -4,6 +4,8 @@ import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {PAGE_SIGNIN} from "../utils/path";
 
+
+// This page will be used to logout and to access the details of our account
 const Settings = ({navigation}) => {
 
     return (// KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.

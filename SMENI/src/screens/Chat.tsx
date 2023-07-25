@@ -2,6 +2,7 @@ import React from 'react';
 import {SafeAreaView, StyleSheet, Text} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
+// This page will be used to exchange messages with other doctors
 const Chat = () => {
 
     return (// KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.

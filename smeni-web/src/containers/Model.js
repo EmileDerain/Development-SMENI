@@ -1,49 +1,15 @@
 import React from "react";
 // ES6 import or TypeScript
 import io from "socket.io-client";
-import {showReload} from "../redux/actions/smeniActions";
-import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useRef, useState} from "react";
 
 import './Global.css';
 import './Model.css';
 
-import {Link} from "react-router-dom";
 import Icon from "@mdi/react";
-import {mdiContentSave, mdiDoctor, mdiFolderPlayOutline, mdiHomeVariantOutline, mdiReload} from "@mdi/js";
+import {mdiReload} from "@mdi/js";
 import Background from "./component/Background";
 import HeaderSubMenu from "./component/HeaderSubMenu";
-
-const menuHeader = [
-    {
-        name: "Home",
-        mdi: mdiHomeVariantOutline,
-        link: '/',
-    },
-    {
-        name: "Reload AI",
-        mdi: mdiReload,
-        link: '',
-    }, {
-        name: "AI",
-        mdi: mdiContentSave,
-        link: '/models',
-    },
-    {
-        name: "Health sounds",
-        mdi: mdiFolderPlayOutline,
-        link: '/audios',
-    },
-    {
-        name: "Doctor accounts",
-        mdi: mdiDoctor,
-        link: '/doctors',
-    },
-]
-
-const startTraining = () => {
-
-}
 
 
 const Model = () => {
@@ -129,7 +95,7 @@ const Model = () => {
                 <div className={"PageActionGlobal"}>
                     <div className={"menuLeft"}>
                         <div className={"menuLeftTopBigger"}>
-                            <div className={"menuLeftTopTitre"}>
+                            <div className={"menuLeftTopTitreModel"}>
                                 <h1>Options</h1>
                             </div>
                             <div className={"optionDiv"}>
@@ -161,14 +127,6 @@ const Model = () => {
             </div>
         </div>
     )
-}
-
-function ButtonMenuHeader(info) {
-    return (
-        <Link className={"iconMenuHeaderDivPage"} to={info.button.link}>
-            <Icon path={info.button.mdi} className={"iconMenuHeaderPage"} size={2}/>
-        </Link>
-    );
 }
 
 export default Model;

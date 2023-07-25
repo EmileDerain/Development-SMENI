@@ -1,54 +1,19 @@
-import React from "react";
-import {Link} from "react-router-dom";
-import Icon from "@mdi/react";
-import {
-    mdiContentSave,
-    mdiDoctor,
-    mdiFolderPlayOutline,
-    mdiHomeVariantOutline,
-    mdiReload,
-    mdiTrashCanOutline
-} from "@mdi/js";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import './Global.css';
 import './Models.css';
+import config from "../config/config"
+
 import Background from "./component/Background";
 import HeaderSubMenu from "./component/HeaderSubMenu";
-
-
-const menuHeader = [
-    {
-        name: "Home",
-        mdi: mdiHomeVariantOutline,
-        link: '/',
-    },
-    {
-        name: "Reload AI",
-        mdi: mdiReload,
-        link: '/model',
-    }, {
-        name: "AI",
-        mdi: mdiContentSave,
-        link: '',
-    },
-    {
-        name: "Health sounds",
-        mdi: mdiFolderPlayOutline,
-        link: '/audios',
-    },
-    {
-        name: "Doctor accounts",
-        mdi: mdiDoctor,
-        link: '/doctors',
-    },
-]
+import ModelsComponent from "./component/ModelsComponent";
+import DialogBox from "./component/DialogBox";
 
 
 const Models = () => {
-
     const [models, setModels] = useState([]);
 
     const [modelSelected, setModelSelected] = useState(undefined);
+
     const [dialogBox, setDialogBox] = useState({
         ask: false,
         modelAsked: undefined,
@@ -56,119 +21,46 @@ const Models = () => {
         message: "",
     });
 
-    const [modelAsked, setModelAsked] = useState(undefined);
+    let currentPage = useRef(1);
+    let maxPage = useRef(1);
+    let sendReq = useRef(false);
 
+    const refScroll = useRef(null);
 
     const getModels = () => {
-        console.log("Req getAudioLabels")
-        fetch('http://localhost:2834/api/cnn/')
+        fetch(config.serverUrl + `api/cnn/model?page=${currentPage.current}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Une erreur s\'est produite lors de la récupération des données.');
+                    throw new Error('An error occurred while retrieving data.');
                 }
                 return response.json();
             })
             .then(modelList => {
-                console.log("usersList", modelList.models)
-                setModels(modelList.models);
+                setModels(prevItems => prevItems.concat(modelList.models));
                 setModelSelected(modelList.selectedModel)
+
+                currentPage.current++;
+                maxPage.current = modelList.count;
+                sendReq.current = false;
             })
             .catch(error => {
                 console.error(error);
             });
     };
 
-    const modelList = models.map((item, index) => {
-        return <ModelInfo key={index} model={item}></ModelInfo>;
-    });
-
-    function ModelInfo(info) {
-        const myElementRef = useRef(null);
-
-        const handleButtonClick = (action) => {
-            const element = myElementRef.current;
-            console.log("handleButtonClick: ", element, action)
-            switch (action) {
-                case "select": {
-                    console.log("selectselect")
-                    if (element && info.model._id !== modelSelected._id) {
-                        setDialogBox(() => ({
-                            ask: true,
-                            type: "select",
-                            modelAsked: info.model,
-                            message: "Are you sure you want to change the Model ?",
-                        }));
-                    }
-                    break;
-                }
-                case "delete": {
-                    console.log("deletedelete")
-                    if (element && info.model._id !== modelSelected._id) {
-                        setDialogBox(() => ({
-                            ask: true,
-                            type: "delete",
-                            modelAsked: info.model,
-                            message: "Are you sure you want to delete the Model ?",
-                        }));
-                    }
-                    break;
-                }
-                default: {
-                    console.log("BREAk");
-                    break;
-                }
-            }
-
-
-        };
-
-
-        return (
-            <div id={info.model._id} ref={myElementRef}
-                 className={modelSelected._id === info.model._id ? "audioDivPageSelected" : "audioDivPage"}>
-                {info.model.accuracy === undefined ?
-                    <>
-                        <h1 className={"menuRightTopTitre100 menuRightTopTitreCentre"}>{info.model.modelName} : Model
-                            building</h1>
-                    </>
-                    :
-                    <>
-                        <h1 className={"menuRightTopTitreDateModels menuRightTopTitreCentre"}
-                            onClick={() => handleButtonClick("select")}>{info.model.date}</h1>
-                        <h1 className={"menuRightTopTitreNameModels menuRightTopTitreCentre"}
-                            onClick={() => handleButtonClick("select")}>{info.model.modelName}</h1>
-                        <h1 className={"menuRightTopTitreLossModels menuRightTopTitreCentre"}
-                            onClick={() => handleButtonClick("select")}>{info.model.loss.toFixed(2)} </h1>
-                        <h1 className={"menuRightTopTitreAccuracyModels menuRightTopTitreCentre"}
-                            onClick={() => handleButtonClick("select")}>{Math.round(info.model.accuracy * 10000) / 100} %</h1>
-                        <div className={"menuRightTopTitreActionModels menuRightTopTitreCentre noCursor"}>
-                            <Icon path={mdiTrashCanOutline} className={"iconMenuHeaderPage cursorHoverPointerRed"}
-                                  onClick={() => handleButtonClick("delete")} size={1}/>
-                        </div>
-                    </>
-                }
-
-            </div>
-        );
-    }
-
     const askModelYes = () => {
-        console.log("Req askModelYes", dialogBox.type);
-
         switch (dialogBox.type) {
             case "select": {
-                const postData = {_id: dialogBox.modelAsked};
-
-                fetch('http://localhost:2834/api/cnn/select', {
+                fetch(config.serverUrl + 'api/cnn/select', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(postData)
+                    body: JSON.stringify({_id: dialogBox.modelAsked._id})
                 })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Une erreur s\'est produite lors de l\'envoi des données.');
+                            throw new Error('An error occurred while retrieving data.');
                         }
                         return response.json();
                     })
@@ -187,18 +79,15 @@ const Models = () => {
                 break;
             }
             case "delete": {
-                console.log("DELETE !");
-                fetch('http://localhost:2834/api/cnn/' + dialogBox.modelAsked._id, {
+                fetch(config.serverUrl + `api/cnn?id=${dialogBox.modelAsked._id}`, {
                     method: 'DELETE',
                 })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Une erreur s\'est produite lors de la suppression des données.');
+                            throw new Error('An error occurred while deleting data.');
                         }
-                        console.log("response.ok")
+                        setModels(prevState => prevState.filter(model => model._id !== dialogBox.modelAsked._id))
                         getModels();
-                        console.log("response.ok getModels")
-
                         setDialogBox(() => ({
                             ask: false,
                             type: undefined,
@@ -212,12 +101,9 @@ const Models = () => {
                 break;
             }
             default: {
-                console.log("BREAk 2");
                 break;
             }
         }
-
-
     }
 
     const askModelNo = () => {
@@ -229,10 +115,34 @@ const Models = () => {
         }));
     }
 
+    useEffect(() => {
+        refScroll.current.addEventListener('scroll', loadData);
+
+        return () => {
+            if (refScroll.current)
+                refScroll.current.removeEventListener('scroll', loadData);
+        };
+    }, []);
+
+    function loadData() {
+        if (refScroll.current) {
+            const {scrollTop, scrollHeight, clientHeight} = refScroll.current;
+            const totalScrollableDistance = scrollHeight - clientHeight;
+            const currentScrollPercentage = (scrollTop / totalScrollableDistance) * 100;
+            const currentScrollDistance = totalScrollableDistance - scrollTop
+
+            if ((isNaN(currentScrollPercentage) || currentScrollPercentage === 100 || currentScrollDistance < 40) && maxPage.current >= currentPage.current && !sendReq.current) {
+                sendReq.current = true;
+                getModels();
+            }
+        }
+    }
 
     useEffect(() => {
-        getModels();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (!sendReq.current) {
+            sendReq.current = true;
+            getModels();
+        }
     }, []);
 
     return (
@@ -243,7 +153,7 @@ const Models = () => {
 
             <div className={"PageGlobal"}>
                 <div className={"PageActionGlobal"}>
-                    <div className={"subMenuGlobal"}>
+                    <div className={"subMenuGlobalModels"}>
                         <div className={"subMenuGlobalTitre"}>
                             <h1 className={"menuRightTopTitreDateModels menuRightTopTitreCentre menuLeftTopTitreBorder"}>Date</h1>
                             <h1 className={"menuRightTopTitreNameModels menuRightTopTitreCentre menuCenterTopTitreDateBorder"}>Name</h1>
@@ -252,41 +162,32 @@ const Models = () => {
                             <h1 className={"menuRightTopTitreActionModels menuRightTopTitreCentre menuLeftTopTitreBorder"}>Action</h1>
                         </div>
 
-                        <div className={"menuRightTopListAudio"}>
-                            {modelList}
+                        <div ref={refScroll} className={"menuRightTopListAudio"}>
+                            {models.map((item, index) => {
+                                return <ModelsComponent key={index}
+                                                        date={item.date}
+                                                        _id={item._id}
+                                                        modelName={item.modelName}
+                                                        loss={item.loss}
+                                                        accuracy={item.accuracy}
+                                                        modelSelected={modelSelected}
+                                                        setDialogBox={setDialogBox}
+                                                        model={item}
+                                />;
+                            })}
                         </div>
-
-
                     </div>
                 </div>
             </div>
 
-            <div className={dialogBox.ask ? "askScreenBack" : "displayNone"}>
-            </div>
-
-            <div className={dialogBox.ask ? "askScreen" : "displayNone"}>
-                <div className={"askScreenDiv"}>
-                    <div className={"askScreenTopDiv"}>
-                        <p className={"menuRightTopTitreCentre"}>{dialogBox.message}</p>
-                    </div>
-
-                    <div className={"askScreenBotDiv"}>
-                        <button className={"askScreenButton"} onClick={askModelYes}>yes</button>
-                        <button className={"askScreenButton"} onClick={askModelNo}>no</button>
-                    </div>
-                </div>
-            </div>
-
+            <DialogBox
+                ask={dialogBox.ask}
+                message={dialogBox.message}
+                functionYes={askModelYes}
+                functionNo={askModelNo}
+            />
         </div>
     )
-}
-
-function ButtonMenuHeader(info) {
-    return (
-        <Link className={"iconMenuHeaderDivPage"} to={info.button.link}>
-            <Icon path={info.button.mdi} className={"iconMenuHeaderPage"} size={2}/>
-        </Link>
-    );
 }
 
 export default Models;

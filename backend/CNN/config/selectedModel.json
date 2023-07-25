@@ -1,9 +1,9 @@
 {
-  "_id": "64944200e4ad6121e4e182a8",
-  "modelName": "DefautModel",
+  "_id": "649e59cc591638d0663d49ed",
+  "modelName": "Modelv2",
   "__v": 0,
-  "accuracy": 0.9575,
-  "date": "22/06/2023",
-  "loss": 0.19,
-  "path": "./CNN/models/DefautModel.h5"
+  "accuracy": 0.35211268067359924,
+  "date": "30/06/2023",
+  "loss": 1.226401448249817,
+  "path": "./CNN/models/Modelv2.h5"
 }

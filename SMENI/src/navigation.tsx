@@ -3,11 +3,12 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import DiagnoHelpScreen from "./screens/DiagnoHelpScreen";
 import SignUp from "./screens/SignUp";
 import SignIn from "./screens/SignIn";
-import SearchPatient from "./screens/SearchPatient"
 import NavigationBar from "./screens/NavigationBar";
 
+// The NavigationContainer must wrap any navigator structure.
 const Stack = createNativeStackNavigator();
 
+// Stack Navigator for SignIn, Sign up and Offline DiagnoHelp Screen.
 const Navigation = () => {
     return (
         <NavigationContainer>

@@ -1,22 +1,32 @@
 const Audio = require('../models/audio');
+const Label = require('../models/label');
+
 const fs = require("fs");
-const Model = require("../models/model");
-const wav = require('node-wav');
+
+let ObjectId = require('mongodb').ObjectId;
+
 
 const {getAudioDurationInSeconds} = require('get-audio-duration')
+const config = require("../CNN/config/config");
 
-exports.renameFile = (req, res, next) => {
+exports.renameFile = async (req, res, next) => {
+    const label = await Label.findById(new ObjectId(req.body.labelId))
+        .select('labelName -_id');
+
+    req.body.label = label.labelName;
+
     const date = Date.now();
+    const path = label.labelName + "/" + req.body.filename.replace(" ", "_") + "_" + label.labelName + "_" + date + ".wav";
 
-    fs.rename(req.file.path, "./CNN/dataStemoscope/Test/" + req.body.label + "/" + req.body.label + "_" + date + "_" + req.file.filename, (err) => {
+    fs.rename(req.file.path, "./CNN/dataStemoscope/Test/" + path, (err) => {
         if (err) {
             console.log("Error : file renamed and moved!");
             res.status(500).json({"status": 500, "reason": "Can't rename file"})
             throw err;
         } else {
             console.log("File renamed and moved!");
-            req.file.path = req.body.label + "/" + req.body.label + "_" + date + "_" + req.file.filename;
-            req.file.filename = req.body.label + "_" + date + "_" + req.file.filename;
+            req.file.path = path;
+            req.file.filename = req.body.filename;
             next();
         }
     });
@@ -26,12 +36,12 @@ exports.saveAudio = async (req, res) => {
     console.log("req.file:", req.file);
 
     const duration = await getAudioDurationInSeconds("./CNN/dataStemoscope/Test/" + req.file.path).then((duration) => {
-        return duration;
+        return duration - 1;  //Difference of lib in the front and the back to calculate duration of a audio file
     })
 
     const date = new Date();
     const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois sont indexés à partir de 0
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
 
     const formattedDate = `${day}/${month}/${year}`;
@@ -41,11 +51,19 @@ exports.saveAudio = async (req, res) => {
         path: req.file.path,
         date: formattedDate,
         label: req.body.label,
-        // doctor: "Tom Jedusor",
-        doctor: req.body.doctor,
-        patient: "undefined",
-        time: Math.ceil(duration),
+
+        labelId: new ObjectId(req.body.labelId),
+        doctorId: new ObjectId(req.body.doctorId),
+        duration: Math.ceil(duration),
+
+        patientId: new ObjectId(req.body.patientId),
+        height: req.body.height,
+        weight: req.body.weight,
+        age: req.body.age,
+        gender: req.body.gender,
+        // comorbidities: req.body.comorbidities,
     });
+
     audioFile.save()
         .then(() => {
             console.log('Audio saved');
@@ -56,16 +74,6 @@ exports.saveAudio = async (req, res) => {
             res.status(400).json({"status": 201, reason: error})
         });
 };
-
-function getWavDuration(filePath) {
-    const buffer = fs.readFileSync(filePath);
-    console.log("buffer:", buffer)
-    const result = wav.decode(buffer);
-    console.log("result:", result)
-    const duration = result.duration;
-    console.log("duration:", duration)
-    return duration;
-}
 
 exports.getAllAudio = (req, res) => {
     Audio.find()
@@ -91,43 +99,101 @@ exports.get10Audio = async (req, res) => {
 
 
 exports.getFilted10Audio = async (req, res) => {
+    console.log("req.body2:", req.body);
     const nbAudio = 11;
 
-    const labelList = ["Murmur", "Normal", "Artifact", "Extrastole", "Extrahls"]
-    const orConditionsLabels = [];
-    const orConditionsDoctor = [];
+    const conditions = [
+        {
+            list: true,
+            tabCondition: [],
+            filterList: req.body.filter.label,
+            key: "labelId",
+        },
+        {
+            list: true,
+            tabCondition: [],
+            filterList: req.body.filter.doctor,
+            key: "doctorId",
+        },
+        {
+            list: true,
+            tabCondition: [],
+            filterList: req.body.filter.patient,
+            key: "patientId",
+        },
+        {
+            list: false,
+            oneCondition: "",
+            filterList: req.body.filter.age,
+            key: "age",
+        },
+        {
+            list: false,
+            oneCondition: "",
+            filterList: req.body.filter.weight,
+            key: "weight",
+        },
+        {
+            list: false,
+            oneCondition: "",
+            filterList: req.body.filter.height,
+            key: "height",
+        },
+        {
+            list: false,
+            oneCondition: "",
+            filterList: req.body.filter.gender,
+            key: "gender",
+        }
+    ]
 
-    console.log("req.body:", req.body);
+    const pageNumber = req.body.pageNumber;
 
-    for (let i = 0; i < req.body.length; i++) {
-        if (labelList.includes(req.body[i]))
-            orConditionsLabels.push({label: req.body[i].toLowerCase()})
-        else
-            orConditionsDoctor.push({doctor: req.body[i]})
+
+    for (let i = 0; i < conditions.length; i++) {
+        const condition = conditions[i];
+        const {key, filterList} = condition;
+
+        if (condition.list) {
+            console.log(condition.key)
+            for (let j = 0; j < filterList.length; j++) {
+                const filterItem = filterList[j];
+                condition.tabCondition.push({[key]: new ObjectId(filterItem)});
+            }
+        } else {
+            if (filterList !== '')
+                condition.oneCondition = {[key]: filterList};
+            else
+                condition.oneCondition = {};
+        }
     }
 
-    console.log(orConditionsLabels);
-    console.log(orConditionsDoctor);
+    const allConditions = [];
 
-    if (orConditionsLabels.length === 0)
-        orConditionsLabels.push({})
+    for (let i = 0; i < conditions.length; i++) {
+        const condition = conditions[i]; // Get the current condition object
+        console.log(i, condition);
+        if (!condition.list)
+            allConditions.push(condition.oneCondition)
+        else if (condition.tabCondition.length === 0)
+            allConditions.push({})
+        else
+            allConditions.push({$or: condition.tabCondition})
+    }
 
-    if (orConditionsDoctor.length === 0)
-        orConditionsDoctor.push({})
+    console.log(conditions[0].tabCondition);
+    console.log(conditions[1].tabCondition);
+    console.log(conditions[2].tabCondition);
 
     const audioCount = await Audio.find({
-        $and: [
-            {$or: orConditionsLabels},
-            {$or: orConditionsDoctor},
-        ]
+        $and: allConditions
     }).countDocuments();
 
+    console.log('Nb audioCount: ', audioCount)
+
     Audio.find({
-        $and: [
-            {$or: orConditionsLabels},
-            {$or: orConditionsDoctor},
-        ]
-    }).skip((req.params.pageNumber - 1) * nbAudio).limit(nbAudio)
+        $and: allConditions
+    }).skip((pageNumber - 1) * nbAudio).limit(nbAudio)
         .then(audios => res.status(200).json({
             "status": 200,
             "audioCount": Math.ceil(audioCount / nbAudio),
@@ -151,62 +217,37 @@ exports.getAllAudioOfADoctor = (req, res) => {
         .catch(error => res.status(400).json({"status": 400, reason: error}));
 };
 
-exports.streamAudio = async (req, res) => {
-    console.log("streamAudio")
-    const audioData = await Audio.findOne({_id: req.params.id})
-        .catch(error => res.status(404).json({"status": 404, "reason": "Not found"}));
-
-    console.log("Find audio !:", audioData)
-
-    const filePath = "./CNN/dataStemoscope/Test/" + audioData.path;
-
-    console.log('File path: ', filePath)
-
-    // Vérifiez si le fichier audio existe
-    if (!fs.existsSync(filePath)) {
-        res.status(404).send({"status": 404, "reason": "Not found"});
-        return;
-    }
-
-    // Récupérer les informations sur le fichier audio
-    const stat = fs.statSync(filePath);
-    const fileSize = stat.size;
-    const range = req.headers.range;
-
-    if (range) {
-        // Extraire les valeurs de "start" et "end" et vérifier si elles sont des entiers valides
-        const positions = range.replace(/bytes=/, '').split('-');
-        const start = parseInt(positions[0], 10);
-        const end = positions[1] ? parseInt(positions[1], 10) : fileSize - 1;
-
-        if (isNaN(start) || isNaN(end) || start >= fileSize || end >= fileSize || start < 0 || end < 0 || start > end) {
-            res.status(416).send({"status": 416, "reason": "Invalid range request"});
-            return;
-        }
-
-        const chunkSize = (end - start) + 1;
-        const fileStream = fs.createReadStream(filePath, {start, end});
-
-        res.writeHead(206, {
-            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-            'Accept-Ranges': 'bytes',
-            'Content-Length': chunkSize,
-            'Content-Type': 'audio/mpeg'
-        });
-
-        fileStream.pipe(res);
-    } else {
-        // Si aucune plage n'est spécifiée, diffusez l'intégralité du fichier
-        res.writeHead(200, {
-            'Content-Length': fileSize,
-            'Content-Type': 'audio/mpeg'
-        });
-        fs.createReadStream(filePath).pipe(res);
-    }
-};
 
 exports.deleteAudio = (req, res) => {
-    Audio.findByIdAndDelete(req.params.id)
+    const {id} = req.query;
+
+    Audio.findByIdAndDelete(id)
         .then(() => res.status(200).json({message: 'Audio delete !'}))
         .catch(error => res.status(400).json({error}));
+};
+
+exports.getPatientAudio = async (req, res) => {
+    const sectionSize = config.sizeOfSection;
+    const {id, page} = req.query;
+
+    console.log("req.getPatientAudio:", id, page);
+
+
+    const count = await Audio.find({
+        patientId: new ObjectId(id)
+    }).countDocuments();
+
+
+    Audio.find({
+        patientId: new ObjectId(id)
+    }).skip((page - 1) * sectionSize).limit(sectionSize)
+        .then(audios => res.status(200).json({
+            "status": 200,
+            "count": Math.ceil(count / sectionSize),
+            "audios": audios
+        }))
+        .catch(error => {
+            console.log(error);
+            res.status(400).json({"status": 400, reason: error})
+        });
 };

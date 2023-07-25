@@ -10,15 +10,17 @@ import {WithLocalSvg} from "react-native-svg";
 import NetInfo from "@react-native-community/netinfo";
 
 
+// Function to check if the token is valid and navigate to the appropriate page
 const CheckToken = async () => {
     const navigation = useNavigation();
     const tokenFromStorage = await AsyncStorage.getItem('token');
     if (isTokenValid(tokenFromStorage)) {
         console.log("token is valid")
-        navigation.navigate("SearchPatient");
+        navigation.navigate(PAGE_DIAGNOHELP);
     }
 }
 
+// SignUp component
 const SignIn = () => {
     const navigation = useNavigation();
 
@@ -29,31 +31,38 @@ const SignIn = () => {
         const unsubscribe = NetInfo.addEventListener(state => {
             if (!(state.isConnected)) {
                 console.log("not connected");
-                navigation.navigate("SearchPatient");
+                navigation.navigate(PAGE_DIAGNOHELP);
             }
         });
         return unsubscribe;
     }, [isScreenFocused]);
 
+    // Check the token validity
     CheckToken();
 
+    // State variables to hold form data and their respective errors
     const [mail, setMail] = useState('');
     const [mailError, setMailError] = useState('');
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 
+    // Icons for password visibility toggle
     const visibilityIcon = require('../assets/images/eye-solid.svg');
     const visibilityOffIcon = require('../assets/images/eye-slash-solid.svg');
 
+    // State variable to hold credentials error
     const [credentialsError, setCredentialsError] = useState('');
 
+    // Function to clear the form fields
     const clearForm = () => {
         setMail('');
         setPassword('');
     }
 
+    // Function to handle form submission
     const handleSubmit = () => {
+        // Validation checks for each form field
         let mailValid = false;
         const mailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (mail.length == 0) {
@@ -72,18 +81,23 @@ const SignIn = () => {
             passwordValid = true;
         }
 
+        // If all fields are valid, proceed to register the account
         if (mailValid && passwordValid) {
             login();
         }
     }
-    const login = async () => {
-        const url = URL_LOGIN; //TODO : ipconfig et mettre son addresse IP locale
 
+    // Function to login to an account
+    const login = async () => {
+        const url = URL_LOGIN;
+
+        // Parameters to be sent in the request body
         const params = {
             mail: mail,
             password: password
         };
 
+        // Create a URLSearchParams object and append the parameters to it
         const formData = new URLSearchParams();
         for (const key in params) {
             // @ts-ignore
@@ -91,6 +105,7 @@ const SignIn = () => {
         }
 
         try {
+            // Send a POST request to the server with the form data
             await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -100,14 +115,16 @@ const SignIn = () => {
             })
                 .then(response => {
                     if (response.ok) {
+                        // If the credentials are correct, store the token in AsyncStorage
                         return response.json();
                     }
+                    // If the credentials are not correct, throw an error
                     throw new Error('The credentials are not correct');
                 })
                 .then(data => {
+                    // When the token is stored, clear the form and navigate to the SearchPatient page
                     const token = data.token;
                     if (token !== null) {
-                        // Utiliser AsyncStorage pour stocker le token
                         AsyncStorage.setItem('token', token)
                             .then(() => {
                                 clearForm();
@@ -118,6 +135,7 @@ const SignIn = () => {
                             });
                     }
                 }).catch(error => {
+                    // If the credentials are not correct, display an error message
                     console.log('error:', error);
                     setCredentialsError('The credentials are not correct');
                 });
@@ -127,6 +145,7 @@ const SignIn = () => {
     };
 
 
+    // SignIn component
     return (
         // KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.
         <KeyboardAwareScrollView style={styles.container}>
@@ -187,7 +206,7 @@ const SignIn = () => {
                 <TouchableOpacity
                     onPress={() => {
                         clearForm();
-                        navigation.navigate("SearchPatient");
+                        navigation.navigate(PAGE_SIGNUP);
                     }}>
                     <Text style={[styles.text, styles.subtitle, styles.navigate]}>Create One !</Text>
                 </TouchableOpacity>

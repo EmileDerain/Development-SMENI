@@ -12,10 +12,10 @@ import {
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
-const ProgressBar = (audioInfo) => {
+const ProgressBar = ({audio}) => {
     // console.log('path', audioInfo.path)
 
-    const url = "http://localhost:2834/audioFiles/" + audioInfo.path
+    const url = "http://localhost:2834/audioFiles/" + audio.path
 
     // console.log('url', url)
     // state
@@ -31,9 +31,14 @@ const ProgressBar = (audioInfo) => {
 
     useEffect(() => {
         const seconds = Math.floor(audioPlayer.current.duration);
-        setDuration(seconds);
         progressBar.current.max = seconds;
     }, [audioPlayer?.current?.loadedmetadata, audioPlayer?.current?.readyState]);
+
+
+    const onLoadedMetadata = ()=>{
+        const seconds = Math.floor(audioPlayer.current.duration);
+        setDuration(seconds);
+    }
 
     const calculateTime = (time) => `${(`0${Math.floor(time / 60)}`).slice(-2)}:${(`0${Math.floor(time % 60)}`).slice(-2)}`;
 
@@ -70,11 +75,11 @@ const ProgressBar = (audioInfo) => {
     useEffect(() => {
         console.log("audioInfo change")
         setIsPlaying(false);
-    }, [audioInfo]);
+    }, [audio]);
 
     return (
         <div className={"player"}>
-            <audio ref={audioPlayer} src={url}/>
+            <audio ref={audioPlayer} src={url} onLoadedMetadata={onLoadedMetadata}/>
 
             {/* progress bar */}
             <div className={"progressBarDiv"}>
@@ -89,12 +94,12 @@ const ProgressBar = (audioInfo) => {
                 </div>
 
                 <div className={"nameDiv menuRightTopTitreCentre"}>
-                    {audioInfo.path}
+                    {audio.audioName}
                 </div>
 
                 {/* current time */}
                 <div className={"currentTime menuRightTopTitreCentre"}>
-                    {calculateTime(currentTime)}
+                    {calculateTime(currentTime)}/{calculateTime(audio.duration)}
                 </div>
 
                 {/* duration */}
