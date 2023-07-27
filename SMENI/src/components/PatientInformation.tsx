@@ -173,6 +173,7 @@ const PatientInformation = ({ onChangeInput }) => {
               <DatePicker
                 ref={pickerRef}
                 date={selectedBirthDate}
+                locale={'vi'}
                 onDateChange={handleDateChange}
                 mode="date"
                 minimumDate={new Date(1900, 0, 1)}
@@ -213,7 +214,7 @@ const PatientInformation = ({ onChangeInput }) => {
               setItems={setGenderOptions}
               onChangeValue={handleGenderChange}
               style={ [styles.dropdownPicker, styles.input]}
-              dropDownDirection='BOTTOM'
+              dropDownDirection='TOP'
               dropDownContainerStyle={styles.dropdownContainer}
             />
 

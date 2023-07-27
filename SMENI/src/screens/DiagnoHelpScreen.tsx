@@ -219,8 +219,9 @@ const DiagnoHelpScreen = () => {
                     />
             </SafeAreaView>
             
-            {/*{sharedFile !== undefined &&<PatientInformation onChangeInput={handlePatientInputChange} />}*/}
-            <PatientInformation onChangeInput={handlePatientDataChange} />
+            {sharedFile !== undefined &&<PatientInformation onChangeInput={handlePatientDataChange} />}
+            
+            {/* Save button */}
             <SafeAreaView>
                 {hasToken ? <TouchableOpacity
                         onPress={() => saveLabeledRecording(selectedValue)}
