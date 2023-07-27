@@ -13,6 +13,7 @@ import {PAGE_SIGNIN, URL_AUDIO} from "../utils/path";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {isTokenValid, parseJwt} from "../utils/jwtCheck";
 import NetInfo from "@react-native-community/netinfo";
+import PatientInformation from '../components/PatientInformation';
 
 
 const CheckToken = async () => {
@@ -31,6 +32,15 @@ const DiagnoHelpScreen = () => {
     const navigation = useNavigation();
 
     const [hasToken, setHasToken] = useState(true);
+    const [patientData, setPatientData] = useState({
+        selectedMedicalID: '',
+        selectedName: '',
+        selectedSurname: '',
+        selectedBirthDate: new Date(),
+        selectedWeight: '',
+        selectedHeight: '',
+        selectedGender: '',
+      });
 
     CheckToken().then((tokenIsValid) => {
         setHasToken(tokenIsValid);
@@ -52,6 +62,7 @@ const DiagnoHelpScreen = () => {
 
 
     const [selectedValue, setSelectedValue] = useState('');
+    const [notes, setNotes] = useState('');
     const [suggestions, setSuggestions] = useState([
         '',
         'murmur',
@@ -69,6 +80,11 @@ const DiagnoHelpScreen = () => {
         setShowSuggestions(text.length > 0);
         setIsInputValid(suggestions.includes(text));
     };
+
+    const handlePatientDataChange = (data) => {
+        setPatientData({ ...patientData, ...data });
+        console.log("patientData: ", data);
+      };
 
     const findSuggestions = (query) => {
         if (query === '') {
@@ -190,6 +206,22 @@ const DiagnoHelpScreen = () => {
                 </View>
             )}
 
+            <SafeAreaView style={[styles.notesWrapper, (sharedFile === undefined) && styles.disabledButton]}>
+                <TextInput
+                        value={notes}
+                        style={[styles.notesInput]}
+                        onChangeText={setNotes}
+                        placeholder="Write your notes..."
+                        placeholderTextColor={colors.icons}
+                        editable={sharedFile !== undefined}
+                        multiline={true} // Permet un retour à la ligne
+                        textAlignVertical="top" // Aligne le texte en haut
+                    />
+            </SafeAreaView>
+            
+            {sharedFile !== undefined &&<PatientInformation onChangeInput={handlePatientDataChange} />}
+            
+            {/* Save button */}
             <SafeAreaView>
                 {hasToken ? <TouchableOpacity
                         onPress={() => saveLabeledRecording(selectedValue)}
@@ -290,6 +322,21 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         width: '50%',
         marginLeft: 10,
+    },
+    notesWrapper: {
+        flexDirection: 'row',
+        height: 150,
+        marginVertical: 20,
+        alignSelf: 'center',
+    },
+    notesInput: {
+        borderRadius: 30,
+        backgroundColor: colors.bigInputBackground,
+        borderWidth: 0,
+        color: colors.default,
+        paddingHorizontal: 15,
+        paddingVertical: 15,
+        width: '90%',
     },
     invalidInput: {
         borderColor: 'red', // Couleur de la bordure en cas d'input invalide
