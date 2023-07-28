@@ -16,7 +16,9 @@ const AudioComponent = ({
                             gender,
                             height,
                             weight,
-                            age
+                            age,
+                            note,
+                            progressbar
                         }) => {
     const myElementRef = useRef(null);
 
@@ -49,7 +51,13 @@ const AudioComponent = ({
     return (
         <>
             <div id={audioName} ref={myElementRef}
-                 className={selectedAudio?._id === audio._id ? "optionDivPageSelected" : selectedAudio !== undefined ? "optionDivPagFull" : "audioDivPage"}>
+                 className={selectedAudio?._id === audio._id ?
+                     progressbar === 1 ? "optionDivPageSelected" : "optionDivPageSelectedFullWave"
+                     :
+                     selectedAudio !== undefined ?
+                         progressbar === 1 ? "optionDivPagFull" : "optionDivPagFullWave"
+                         : "audioDivPage"
+                 }>
                 <h1 className={"menuRightTopTitreDate menuRightTopTitreCentre"}
                     onClick={() => handleButtonClick()}>{(() => {
                     const dateConv = new Date(date);
@@ -72,20 +80,30 @@ const AudioComponent = ({
             </div>
 
             {selectedAudio?._id === audio._id ?
-                <div className={"audioDivPageSelectedInfo"}>
-                    <div className={"audioDivPageSelectedInfoSpace"}>
-                        <h1 className={"genderInfo"}>Gender: {gender === 1 ?
-                            <div className={"subMenuGlobalSearchIcon"}>
-                                <Icon path={mdiGenderFemale} className={"iconMenuHeaderPage"} size={1}/>
-                            </div>
-                            :
-                            <Icon path={mdiGenderMale} className={"iconMenuHeaderPage"} size={1}/>
-                        }</h1>
-                        <h1>Height: {height} cm</h1>
-                        <h1>Weight: {weight} kg</h1>
-                        <h1>Age: {age} years old</h1>
+                <>
+                    <div className={progressbar !== 1 ? "audioDivPageSelectedInfoFull" : "audioDivPageSelectedInfo"}>
+                        <div className={"audioDivPageSelectedInfoSpace"}>
+                            <h1 className={"genderInfo"}>Gender: {gender === 1 ?
+                                <div className={"subMenuGlobalSearchIcon"}>
+                                    <Icon path={mdiGenderFemale} className={"iconMenuHeaderPage"} size={1}/>
+                                </div>
+                                :
+                                <Icon path={mdiGenderMale} className={"iconMenuHeaderPage"} size={1}/>
+                            }</h1>
+                            <h1>Height: {height} cm</h1>
+                            <h1>Weight: {weight} kg</h1>
+                            <h1>Age: {age} years old</h1>
+                        </div>
                     </div>
-                </div>
+                    {note ?
+                        <div className={"audioDivPageSelectedNote"}>
+                            Note : {note}
+                        </div>
+                        :
+                        <></>
+                    }
+
+                </>
                 :
                 <></>
             }

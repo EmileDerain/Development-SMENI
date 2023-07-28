@@ -4,6 +4,7 @@ import {
     mdiGenderFemale,
     mdiGenderMale,
     mdiTrashCanOutline,
+    mdiPencil,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
@@ -17,14 +18,21 @@ import config from "../config/config";
 import './Global.css';
 import './Audios.css';
 import './PatientDetails.css';
+import ProgressBarWaveForm from "./ProgressBarWaveForm";
+import DialogBoxPatientDetail from "./component/DialogBoxPatientDetail";
 
 
 const PatientDetails = () => {
     const {id} = useParams();
 
     const [audios, setAudios] = useState([]);
-    const [patient, setPatient] = useState([]);
+    const [patient, setPatient] = useState(undefined);
+    const [progressbar, setProgressbar] = useState(1);
 
+    const [dialogBoxEdit, setDialogBoxEdit] = useState({
+        ask: false,
+        type: undefined,
+    });
 
     const [selectedAudio, setSelectedAudio] = useState(undefined);
 
@@ -184,6 +192,37 @@ const PatientDetails = () => {
         }
     }
 
+    const dialogBoxPatientYes = (data) => {
+        switch (dialogBoxEdit.type) {
+            case "patient": {
+                setPatient(data);
+            }
+            case "deletePatient": {
+                fetch(config.serverUrl + `/api/patient?id=${dialogBox.whatAsked._id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'authorization': localStorage.getItem('token'),
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('An error occurred while deleting data.');
+                        } else {
+                            window.location.href = '/patients';
+
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
     const resetDialogBox = () => {
         setDialogBox(() => ({
             ask: false,
@@ -193,8 +232,15 @@ const PatientDetails = () => {
         }));
     }
 
+    const resetDialogBoxEdit = () => {
+        setDialogBoxEdit(() => ({
+            ask: false,
+        }));
+    }
+
     const dialogBoxNo = () => {
         resetDialogBox();
+        resetDialogBoxEdit();
     }
 
     const openDialogBox = (action) => {
@@ -208,6 +254,12 @@ const PatientDetails = () => {
                 }));
                 break;
             }
+            case "editPatient" : {
+                setDialogBoxEdit(() => ({
+                    ask: true,
+                }));
+                break;
+            }
             default: {
                 break;
             }
@@ -218,7 +270,7 @@ const PatientDetails = () => {
         <div className={"screen"}>
             <Background></Background>
             <HeaderSubMenu
-                title={`${patient.lastName} ${patient.firstName}`}/>
+                title={`${patient?.lastName} ${patient?.firstName}`}/>
 
             <div className={"PageGlobal"}>
                 <div className={"PageActionGlobal"}>
@@ -229,10 +281,10 @@ const PatientDetails = () => {
                                     <h1>Patient information</h1>
                                 </div>
                                 <div className={"menuLeftTopTitreOption"}>
-                                    {/*<div className={"menuLeftTopTitreOption2"}>*/}
-                                    {/*    <Icon path={mdiPencil} className={"iconMenuHeaderPage cursorHoverPointerBlue"}*/}
-                                    {/*          size={1}/>*/}
-                                    {/*</div>*/}
+                                    <div className={"menuLeftTopTitreOption2"}>
+                                        <Icon path={mdiPencil} className={"iconMenuHeaderPage cursorHoverPointerBlue"}
+                                              onClick={() => openDialogBox("editPatient")} size={1}/>
+                                    </div>
                                     <div className={"menuLeftTopTitreOption2"}>
                                         <Icon path={mdiTrashCanOutline}
                                               className={"iconMenuHeaderPage cursorHoverPointerRed"}
@@ -245,28 +297,22 @@ const PatientDetails = () => {
                             <div className={"menuLeftTopMenus"}>
                                 <div className={"menuLeftTopMenusFilter"}>
                                     <div className={"menuLeftTopMenusFilterInformation"}>
-                                        <h1>Lastname : {patient.lastName}</h1>
+                                        <h1>Lastname : {patient?.lastName}</h1>
                                     </div>
                                     <div className={"menuLeftTopMenusFilterInformation"}>
-                                        <h1>FirstName : {patient.firstName}</h1>
+                                        <h1>FirstName : {patient?.firstName}</h1>
                                     </div>
                                     <div className={"menuLeftTopMenusFilterInformation"}>
                                         <h1>Gender : </h1>
-                                        {patient.gender === 1 ?
+                                        {patient?.gender === 1 ?
                                             <Icon path={mdiGenderFemale} className={"iconMenuHeaderPage"} size={1}/>
                                             :
                                             <Icon path={mdiGenderMale} className={"iconMenuHeaderPage"} size={1}/>
                                         }
                                     </div>
                                     <div className={"menuLeftTopMenusFilterInformation"}>
-                                        <h1>Height : {patient.height} cm</h1>
-                                    </div>
-                                    <div className={"menuLeftTopMenusFilterInformation"}>
-                                        <h1>Weight : {patient.weight} kg</h1>
-                                    </div>
-                                    <div className={"menuLeftTopMenusFilterInformation"}>
                                         <h1>BirthDate : {(() => {
-                                            const date = new Date(patient.birthDate);
+                                            const date = new Date(patient?.birthDate);
                                             const day = String(date.getDate()).padStart(2, '0');
                                             const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois sont indexés à partir de 0
                                             const year = date.getFullYear();
@@ -275,10 +321,7 @@ const PatientDetails = () => {
                                         })()}</h1>
                                     </div>
                                     <div className={"menuLeftTopMenusFilterInformation"}>
-                                        <h1>MedicalID : {patient.medicalID}</h1>
-                                    </div>
-                                    <div className={"menuLeftTopMenusFilterInformation"}>
-                                        <h1>Comorbidities : ***</h1>
+                                        <h1>MedicalID : {patient?.medicalID}</h1>
                                     </div>
                                 </div>
                             </div>
@@ -287,10 +330,10 @@ const PatientDetails = () => {
                     </div>
 
                     <div className={"menuRightSmaller"}>
-
-                        <div className={selectedAudio !== undefined ? "menuRightTop" : "menuRightTopFull"}>
+                        <div
+                            className={selectedAudio !== undefined ? progressbar === 1 ? "menuRightTopSmall" : "menuRightTop" : "menuRightTopFull"}>
                             <div
-                                className={selectedAudio !== undefined ? "menuRightTopTitreFull" : "menuRightTopTitre"}>
+                                className={selectedAudio !== undefined ? progressbar === 1 ? "menuRightTopTitreFull" : "menuRightTopTitreFullBig" : "menuRightTopTitre"}>
                                 <h1 className={"menuRightTopTitreDate menuRightTopTitreCentre menuRightTopTitreDateBorder"}>Date</h1>
                                 <h1 className={"menuRightTopTitreName menuRightTopTitreCentre menuRightTopTitreBorder"}>Name</h1>
                                 <h1 className={"menuRightTopTitreDoctor menuRightTopTitreCentre menuRightTopTitreBorder"}>Label</h1>
@@ -312,6 +355,8 @@ const PatientDetails = () => {
                                                            height={item.height}
                                                            weight={item.weight}
                                                            age={item.age}
+                                                           note={item.note}
+                                                           progressbar={progressbar}
                                     />;
                                 })}
                                 {currentPage.current < maxPage.current ?
@@ -333,12 +378,23 @@ const PatientDetails = () => {
                         </div>
 
                         {selectedAudio !== undefined ?
-                            <div className={"menuRightBot"}>
-                                <ProgressBar
-                                    audio={selectedAudio}
-                                />
-                            </div> :
-                            <></>}
+                            progressbar === 1 ?
+                                <div className={"menuRightBot"}>
+                                    <ProgressBar
+                                        audio={selectedAudio}
+                                        setProgressbar={setProgressbar}
+                                    />
+                                </div>
+                                :
+                                <div className={"menuRightBotWave"}>
+                                    <ProgressBarWaveForm
+                                        audio={selectedAudio}
+                                        setProgressbar={setProgressbar}
+                                    />
+                                </div>
+                            :
+                            <></>
+                        }
 
                     </div>
                 </div>
@@ -349,6 +405,13 @@ const PatientDetails = () => {
                 message={dialogBox.message}
                 functionYes={dialogBoxYes}
                 functionNo={dialogBoxNo}
+            />
+
+            <DialogBoxPatientDetail
+                ask={dialogBoxEdit.ask}
+                patient={patient}
+                functionUpdate={dialogBoxYes}
+                functionClose={dialogBoxNo}
             />
 
         </div>

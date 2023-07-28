@@ -11,18 +11,18 @@
     color: white;
     background-color: var(--bleu_theme);
 
-    font-size: var(--front_size_big_2);
+    font-size: var(--front_size_big_3);
 }
 
 .PNF{
     color: white;
 
-    font-size: var(--front_size_big_3);
+    font-size: var(--front_size_big_4);
 }
 
 .Link{
     color: white;
 
-    font-size: var(--front_size_big_2);
+    font-size: var(--front_size_big_3);
     text-decoration: underline;
 }

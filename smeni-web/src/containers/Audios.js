@@ -8,6 +8,7 @@ import Filter from "./component/Filter";
 import DialogBox from "./component/DialogBox";
 import FilterSearch from "./component/FilterSearch";
 import FilterGender from "./component/FilterGender";
+import ProgressBarWaveForm from './ProgressBarWaveForm'
 import config from "../config/config";
 
 import './Global.css';
@@ -25,6 +26,7 @@ const Audios = () => {
     });
 
     const [audios, setAudios] = useState([]);
+    const [progressbar, setProgressbar] = useState(1);
 
     const [selectedAudio, setSelectedAudio] = useState(undefined);
 
@@ -245,9 +247,10 @@ const Audios = () => {
 
                     <div className={"menuRight"}>
 
-                        <div className={selectedAudio !== undefined ? "menuRightTop" : "menuRightTopFull"}>
+                        <div
+                            className={selectedAudio !== undefined ? progressbar === 1 ? "menuRightTopSmall" : "menuRightTop" : "menuRightTopFull"}>
                             <div
-                                className={selectedAudio !== undefined ? "menuRightTopTitreFull" : "menuRightTopTitre"}>
+                                className={selectedAudio !== undefined ? progressbar === 1 ? "menuRightTopTitreFull" : "menuRightTopTitreFullBig" : "menuRightTopTitre"}>
                                 <h1 className={"menuRightTopTitreDate menuRightTopTitreCentre menuRightTopTitreDateBorder"}>Date</h1>
                                 <h1 className={"menuRightTopTitreName menuRightTopTitreCentre menuRightTopTitreBorder"}>Name</h1>
                                 <h1 className={"menuRightTopTitreDoctor menuRightTopTitreCentre menuRightTopTitreBorder"}>Label</h1>
@@ -269,6 +272,8 @@ const Audios = () => {
                                                            height={item.height}
                                                            weight={item.weight}
                                                            age={item.age}
+                                                           note={item.note}
+                                                           progressbar={progressbar}
                                     />;
                                 })}
                                 {currentPage.current < maxPage.current ?
@@ -290,11 +295,21 @@ const Audios = () => {
                         </div>
 
                         {selectedAudio !== undefined ?
-                            <div className={"menuRightBot"}>
-                                <ProgressBar
-                                    audio={selectedAudio}
-                                />
-                            </div> :
+                            progressbar === 1 ?
+                                <div className={"menuRightBot"}>
+                                    <ProgressBar
+                                        audio={selectedAudio}
+                                        setProgressbar={setProgressbar}
+                                    />
+                                </div>
+                                :
+                                <div className={"menuRightBotWave"}>
+                                    <ProgressBarWaveForm
+                                        audio={selectedAudio}
+                                        setProgressbar={setProgressbar}
+                                    />
+                                </div>
+                            :
                             <></>
                         }
 

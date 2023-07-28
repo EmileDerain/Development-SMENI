@@ -23,9 +23,10 @@ const audioSchema = new Schema({
     weight: {type: Number, required: true},
     age: {type: Number, required: true},
     gender: {type: Number, required: true},  //1: women, 2: male
+    note: {type: String, required: false},
 
 
-    comorbidities: {type: Array, required: false},
+    //comorbidities: {type: Array, required: false},
 });
 
 audioSchema.plugin(uniqueValidator);

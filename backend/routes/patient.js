@@ -19,6 +19,8 @@ router.get('/', authAdminDoctor, userCtrl.getPatient); //use
 router.post('/labels', authAdminDoctor, userCtrl.getAllPatientLabelsFilter); //use
 router.post('/', authAdminDoctor, userCtrl.getAllPatientFilter); //use
 
+router.patch('/', authAdminDoctor, userCtrl.patchPatient)
+
 router.delete('/', authAdminDoctor, userCtrl.deletePatient); //use
 
 //TODO : delete

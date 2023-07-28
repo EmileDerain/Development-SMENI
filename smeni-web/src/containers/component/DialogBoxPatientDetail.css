@@ -1,0 +1,84 @@
+.askScreenDivBiggerEdit {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    flex-direction: column;
+
+    height: 65vh;
+    width: 20vw;
+
+    font-size: min(1.5vw, 3vh);
+
+    background-color: var(--bleu_theme);
+    color: white;
+
+    border-radius: min(0.5vw, 1vh);
+}
+
+.menuSettingPatient {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    width: 100%;
+    height: 15%;
+
+    /*background-color: red;*/
+}
+
+
+.askScreenFeedbackPatient {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    height: 10%;
+    width: 100%;
+
+    font-size: var(--front_size_big);
+    /*background-color: red;*/
+    color: white;
+}
+
+.menuPatientUpdate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 15%;
+
+    font-size: var(--front_size_big);
+    border-radius: min(0.5vw, 1vh);
+
+    border: none;
+    outline: none;
+}
+
+.menuPatientUpdateButton {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40%;
+    height: 50%;
+
+    font-size: var(--front_size_big);
+    background-color: white;
+    border-radius: min(0.5vw, 1vh);
+    color: #555555;
+
+
+    border: none;
+    outline: none;
+}
+
+.menuPatientUpdateButton:hover {
+    cursor: pointer;
+    color: white;
+    background-color: var(--bleu_theme_select);
+}

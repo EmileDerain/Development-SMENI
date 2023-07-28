@@ -9,7 +9,6 @@ let ObjectId = require('mongodb').ObjectId;
 
 const {getAudioDurationInSeconds} = require('get-audio-duration')
 const config = require("../CNN/config/config");
-const Model = require("../models/model");
 const Patient = require("../models/patient");
 
 exports.renameFile = async (req, res, next) => {
@@ -49,7 +48,7 @@ exports.saveAudio = async (req, res) => {
 
     const formattedDate = `${day}/${month}/${year}`;
 
-    const audioFile = new Audio({
+    const commonProperties = {
         audioName: req.file.filename,
         path: req.file.path,
         date: formattedDate,
@@ -65,7 +64,13 @@ exports.saveAudio = async (req, res) => {
         age: req.body.age,
         gender: req.body.gender,
         // comorbidities: req.body.comorbidities,
-    });
+    };
+
+    const audioFileData = req.body.note === undefined ? {...commonProperties} : {
+        ...commonProperties,
+        note: req.body.note
+    };
+    const audioFile = new Audio(audioFileData);
 
     audioFile.save()
         .then(() => {
@@ -309,6 +314,23 @@ function calculateAge(dateOfBirth, currentDate) {
     return age;
 }
 
+const generateRandomText = (nombreMots) => {
+    const mots = [
+        "lorem", "ipsum", "dolor", "sit", "amet",
+        "consectetur", "adipiscing", "elit", "sed",
+        "do", "eiusmod", "tempor", "incididunt", "ut",
+        "labore", "et", "dolore", "magna", "aliqua"
+    ];
+    let texteAleatoire = "";
+
+    for (let i = 0; i < nombreMots; i++) {
+        const motAleatoire = mots[Math.floor(Math.random() * mots.length)];
+        texteAleatoire += motAleatoire + " ";
+    }
+
+    return texteAleatoire.trim(); // Pour supprimer l'espace final
+};
+
 exports.init100Audio = async (req, res) => {
     const audios = ["I_speak-soft_pressure-tee_shirt",
         "I_speak-with_tee_shirt",
@@ -388,7 +410,8 @@ exports.init100Audio = async (req, res) => {
                 const sourceFilePath = `./audioFilesInit/${audioChoose}.wav`;
                 const destinationFilePath = `./CNN/dataStemoscope/Test/${path}`
 
-                console.log("path", path)
+                const note = generateRandomText(random(10, 100));
+
 
                 await fs.copyFile(sourceFilePath, destinationFilePath, async (err) => {
                     if (err) {
@@ -420,7 +443,7 @@ exports.init100Audio = async (req, res) => {
                             weight = weightM[age]
                         }
 
-                        const audioFile = new Audio({
+                        const commonProperties = {
                             audioName: filename,
                             path: path,
                             date: dividedDates[k],
@@ -436,11 +459,23 @@ exports.init100Audio = async (req, res) => {
                             age: age,
                             gender: patient.gender,
                             // comorbidities: req.body.comorbidities,
-                        });
+                        };
+                        let audioFileData;
+
+                        if (random(0, 10) !== 0) {
+                            audioFileData = {
+                                ...commonProperties,
+                                note: note
+                            };
+                        }else{
+                            audioFileData = {
+                                ...commonProperties
+                            };
+                        }
+
+                        const audioFile = new Audio(audioFileData);
 
                         audioFile.save()
-
-
                     }
                 });
 

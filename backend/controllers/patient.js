@@ -3,6 +3,8 @@ const Label = require("../models/label");
 const Audio = require("../models/audio");
 const config = require("../CNN/config/config");
 const {ObjectId} = require("mongodb");
+const bcrypt = require("bcrypt");
+const User = require("../models/user");
 
 
 exports.createPatient = (req, res) => {
@@ -167,6 +169,33 @@ exports.getPatient = async (req, res) => {
         })
         .catch(error => res.status(400).json({error, message: 'Error while retrieving all the patients'}));
 };
+
+
+exports.patchPatient = (req, res) => {
+    console.log("patchPatient", req.body)
+    const id = req.body._id;
+
+    const patient = {
+        ... req.body.patientUpdate,
+    };
+
+    Patient.findByIdAndUpdate(
+        id,
+        {$set: patient},
+    ).then(updatedModel => {
+        if (updatedModel) {
+            console.log("Patient updated:", updatedModel);
+            res.status(201).json({message: 'Patient updated.'});
+        } else {
+            console.log("No matching patient found:", updatedModel);
+            res.status(400).json({message: 'No matching patient found'});
+        }
+    }).catch(error => {
+        console.error("Error updating : ", error);
+        res.status(400).json({message: "Error updating", error});
+    });
+};
+
 
 exports.deletePatient = (req, res) => {
     const {id} = req.query;

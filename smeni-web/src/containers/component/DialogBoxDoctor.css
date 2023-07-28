@@ -142,7 +142,7 @@
 }
 
 .menuDoctorUpdate:hover {
-
+    cursor: pointer;
     color: white;
     background-color: var(--bleu_theme_select);
 }
