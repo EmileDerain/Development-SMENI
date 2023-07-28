@@ -12,23 +12,7 @@ const NewPatient = () => {
 
     const navigation = useNavigation();
 
-    // State variables to hold form data and their respective errors
-    const [firstName, setFirstName] = useState('');
-    const [firstNameError, setFirstNameError] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [lastNameError, setLastNameError] = useState('');
-    const [dateOfBirth, setDateOfBirth] = useState('');
-    const [dateOfBirthError, setDateOfBirthError] = useState('');
-    const [height, setHeight] = useState('');
-    const [heightError, setHeightError] = useState('');
-    const [weight, setWeight] = useState('');
-    const [weightError, setWeightError] = useState('');
-    const [gender, setGender] = useState('');
-    const [genderError, setGenderError] = useState('');
-    const [medicalID, setMedicalID] = useState('');
-    const [medicalIDError, setMedicalIDError] = useState('');
-
-
+    // State variables to hold form data
     const [patientData, setPatientData] = useState({
         selectedMedicalID: '',
         selectedName: '',

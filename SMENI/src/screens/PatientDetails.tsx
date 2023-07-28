@@ -15,8 +15,6 @@ const PatientDetails = ({route}) => {
 
     // Load icons from assets
     const goBack = require('../assets/images/arrow-left-solid.svg');
-    const weightPicture = require('../assets/images/weight-scale-solid.svg');
-    const heightPicture = require('../assets/images/ruler-vertical-solid.svg');
     const agePicture = require('../assets/images/cake-candles-solid.svg');
     const genderPicture = require('../assets/images/venus-mars-solid.svg');
     const medicalIDPicture = require('../assets/images/id-card-solid.svg');
@@ -31,14 +29,6 @@ const PatientDetails = ({route}) => {
                 <Text style={[styles.text, styles.title]}>{patient.firstName} {patient.lastName}</Text>
             </SafeAreaView>
             <SafeAreaView>
-                <SafeAreaView style={styles.field}>
-                    <WithLocalSvg asset={heightPicture} width={25} height={25} style={styles.icon}/>
-                    <Text style={styles.text}>{patient.height} cm</Text>
-                </SafeAreaView>
-                <SafeAreaView style={styles.field}>
-                    <WithLocalSvg asset={weightPicture} width={25} height={25} style={styles.icon}/>
-                    <Text style={styles.text}>{patient.weight} Kg</Text>
-                </SafeAreaView>
                 <SafeAreaView style={styles.field}>
                     <WithLocalSvg asset={agePicture} width={25} height={25} style={styles.icon}/>
                     <Text style={styles.text}>{moment().diff(patient.birthDate, 'years')} years old
