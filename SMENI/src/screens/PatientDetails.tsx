@@ -18,6 +18,7 @@ const PatientDetails = ({route}) => {
     const agePicture = require('../assets/images/cake-candles-solid.svg');
     const genderPicture = require('../assets/images/venus-mars-solid.svg');
     const medicalIDPicture = require('../assets/images/id-card-solid.svg');
+    const modifyPicture = require('../assets/images/pen-solid.svg');
 
 
     return (// KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.
@@ -27,6 +28,9 @@ const PatientDetails = ({route}) => {
                     navigation.goBack();
                 }}/>
                 <Text style={[styles.text, styles.title]}>{patient.firstName} {patient.lastName}</Text>
+                <WithLocalSvg asset={modifyPicture} width={25} height={25} onPress={() => {
+                    navigation.goBack();
+                }}/>
             </SafeAreaView>
             <SafeAreaView>
                 <SafeAreaView style={styles.field}>
