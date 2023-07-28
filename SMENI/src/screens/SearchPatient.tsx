@@ -4,7 +4,7 @@ import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
 import {WithLocalSvg} from "react-native-svg";
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {PAGE_PATIENTDETAILS, URL_GET_PATIENT} from "../utils/path";
+import {PAGE_PATIENTDETAILS, URL_GET_BY_MEDICAL_ID, URL_GET_PATIENT} from "../utils/path";
 
 // Function to get patients from the server
 const GetPatients = async () => {
@@ -19,6 +19,26 @@ const GetPatients = async () => {
         const json = await response.json();
         return json.patients;
     } catch (error) {
+        console.log(error);
+    }
+}
+
+const GetPatientsById = async (id) => {
+    console.log("id: ", id);
+    try {
+        const response = await fetch(URL_GET_BY_MEDICAL_ID, {
+            method: 'POST', headers: {
+                'Content-Type': 'application/json',
+            }, body: JSON.stringify({
+                numberPatientToSkip: 0,
+                medicalID: id,
+            }),
+        });
+        const json = await response.json();
+        //console.log(json);
+        return json.patients;
+    } catch (error) {
+        console.log("merde");
         console.log(error);
     }
 }
@@ -56,6 +76,23 @@ const SearchPatient = () => {
         }).catch(e => console.log(e));
     }, [isScreenFocused]);
 
+
+    // Function to handle search query
+    const handleSearch = (text) => {
+        setSearchPatient(text);
+        // Call GetPatientsById function to fetch patient data from the server
+        GetPatientsById(text).then(r => {
+            // If the response is undefined, return
+            if (r == undefined) {
+                return;
+            }
+            // Set the patients state with the fetched data
+            setPatients(r);
+            setNumberPatientToSkip(numberPatientToSkip + r.length);
+        }).catch(e => console.log(e));
+
+    }
+
     return (// KeyboardAwareScrollView is a ScrollView that automatically adjusts its height when the keyboard appears.
         <KeyboardAwareScrollView style={styles.container}>
             {/*contenu*/}
@@ -66,7 +103,8 @@ const SearchPatient = () => {
                     <TextInput
                         value={searchPatient}
                         placeholder={'Search Patient'}
-                        onChangeText={(text) => setSearchPatient(text)}
+                        keyboardType="numeric"
+                        onChangeText={(text) => handleSearch(text)}
                     />
                 </SafeAreaView>
                 <WithLocalSvg asset={addPatientIcon} width={25} height={25} style={[styles.icon, styles.iconNew]}
@@ -85,7 +123,7 @@ const SearchPatient = () => {
                                               width={25} height={25}
                                               style={[styles.icon, styles.folder]}/>
                                 <SafeAreaView style={styles.patientDetails}>
-                                    <Text>{patient.firstName} {patient.lastName}</Text>
+                                    <Text>{patient.medicalID}</Text>
                                     <Text>X files {/*change this to a request to get the number of file*/}</Text>
                                 </SafeAreaView>
                             </SafeAreaView>

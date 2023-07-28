@@ -16,7 +16,7 @@ const CheckToken = async () => {
     const tokenFromStorage = await AsyncStorage.getItem('token');
     if (isTokenValid(tokenFromStorage)) {
         console.log("token is valid")
-        navigation.navigate(PAGE_DIAGNOHELP);
+        navigation.navigate('SearchPatient');
     }
 }
 

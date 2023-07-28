@@ -1,4 +1,4 @@
-const URL = "172.25.192.1" //TODO : use ipconfig to get your ip address, change it when it will be on a server
+const URL = "172.16.6.108" //TODO : use ipconfig to get your ip address, change it when it will be on a server
 
 
 // the API that we use to communicate with the server
@@ -12,6 +12,7 @@ const URL_AUDIO = `${API_URL}audio`
 const URL_PREDICT = `${API_URL}cnn/predict`
 const URL_CREATE_PATIENT = `${API_URL}patient/createPatient`
 const URL_GET_PATIENT = `${API_URL}patient/getAllPatients`
+const URL_GET_BY_MEDICAL_ID = `${API_URL}patient/getPatientsByMedicalID`
 
 // just to facilitate the navigation between the differents pages
 const PAGE_SIGNIN = 'SignIn'
@@ -21,4 +22,5 @@ const PAGE_SEARCH_PATIENT= 'SearchPatient'
 const PAGE_HOME = 'Home'
 const PAGE_PATIENTDETAILS = 'PatientDetails'
 
-export {URL_LOGIN, URL_SIGNUP, URL_AUDIO, URL_PREDICT, URL_GET_PATIENT, PAGE_SIGNUP, PAGE_DIAGNOHELP, PAGE_SIGNIN, PAGE_PATIENTDETAILS, URL_CREATE_PATIENT}
+export {URL_LOGIN, URL_SIGNUP, URL_AUDIO, URL_PREDICT, URL_GET_PATIENT, PAGE_SIGNUP, PAGE_DIAGNOHELP, PAGE_SIGNIN,
+    PAGE_PATIENTDETAILS, URL_CREATE_PATIENT, URL_GET_BY_MEDICAL_ID}

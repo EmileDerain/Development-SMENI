@@ -21,6 +21,15 @@ exports.createPatient = (req, res) => {
         .catch(error => res.status(400).json({error, message: 'Error while creating patient !'}));
 };
 
+
+exports.getPatientsByMedicalID = (req, res) => {
+    const medicalID = req.body.medicalID;
+    // regex to find all the patients that have the medicalID in their medicalID array
+    Patient.find({medicalID: {$regex: medicalID}}).skip(0).limit(5)
+        .then(patients => res.status(200).json({"patients": patients, message: 'The patients have been retrieved'}))
+        .catch(error => res.status(400).json({error, message: 'Error while retrieving the patients'}));
+}
+
 exports.getAllPatients = (req, res) => {
     const numberToSkip = req.body.numberPatientToSkip;
     Patient.find().skip(numberToSkip).limit(5)
