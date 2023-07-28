@@ -1,4 +1,4 @@
-const URL = "172.25.192.1" //TODO : use ipconfig to get your ip address, change it when it will be on a server
+const URL = "172.16.6.108" //TODO : use ipconfig to get your ip address, change it when it will be on a server
 
 
 // the API that we use to communicate with the server

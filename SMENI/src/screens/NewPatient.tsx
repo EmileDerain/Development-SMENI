@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
+import {SafeAreaView, StyleSheet, Text, TouchableOpacity} from "react-native";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import colors from "../assets/colors/colors";
 import {WithLocalSvg} from "react-native-svg";
 import {useNavigation} from "@react-navigation/native";
 import {URL_CREATE_PATIENT} from "../utils/path";
+import PatientInformation from "../components/PatientInformation";
 
 // NewPatient component
 const NewPatient = () => {
@@ -27,95 +28,67 @@ const NewPatient = () => {
     const [medicalID, setMedicalID] = useState('');
     const [medicalIDError, setMedicalIDError] = useState('');
 
+
+    const [patientData, setPatientData] = useState({
+        selectedMedicalID: '',
+        selectedName: '',
+        selectedSurname: '',
+        selectedBirthDate: new Date(),
+        selectedWeight: '',
+        selectedHeight: '',
+        selectedGender: '',
+    });
+
+
     const goBack = require('../assets/images/arrow-left-solid.svg');
+
+
+    const handlePatientDataChange = (data) => {
+        setPatientData({...patientData, ...data});
+        console.log("patientData: ", data);
+    };
 
     // Function to handle form submission
     const handleSubmit = () => {
-        let firstNameValid = false;
-        if (firstName.length == 0) {
-            setFirstNameError('First Name is required');
-        } else {
-            setFirstNameError('');
-            firstNameValid = true;
-        }
+        // Validate the form fields
+        saveNewPatient();
 
-        let lastNameValid = false;
-        if (lastName.length == 0) {
-            setLastNameError('Last Name is required');
-        } else {
-            setLastNameError('');
-            lastNameValid = true;
-        }
-
-        // Additional form validation code for other fields
-        /*let dateOfBirthValid = false;
-       if (dateOfBirth.length == 0) {
-           setDateOfBirthError('Date of Birth is required');
-       } else {
-           setDateOfBirthError('');
-           dateOfBirthValid = true;
-       }
-
-       let heightValid = false;
-       if (height.length == 0) {
-           setHeightError('Height is required');
-       } else {
-           setHeightError('');
-           heightValid = true;
-       }
-
-       let weightValid = false;
-       if (weight.length == 0) {
-           setWeightError('Weight is required');
-       } else {
-           setWeightError('');
-           weightValid = true;
-       }
-
-       let genderValid = false;
-       if (gender.length == 0) {
-           setGenderError('Gender is required');
-       } else {
-           setGenderError('');
-           genderValid = true;
-       }*/
-
-        if (firstNameValid && lastNameValid) {// && dateOfBirthValid && heightValid && weightValid && genderValid) {
-            saveNewPatient();
-        }
     }
 
     // Function to clear the form fields
     const clearForm = () => {
-        setFirstName('');
-        setLastName('');
-        setDateOfBirth('');
-        setHeight('');
-        setWeight('');
-        setMedicalID('');
-        setGender('');
+        setPatientData({
+            selectedMedicalID: '',
+            selectedName: '',
+            selectedSurname: '',
+            selectedBirthDate: new Date(),
+            selectedWeight: '',
+            selectedHeight: '',
+            selectedGender: '',
+
+        });
     }
 
     // Function to save a new patient to the server
     const saveNewPatient = async () => {
+        console.log("coucou");
         const url = URL_CREATE_PATIENT;
 
-        // Ensuring that the gender is set to "2" if not "1" or "2"
-        if (!(gender == '2' || gender == '1')) {
-            setGender("2");
+        if (patientData.selectedGender === 'male') {
+            setPatientData({...patientData, selectedGender: '2'});
+        } else {
+            setPatientData({...patientData, selectedGender: '1'})
         }
 
-        // Generate a random medical ID if none is provided (just for testing for now)
-        let n;
-        if (medicalID.length == 0) {
-            n = Math.floor(Math.random() * 10000);
-        } else {
-            n = Number(medicalID);
-        }
         // Parameters to be sent in the request body
         const params = {
-            firstName: firstName, lastName: lastName, birthDate: new Date('1998-12-31T23:00:00.000Z'), // TODO: Change this with the actual birthdate
-            height: height, weight: weight, gender: Number(gender), medicalID: n,
+            firstName: patientData.selectedName,
+            lastName: patientData.selectedSurname,
+            birthDate: patientData.selectedBirthDate,
+            height: patientData.selectedHeight,
+            weight: patientData.selectedWeight,
+            gender: patientData.selectedGender,
+            medicalID: patientData.selectedMedicalID,
         };
 
         // Create a URLSearchParams object and append the parameters to it
@@ -158,69 +131,8 @@ const NewPatient = () => {
             </SafeAreaView>
             {/*Overview    */}
             <SafeAreaView style={[styles.content, styles.overwiew]}>
-                <Text style={[styles.text, styles.subtitle]}>Overview :</Text>
-                <SafeAreaView style={styles.inputWrapper}>
-                    <Text style={styles.text}>First Name : </Text>
-                    <TextInput style={styles.input}
-                               value={firstName}
-                               placeholder={'First Name'}
-                               onChangeText={(text) => setFirstName(text)}
-                    />
-                    <Text style={styles.errorInput}>{firstNameError}</Text>
-                </SafeAreaView>
-                <SafeAreaView style={styles.inputWrapper}>
-                    <Text style={styles.text}>Last Name : </Text>
-                    <TextInput style={styles.input}
-                               value={lastName}
-                               placeholder={'Last Name'}
-                               onChangeText={(text) => setLastName(text)}
-                    />
-                    <Text style={styles.errorInput}>{lastNameError}</Text>
-                </SafeAreaView>
-                <SafeAreaView style={styles.inputWrapper}>
-                    <Text style={styles.text}>Date of Birth : </Text>
-                    <TextInput style={styles.input}
-                               value={dateOfBirth}
-                               placeholder={'Date of Birth'}
-                               onChangeText={(text) => setDateOfBirth(text)}
-                    />
-                    <Text style={styles.errorInput}>{dateOfBirthError}</Text>
-                </SafeAreaView>
-                <SafeAreaView style={styles.inputWrapper}>
-                    <Text style={styles.text}>Height : </Text>
-                    <TextInput style={styles.input}
-                               value={height}
-                               placeholder={'Height'}
-                               onChangeText={(text) => setHeight(text)}
-                    />
-                    <Text style={styles.errorInput}>{heightError}</Text>
-                </SafeAreaView>
-                <SafeAreaView style={styles.inputWrapper}>
-                    <Text style={styles.text}>Weight : </Text>
-                    <TextInput style={styles.input}
-                               value={weight}
-                               placeholder={'Weight'}
-                               onChangeText={(text) => setWeight(text)}
-                    />
-                    <Text style={styles.errorInput}>{weightError}</Text>
-                </SafeAreaView>
-                <SafeAreaView style={styles.inputWrapper}>
-                    <Text style={styles.text}>Gender : </Text>
-                    <TextInput style={styles.input}
-                               value={gender}
-                               placeholder={'Gender'}
-                               onChangeText={(text) => setGender(text)}
-                    />
-                    <Text style={styles.errorInput}>{genderError}</Text>
-                </SafeAreaView><SafeAreaView style={styles.inputWrapper}>
-                <Text style={styles.text}>Medical ID : </Text>
-                <TextInput style={styles.input}
-                           value={medicalID}
-                           placeholder={'Medical ID'}
-                           onChangeText={(text) => setMedicalID(text)}
-                />
-                <Text style={styles.errorInput}>{medicalIDError}</Text>
-            </SafeAreaView>
+                <PatientInformation onChangeInput={handlePatientDataChange}/>
+
             </SafeAreaView>
             <SafeAreaView style={styles.content}>
                 {/*Comprehensive Overview */}
