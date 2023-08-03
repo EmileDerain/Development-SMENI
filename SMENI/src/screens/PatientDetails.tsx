@@ -28,9 +28,7 @@ const PatientDetails = ({route}) => {
                     navigation.goBack();
                 }}/>
                 <Text style={[styles.text, styles.title]}>{patient.firstName} {patient.lastName}</Text>
-                <WithLocalSvg asset={modifyPicture} width={25} height={25} onPress={() => {
-                    navigation.goBack();
-                }}/>
+                <WithLocalSvg asset={modifyPicture} width={25} height={25} style={styles.modify}/>
             </SafeAreaView>
             <SafeAreaView>
                 <SafeAreaView style={styles.field}>
@@ -78,6 +76,8 @@ const styles = StyleSheet.create({
         marginLeft: 10, alignSelf: 'center', marginRight: 10,
     }, field: {
         flexDirection: 'row', marginBottom: 15,
+    }, modify:{
+        marginLeft: 'auto', alignSelf: 'center', marginRight: 10,
     }
 });
 
