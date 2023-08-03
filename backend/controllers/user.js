@@ -2,6 +2,9 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const config = require("../CNN/config/config");
+const Admin = require("../models/admin");
+const Audio = require("../models/audio");
+const Model = require("../models/model");
 
 exports.signup = (req, res) => {
     bcrypt.hash(req.body.password, 10)
@@ -28,11 +31,17 @@ exports.login = (req, res) => {
                         return res.status(401).json({message: 'The credentials are incorrect'});
                     }
                     res.status(200).json({
-                        userId: user._id, token: jwt.sign({
-                                userId: user._id, firstName: user.firstName, lastName: user.lastName,
-                            }, 'RANDOM_TOKEN_SECRET', //TODO : change this token to a more secure one later and the one in ../middleware/authDoctor.js
+                        type: "doctor",
+                        userId: user._id,
+                        token: jwt.sign({
+                                userId: user._id,
+                                firstName: user.firstName,
+                                lastName: user.lastName,
+                                mail: user.mail,
+                            }, 'RANDOM_TOKEN_SECRET_DOCTOR', //TODO : change this token to a more secure one later and the one in ../middleware/authDoctor.js
                             {expiresIn: '24h'} //TODO : maybe more longer validity
-                        ), message: 'Connexion successful',
+                        ),
+                        message: 'Connexion successful',
                     });
                 })
                 .catch(error => res.status(500).json({error, message: 'The credentials are incorrect'}));
@@ -118,7 +127,7 @@ exports.getAllUserLabelsFilter = async (req, res) => {
         .catch(error => res.status(400).json({error, message: 'Error while retrieving all the users'}));
 };
 
-exports.getAllUserFilter = async (req, res) => {
+exports.getUserFilterBySection = async (req, res) => {
     const sectionSize = config.sizeOfSection;
     const {page} = req.query;
 
@@ -168,3 +177,150 @@ exports.getAllUserFilter = async (req, res) => {
         })
         .catch(error => res.status(400).json({error, message: 'Error while retrieving all the users'}));
 };
+
+
+exports.patchMail = (req, res) => {
+    const user = {
+        mail: req.body.mail,
+    };
+
+    User.findByIdAndUpdate(
+        req.auth.userId,
+        {$set: user},
+    ).then(updatedModel => {
+        if (updatedModel) {
+            console.log("User updated:", updatedModel);
+            res.status(201).json({message: 'User updated, the changes will be effective at your next login.'});
+        } else {
+            console.log("No matching user found:", updatedModel);
+            res.status(400).json({message: 'No matching user found'});
+        }
+    }).catch(error => {
+        console.error("Error updating : ", error);
+        res.status(400).json({message: "Error updating", error});
+    });
+};
+
+exports.patchPassword = (req, res) => {
+
+    bcrypt.hash(req.body.password, 10)
+        .then(
+            hash => {
+                const user = {
+                    password: hash,
+                };
+
+                User.findByIdAndUpdate(
+                    req.auth.userId,
+                    {$set: user},
+                ).then(updatedModel => {
+                    if (updatedModel) {
+                        console.log("User updated:", updatedModel);
+                        res.status(201).json({message: 'User updated, the changes will be effective at your next login.'});
+                    } else {
+                        console.log("No matching doctor found:", updatedModel);
+                        res.status(400).json({message: 'No matching doctor found'});
+                    }
+                }).catch(error => {
+                    console.error("Error updating : ", error);
+                    res.status(400).json({message: "Error updating", error});
+                });
+            }
+        )
+        .catch(error => {
+            console.log('catch', error)
+            res.status(500).json({error, message: 'Error while hashing password !'})
+        });
+};
+
+
+exports.patchMailAdministration = (req, res) => {
+    const id = req.body._id;
+
+    const user = {
+        mail: req.body.mail,
+    };
+
+    User.findByIdAndUpdate(
+        id,
+        {$set: user},
+    ).then(updatedModel => {
+        if (updatedModel) {
+            console.log("User updated:", updatedModel);
+            res.status(201).json({message: 'User updated.'});
+        } else {
+            console.log("No matching user found:", updatedModel);
+            res.status(400).json({message: 'No matching user found'});
+        }
+    }).catch(error => {
+        console.error("Error updating : ", error);
+        res.status(400).json({message: "Error updating", error});
+    });
+};
+
+exports.patchPasswordAdministration = (req, res) => {
+    const id = req.body._id;
+
+    bcrypt.hash(req.body.password, 10)
+        .then(
+            hash => {
+                const user = {
+                    password: hash,
+                };
+
+                User.findByIdAndUpdate(
+                    id,
+                    {$set: user},
+                ).then(updatedModel => {
+                    if (updatedModel) {
+                        console.log("User updated:", updatedModel);
+                        res.status(201).json({message: 'User updated.'});
+                    } else {
+                        console.log("No matching user found:", updatedModel);
+                        res.status(400).json({message: 'No matching user found'});
+                    }
+                }).catch(error => {
+                    console.error("Error updating : ", error);
+                    res.status(400).json({message: "Error updating", error});
+                });
+            }
+        )
+        .catch(error => {
+            console.log('catch', error)
+            res.status(500).json({error, message: 'Error while hashing password !'})
+        });
+};
+
+exports.deleteDoctor = (req, res) => {
+    const {id} = req.query;
+
+    User.findByIdAndDelete(id)
+        .then(() => res.status(200).json({message: 'Doctor delete !'}))
+        .catch(error => res.status(400).json({error}));
+};
+
+
+exports.init100User = async (req, res) => {
+
+    const firstName = ["Ai Vân", "Bich Thuy", "Công Minh", "Chi Tài", "Duyên", "Giang Long", "Lam"]
+    const lastName = ["Nguyen", "Tran", "Le", "Pham", "Vu", "Ngo", "Do", "Hoang", "Dao", "Dang", "Duong", "Dinh"]
+
+    for (let i = 0; i < 2; i++) {
+        for (let j = 0; j < 12; j++) {
+
+            bcrypt.hash("password", 10)
+                .then(hash => {
+                    const user = new User({
+                        firstName: firstName[i],
+                        lastName: lastName[j],
+                        mail: firstName[i].replace(" ", "") + lastName[j] + '@gmail.com',
+                        password: hash,
+                    });
+                    user.save()
+                        .then((u) => console.log('User ' + (i + 1) + j + ' created !'))
+                        .catch(error => console.log('Email is already used !'));
+                })
+                .catch(error => console.log('Error while hashing password !'));
+        }
+    }
+}

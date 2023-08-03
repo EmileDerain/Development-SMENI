@@ -45,3 +45,16 @@
     background-color: #0056b3;
 }
 
+
+.audioDivPageSelectedNote{
+    display: flex;
+    text-align: justify;
+
+
+    font-size: var(--front_size_big_2);
+    color: white;
+    background-color: var(--bleu_theme_select);
+    padding: 0 1% 1% 1%;
+
+    border-bottom: white 1px solid;
+}

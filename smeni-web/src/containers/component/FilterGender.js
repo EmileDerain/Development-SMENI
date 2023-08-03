@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, {useState} from "react";
 import {
     mdiGenderFemale,
     mdiGenderMale,
@@ -13,8 +13,6 @@ import './Filter.css';
 import './FilterGender.css';
 
 const FilterSearch = ({name, typeFilter, addFilterSelected}) => {
-    console.log("RENDER DoctorFilter");
-
     const [showLabels, setShowLabels] = useState(false);
     const [valueSearch, setValueSearch] = useState("");
 

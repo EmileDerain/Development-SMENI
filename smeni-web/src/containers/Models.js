@@ -1,12 +1,13 @@
 import React, {useEffect, useRef, useState} from "react";
-import './Global.css';
-import './Models.css';
-import config from "../config/config"
 
 import Background from "./component/Background";
 import HeaderSubMenu from "./component/HeaderSubMenu";
 import ModelsComponent from "./component/ModelsComponent";
 import DialogBox from "./component/DialogBox";
+
+import './Global.css';
+import './Models.css';
+import config from "../config/config"
 
 
 const Models = () => {
@@ -16,7 +17,7 @@ const Models = () => {
 
     const [dialogBox, setDialogBox] = useState({
         ask: false,
-        modelAsked: undefined,
+        whatAsked: undefined,
         type: undefined,
         message: "",
     });
@@ -28,7 +29,11 @@ const Models = () => {
     const refScroll = useRef(null);
 
     const getModels = () => {
-        fetch(config.serverUrl + `api/cnn/model?page=${currentPage.current}`)
+        fetch(`${config.serverUrl}/api/cnn/model?page=${currentPage.current}`,{
+            headers: {
+                'authorization': localStorage.getItem('token'),
+            },
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('An error occurred while retrieving data.');
@@ -51,12 +56,13 @@ const Models = () => {
     const askModelYes = () => {
         switch (dialogBox.type) {
             case "select": {
-                fetch(config.serverUrl + 'api/cnn/select', {
+                fetch(`${config.serverUrl}/api/cnn/select`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'authorization': localStorage.getItem('token'),
                     },
-                    body: JSON.stringify({_id: dialogBox.modelAsked._id})
+                    body: JSON.stringify({_id: dialogBox.whatAsked._id})
                 })
                     .then(response => {
                         if (!response.ok) {
@@ -65,13 +71,8 @@ const Models = () => {
                         return response.json();
                     })
                     .then(() => {
-                        setModelSelected(dialogBox.modelAsked);
-                        setDialogBox(() => ({
-                            ask: false,
-                            type: undefined,
-                            modelAsked: undefined,
-                            message: "",
-                        }));
+                        setModelSelected(dialogBox.whatAsked);
+                        resetDialogBox();
                     })
                     .catch(error => {
                         console.error(error);
@@ -79,21 +80,19 @@ const Models = () => {
                 break;
             }
             case "delete": {
-                fetch(config.serverUrl + `api/cnn?id=${dialogBox.modelAsked._id}`, {
+                fetch(`${config.serverUrl}/api/cnn?id=${dialogBox.whatAsked._id}`, {
                     method: 'DELETE',
+                    headers: {
+                        'authorization': localStorage.getItem('token'),
+                    },
                 })
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('An error occurred while deleting data.');
                         }
-                        setModels(prevState => prevState.filter(model => model._id !== dialogBox.modelAsked._id))
+                        setModels(prevState => prevState.filter(model => model._id !== dialogBox.whatAsked._id))
                         getModels();
-                        setDialogBox(() => ({
-                            ask: false,
-                            type: undefined,
-                            modelAsked: undefined,
-                            message: "",
-                        }));
+                        resetDialogBox();
                     })
                     .catch(error => {
                         console.error(error);
@@ -106,25 +105,29 @@ const Models = () => {
         }
     }
 
-    const askModelNo = () => {
+    const resetDialogBox = () => {
         setDialogBox(() => ({
             ask: false,
             type: undefined,
-            modelAsked: undefined,
+            whatAsked: undefined,
             message: "",
         }));
     }
 
+    const askModelNo = () => {
+        resetDialogBox();
+    }
+
     useEffect(() => {
-        refScroll.current.addEventListener('scroll', loadData);
+        refScroll.current.addEventListener('scroll', scroll);
 
         return () => {
             if (refScroll.current)
-                refScroll.current.removeEventListener('scroll', loadData);
+                refScroll.current.removeEventListener('scroll', scroll);
         };
     }, []);
 
-    function loadData() {
+    function scroll() {
         if (refScroll.current) {
             const {scrollTop, scrollHeight, clientHeight} = refScroll.current;
             const totalScrollableDistance = scrollHeight - clientHeight;

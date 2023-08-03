@@ -4,12 +4,15 @@ import {
     mdiOpenInNew,
 } from "@mdi/js";
 import Icon from "@mdi/react";
-import { useNavigate } from 'react-router-dom';
+
+import Background from "./component/Background";
+import HeaderSubMenu from "./component/HeaderSubMenu";
 
 import './Global.css';
 import './Doctors.css';
-import Background from "./component/Background";
-import HeaderSubMenu from "./component/HeaderSubMenu";
+import './Patient.css';
+import './Audios.css';
+
 
 const Patient = () => {
     const [patient, setPatient] = useState([]);
@@ -26,7 +29,8 @@ const Patient = () => {
         fetch(`http://localhost:2834/api/patient?page=${currentPage.current}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'authorization': localStorage.getItem('token'),
             },
             body: JSON.stringify({filter: filterSave.current})
         })
@@ -58,16 +62,15 @@ const Patient = () => {
     });
 
     function Patient({medicalID, firstName, lastName, id}) {
-        const navigate = useNavigate();
 
         return (
-            <div className={"audioDivPage"}>
+            <div className={"patientDivPage"}>
                 <h1 className={"menuRightTopTitreNameDoctors menuRightTopTitreCentre"}>{firstName} {lastName}</h1>
                 <h1 className={"menuRightTopTitreEmailDoctors menuRightTopTitreCentre"}>{medicalID}</h1>
                 <div className={"menuRightTopTitreActionDoctors menuRightTopTitreCentre"}>
-                    {/*<Icon path={mdiListBoxOutline} className={"iconMenuHeaderPage cursorHoverPointerRed"} size={1}/>*/}
                     <div onClick={() => {
-                        navigate(`/patient/${id}`)
+                        window.location.href = `/patient/${id}`;
+
                     }}>
                         <Icon path={mdiOpenInNew} className={"iconMenuHeaderPage cursorHoverPointerBlue"}
                               size={1}/>
@@ -129,7 +132,7 @@ const Patient = () => {
                             >
                             </input>
                             <div className={"subMenuGlobalSearchIcon"}>
-                                <Icon path={mdiMagnify} className={"iconMenuHeaderPage"} size={2}/>
+                                <Icon path={mdiMagnify} className={"iconMenuHeaderPageDefault"} size={2}/>
                             </div>
                         </div>
 

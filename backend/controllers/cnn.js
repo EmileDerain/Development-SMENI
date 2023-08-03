@@ -47,7 +47,7 @@ exports.getAllModel = (req, res) => {
         .catch(error => res.status(400).json({"status": 400, reason: error}));
 };
 
-exports.getAllModelBySection = async (req, res) => {
+exports.getModelBySection = async (req, res) => {
     const sectionSize = config.sizeOfSection;
     const {page} = req.query;
 
@@ -101,7 +101,6 @@ exports.getAllLabels = (req, res) => {
 };
 
 exports.getAllLabelsFilter = (req, res) => {
-    console.log("req.body:", req.body.filter)
     const label = req.body.filter;
     const regexLabel = new RegExp(`\\b${label}`, "i");
 
@@ -203,27 +202,6 @@ exports.train = async (req, res) => {
     });
 };
 
-exports.init100Models = async (req, res) => {
-    const date = new Date();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois sont indexés à partir de 0
-    const year = date.getFullYear();
-
-    const formattedDate = `${day}/${month}/${year}`;
-
-    for (let i = 0; i < 100; i++) {
-        const model = new Model({
-            modelName: "name" + i,
-            path: 'name' + i + '.h5',
-            date: formattedDate,
-            loss: 0,
-            accuracy: 1,
-        });
-        await model.save()
-    }
-}
-
-
 exports.predict = async (req, res) => {
     console.log("Predict: ", req.file.path);
 
@@ -271,3 +249,24 @@ exports.deleteModel = (req, res) => {
         .then(() => res.status(200).json({message: 'Model delete !'}))
         .catch(error => res.status(400).json({error}));
 };
+
+
+exports.init100Models = async (req, res) => {
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois sont indexés à partir de 0
+    const year = date.getFullYear();
+
+    const formattedDate = `${day}/${month}/${year}`;
+
+    for (let i = 0; i < 100; i++) {
+        const model = new Model({
+            modelName: "name" + i,
+            path: 'name' + i + '.h5',
+            date: formattedDate,
+            loss: 0,
+            accuracy: 1,
+        });
+        await model.save()
+    }
+}

@@ -8,7 +8,7 @@ const ObjectId = Schema.ObjectId;
 const audioSchema = new Schema({
     audioName: {type: String, required: true},
     path: {type: String, required: true, unique: true},
-    date: {type: String, required: true},
+    date: {type: Date, required: true},
     duration: {type: Number, required: true},
     label: {type: String, required: true},
 
@@ -17,15 +17,16 @@ const audioSchema = new Schema({
     doctorId: {type: ObjectId, required: true},
 
     //patient
-    patientId: {type: ObjectId, required: true}, //patient
+    patientId: {type: ObjectId, required: true},
 
     height: {type: Number, required: true},
     weight: {type: Number, required: true},
-    age: {type: Number, required: true},  //Mois ou ans
+    age: {type: Number, required: true},
     gender: {type: Number, required: true},  //1: women, 2: male
+    note: {type: String, required: false},
 
 
-    comorbidities: {type: String, required: false}, //A demander
+    //comorbidities: {type: Array, required: false},
 });
 
 audioSchema.plugin(uniqueValidator);

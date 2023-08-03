@@ -319,7 +319,7 @@ def trainModel(model_name):
 
     lstm_model.fit(x_train_lstm, y_train_lstm,
                    validation_data=(x_val_lstm, y_val_lstm),
-                   batch_size=8, epochs=5,
+                   batch_size=8, epochs=1,
                    class_weight=class_weight,
                    callbacks=callback)
 

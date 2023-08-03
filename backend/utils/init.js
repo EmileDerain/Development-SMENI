@@ -17,7 +17,7 @@ exports.initUsers = () => {
                     .catch(error => console.log('Error while hashing password !'));
 
 
-            bcrypt.hash("mdp", 10)
+                bcrypt.hash("mdp", 10)
                     .then(hash => {
                         const user = new User({
                             firstName: "Emile", lastName: "Derain", mail: "ed@gmail.com", password: hash,

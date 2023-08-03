@@ -18,7 +18,6 @@ input {
 
     display: flex;
 
-    background-color: #00cc33;
     border-top-left-radius: min(0.5vw, 1vh);
     border-top-right-radius: min(0.5vw, 1vh);
     box-sizing: border-box;
@@ -132,6 +131,7 @@ input {
 
 .progressBarButton {
     height: 80%;
+
     width: 100%;
 
     display: flex;

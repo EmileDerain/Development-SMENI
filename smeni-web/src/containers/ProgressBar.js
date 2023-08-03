@@ -12,7 +12,7 @@ import {
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
-const ProgressBar = ({audio}) => {
+const ProgressBar = ({audio, setProgressbar}) => {
     // console.log('path', audioInfo.path)
 
     const url = "http://localhost:2834/audioFiles/" + audio.path
@@ -105,7 +105,7 @@ const ProgressBar = ({audio}) => {
                 {/* duration */}
                 {/*<div className={"duration"}>{(duration && !isNaN(duration)) && calculateTime(duration)}</div>*/}
                 <div className={"moreInfoDiv menuRightTopTitreCentre"}>
-                    <Icon path={mdiOpenInNew} size={1}/>
+                    <Icon path={mdiOpenInNew} className={"cursorHoverPointerBlue"}  onClick={() => setProgressbar(2)} size={1}/>
                 </div>
 
             </div>

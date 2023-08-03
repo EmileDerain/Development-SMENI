@@ -1,19 +1,21 @@
-import React from "react";
-// ES6 import or TypeScript
+import React, {useEffect, useRef, useState} from "react";
 import io from "socket.io-client";
-import {useEffect, useRef, useState} from "react";
+import Icon from "@mdi/react";
+import {mdiReload} from "@mdi/js";
+
+import Background from "./component/Background";
+import HeaderSubMenu from "./component/HeaderSubMenu";
+import Config from "../config/config"
 
 import './Global.css';
 import './Model.css';
 
-import Icon from "@mdi/react";
-import {mdiReload} from "@mdi/js";
-import Background from "./component/Background";
-import HeaderSubMenu from "./component/HeaderSubMenu";
-
 
 const Model = () => {
     const [logs, setLogs] = useState([]);
+
+    const refLogs = useRef(null);
+    const [scrollPercentage, setScrollPercentage] = useState(0);
 
     const startTraining = (modelName) => {
 
@@ -21,16 +23,17 @@ const Model = () => {
             setLogs([])
             const postData = {name: modelName};
 
-            fetch('http://localhost:2834/api/cnn/train', {
+            fetch(`${Config.serverUrl}/api/cnn/train`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'authorization': localStorage.getItem('token'),
                 },
                 body: JSON.stringify(postData)
             })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Une erreur s\'est produite lors de l\'envoi des données.');
+                        throw new Error('An error occurred while retrieving data.');
                     }
                     return response.json();
                 })
@@ -41,26 +44,19 @@ const Model = () => {
                     console.error(error);
                 });
 
-            console.log('io.connect("http://localhost:2834");')
-            const socket = io.connect("http://localhost:2834");
+            const socket = io.connect(Config.serverUrl);
 
             socket.on("receive_cnn_logs", (data) => {
                 setLogs((prevLogs) => [...prevLogs, data]);
             });
 
             socket.on("end_cnn_logs", () => {
-                document.getElementById("modelName").value = "";
+                const modelNameInput = document.getElementById("modelName")
+                if (modelNameInput !== undefined)
+                    modelNameInput.value = "";
             });
         }
     };
-
-    const logList = logs.map((item, index) => {
-        return <p key={index} className={"logItem"}>{item}</p>;
-    });
-
-    const refLogs = useRef(null);
-    const [scrollPercentage, setScrollPercentage] = useState(0);
-
 
     useEffect(() => {
         if (refLogs.current) {
@@ -71,25 +67,18 @@ const Model = () => {
             const currentScrollDistance = totalScrollableDistance - scrollTop
             setScrollPercentage(currentScrollPercentage);
 
-            console.log("scrollPercentage:", scrollPercentage);
-            console.log("scrollPercentage === 100", scrollPercentage === 100)
-            console.log("currentScrollDistance", currentScrollDistance)
-            console.log("isNaN(scrollPercentage)", isNaN(scrollPercentage))
-
             if (isNaN(scrollPercentage) || scrollPercentage === 100 || currentScrollDistance < 40) {
-                console.log("scroll");
                 refLogs.current.scrollTop = refLogs.current.scrollHeight;
             }
 
         }
-    }, [logList]);
+    }, [logs]);
 
     return (
         <div className={"screen"}>
             <Background></Background>
             <HeaderSubMenu
                 title={"Reload AI"}/>
-
 
             <div className={"PageGlobal"}>
                 <div className={"PageActionGlobal"}>
@@ -102,8 +91,8 @@ const Model = () => {
                                 <input type="text" placeholder="Model Name" className={"custom-input"} id={"modelName"}>
                                 </input>
                             </div>
-
                         </div>
+
                         <div className={"menuLeftBotButton"}
                              onClick={() => startTraining(document.getElementById("modelName").value)}>
                             <div className={"menuLeftBotButtonDiv"}>
@@ -117,12 +106,15 @@ const Model = () => {
                             <div className={"menuRightCenterTitre"}>
                                 <h1 className={"menuRightTopTitreCentre "}>Logs</h1>
                             </div>
-                            <div ref={refLogs} className={"menuRightCenterLogs"}>
-                                {logList}
-                            </div>
 
+                            <div ref={refLogs} className={"menuRightCenterLogs"}>
+                                {logs.map((item, index) => {
+                                    return <p key={index} className={"logItem"}>{item}</p>;
+                                })}
+                            </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

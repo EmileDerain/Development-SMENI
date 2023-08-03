@@ -1,0 +1,47 @@
+.progressBarWave{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 83.6%;
+
+
+    border-radius: min(0.5vw, 1vh);
+    border: 1px solid var(--bleu_theme);
+
+}
+
+.progressBarWaveDiv{
+    border-radius: min(0.5vw, 1vh);
+
+    overflow: hidden;
+
+    height: 95%;
+    width: 99%;
+}
+
+.menuRightBotWave{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 50%;
+
+    border-radius: min(0.5vw, 1vh);
+
+    background-color: var(--bleu_theme);
+}
+
+
+.progressBarButtonWave {
+    height: 16%;
+    /*height: 80%;*/
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+
+    color: white;
+}

@@ -31,7 +31,6 @@ app.use(cors())
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-// app.use('/audioFiles', express.static(path.join(__dirname, 'audioFiles')))
 
 app.get('/audioFiles/:dir/:filename', (req, res) => {
     const dir = req.params.dir;
@@ -47,19 +46,5 @@ app.use("/api/user", userRoutes);
 app.use("/api/patient", patientRoutes);
 app.use("/api/admin", adminRoutes);
 initUsers();
-
-const config = require("./CNN/config/config");
-const Model = require("./models/model");
-const fs = require("fs");
-const Audio = require("./models/audio");
-
-// Model.findById('64944200e4ad6121e4e182a8')
-//     .then(model => {
-//         console.log(model);
-//         console.log(config.MODEL_SELECTED);
-//         const json = JSON.stringify(model, null, 2);
-//         fs.writeFileSync('./CNN/config/selectedModel.json', json);
-//     })
-//
 
 module.exports = app;
