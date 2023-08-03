@@ -117,9 +117,12 @@ const SignIn = () => {
                     if (response.ok) {
                         // If the credentials are correct, store the token in AsyncStorage
                         return response.json();
+                    }else if(response.status === 401){
+                        // If the credentials are not correct, throw an error
+                        throw new Error('The credentials are not correct');
+                    } else {
+                        throw new Error('Something went wrong');
                     }
-                    // If the credentials are not correct, throw an error
-                    throw new Error('The credentials are not correct');
                 })
                 .then(data => {
                     // When the token is stored, clear the form and navigate to the SearchPatient page
