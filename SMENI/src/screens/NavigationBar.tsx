@@ -49,7 +49,7 @@ const NavigationBar = () => {
                     } else if (rn === 'Search_Screen_Bar') {
                         iconName = focused ? 'search' : 'search-outline';
                     } else if (rn === 'Diagno_Bar') {
-                        iconName = focused ? 'help-circle' : 'help-circle-outline';
+                        iconName = focused ? 'medkit' : 'medkit-outline';
                     } else if (rn === 'Settings_Bar') {
                         iconName = focused ? 'settings' : 'settings-outline';
                     } else if (rn === 'Chat_Bar') {

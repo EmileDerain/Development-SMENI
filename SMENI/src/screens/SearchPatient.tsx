@@ -148,10 +148,8 @@ const styles = StyleSheet.create({
     }, content: {
         flexDirection: 'row', marginTop: 20, marginLeft: 10, justifyContent: 'space-between',
     }, input: {
-        borderRadius: 15,
-        backgroundColor: colors.inputBackground,
-        borderWidth: 1,
-        borderColor: colors.inputBackground,
+        borderRadius: 20,
+        backgroundColor: '#EEF6FC',
         color: colors.default,
         paddingHorizontal: 15,
         paddingVertical: 5,
