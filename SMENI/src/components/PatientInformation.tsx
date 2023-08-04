@@ -1,13 +1,35 @@
 import React, { useState, useRef } from 'react';
-import { Text, View, StyleSheet, SafeAreaView, TouchableWithoutFeedback, TextInput } from 'react-native';
+import { TouchableOpacity, Text, View, StyleSheet, SafeAreaView, TouchableWithoutFeedback, TextInput } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import colors from '../assets/colors/colors';
 import DropDownPicker from 'react-native-dropdown-picker'; // Import DropDownPicker
+import {URL_GET_BY_MEDICAL_ID} from "../utils/path";
 
+
+// Function to get patients from the server
+const GetPatientsById = async (id) => {
+  console.log("id: ", id);
+  try {
+      const response = await fetch(URL_GET_BY_MEDICAL_ID, {
+          method: 'POST', headers: {
+              'Content-Type': 'application/json',
+          }, body: JSON.stringify({
+              numberPatientToSkip: 0,
+              medicalID: id,
+          }),
+      });
+      const json = await response.json();
+      console.log(json);
+      return json.patients;
+  } catch (error) {
+      console.log(error);
+  }
+}
 
 
 const PatientInformation = ({ onChangeInput }) => {
   DropDownPicker.setListMode("SCROLLVIEW");
+  const [patients, setPatients] = useState([]);
   const [selectedMedicalID, setSelectedMedicalID] = useState(''); 
   const [selectedName, setSelectedName] = useState('');
   const [selectedSurname, setSelectedSurname] = useState('');
@@ -21,11 +43,29 @@ const PatientInformation = ({ onChangeInput }) => {
     { label: 'Male', value: 'male' },
     { label: 'Female', value: 'female' },
   ]);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const pickerRef = useRef(null);
-  const handleMedicalIDChange = (text) => {
+  
+  const handleMedicalIDChange = async (text) => {
     const medicalID = text.replace(/[^0-9]/g, '');
     setSelectedMedicalID(medicalID);
+
+    if (medicalID) {
+      const patientsResponse = await GetPatientsById(medicalID);
+
+      if (patientsResponse && patientsResponse.length > 0) {
+        setPatients(patientsResponse);
+        setIsDropdownVisible(true);
+      } else {
+        setPatients([]);
+        setIsDropdownVisible(false);
+      }
+    } else {
+      setPatients([]);
+      setIsDropdownVisible(false);
+    }
+
     onChangeInput({
       selectedMedicalID: medicalID,
       selectedName,
@@ -35,6 +75,22 @@ const PatientInformation = ({ onChangeInput }) => {
       selectedHeight,
       selectedGender,
     });
+  };
+
+  const handlePatientSelect = (itemValue) => {
+    console.log("itemValue: ", itemValue);
+    const selectedPatient = patients.find((patient) => patient.medicalID === itemValue);
+    console.log("selectedPatient: ", selectedPatient);
+    if (selectedPatient) {
+      setIsDropdownVisible(false);
+      setSelectedMedicalID(selectedPatient.medicalID);
+      setSelectedName(selectedPatient.firstName);
+      setSelectedSurname(selectedPatient.lastName);
+      setSelectedBirthDate(new Date(selectedPatient.birthDate));
+      setSelectedWeight(selectedPatient.weight);
+      setSelectedHeight(selectedPatient.height);
+      setSelectedGender(selectedPatient.gender);
+    }
   };
 
   const handleNameChange = (text) => {
@@ -146,6 +202,19 @@ const PatientInformation = ({ onChangeInput }) => {
               onChangeText={handleMedicalIDChange}
             />  
           </SafeAreaView>
+              {isDropdownVisible && patients.length > 0 && (
+              <View style={styles.dropdown}>
+                {patients.map((patient) => (
+                  <TouchableOpacity
+                    key={patient.medicalID}
+                    style={styles.dropdownItem}
+                    onPress={() => handlePatientSelect(patient.medicalID)}
+                  >
+                    <Text style={styles.dropdownText}>{`${patient.firstName} ${patient.lastName}`}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+          )}
           <SafeAreaView style={styles.row}>
             <Text style={styles.label}>Name:</Text>
             <TextInput
@@ -302,6 +371,33 @@ const styles = StyleSheet.create({
 
     backgroundColor: colors.background,
   },
+  dropdown: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -15,
+    marginLeft: '33%',
+    backgroundColor: colors.background,
+    borderColor: colors.background,
+    borderWidth: 0,
+    borderRadius: 30,
+  },
+  dropdownItem: {
+    alignItems: 'center',
+    borderColor: colors.textLight,
+    borderWidth: 1,
+    borderRadius: 30,
+    margin:2,
+    paddingHorizontal: 10,
+    zIndex: 1,
+  },
+  dropdownText: {
+    color: colors.textLight,
+    fontSize: 16,
+    
+    margin: 10,
+  },
+
 });
 
 const pickerSelectStyles = StyleSheet.create({

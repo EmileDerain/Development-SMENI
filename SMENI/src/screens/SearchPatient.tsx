@@ -103,14 +103,17 @@ const SearchPatient = () => {
                     <TextInput
                         value={searchPatient}
                         placeholder={'Search Patient'}
+                        placeholderTextColor={colors.textLight}
                         keyboardType="numeric"
                         onChangeText={(text) => handleSearch(text)}
                     />
                 </SafeAreaView>
-                <WithLocalSvg asset={addPatientIcon} width={25} height={25} style={[styles.icon, styles.iconNew]}
-                              onPress={() => {
-                                  navigation.navigate('NewPatient')
-                              }}/>
+                <SafeAreaView style={[styles.iconNew]}>
+                    <WithLocalSvg asset={addPatientIcon} width={25} height={25} 
+                                onPress={() => {
+                                    navigation.navigate('NewPatient')
+                                }}/>
+                </SafeAreaView>
             </SafeAreaView>
             <SafeAreaView style={styles.patients}>
                 {patients.length != 0 ? patients.map((patient) => {
@@ -119,12 +122,15 @@ const SearchPatient = () => {
                             key={patient._id}
                             onPress={() => navigation.navigate(PAGE_PATIENTDETAILS, {patient})}>
                             <SafeAreaView style={styles.patient}>
+                                <SafeAreaView style={[styles.icon, styles.folderIcon]}>
                                 <WithLocalSvg asset={folderIcon}
                                               width={25} height={25}
-                                              style={[styles.icon, styles.folder]}/>
+                                              style={[styles.folder]}/>
+                                </SafeAreaView>
+                                
                                 <SafeAreaView style={styles.patientDetails}>
-                                    <Text>{patient.medicalID}</Text>
-                                    <Text>X files {/*change this to a request to get the number of file*/}</Text>
+                                    <Text style={styles.patientID}>{patient.medicalID}</Text>
+                                    <Text style={styles.patientNumberFiles}>X files {/*change this to a request to get the number of file*/}</Text>
                                 </SafeAreaView>
                             </SafeAreaView>
                         </TouchableOpacity>);
@@ -142,28 +148,33 @@ const styles = StyleSheet.create({
     }, content: {
         flexDirection: 'row', marginTop: 20, marginLeft: 10, justifyContent: 'space-between',
     }, input: {
-        borderRadius: 15,
-        backgroundColor: colors.inputBackground,
-        borderWidth: 1,
-        borderColor: colors.inputBackground,
+        borderRadius: 20,
+        backgroundColor: '#EEF6FC',
         color: colors.default,
         paddingHorizontal: 15,
         paddingVertical: 5,
-        width: '85%',
+        width: '80%',
     }, searchBar: {
         flexDirection: 'row',
     }, icon: {
-        marginRight: 10, alignSelf: 'center',
+        marginRight: 10, alignSelf: 'center',  padding: 15, borderRadius: 15,
     }, iconNew: {
-        marginRight: 15,
-    }, patients: {
+        marginRight: 15,  borderWidth:1,borderColor:'#D7DEEA', alignSelf: 'center', padding: 15, borderRadius: 15, marginLeft: 5,
+    }, folderIcon: {
+        backgroundColor: "#DCEDF9",
+    },patients: {
         flexDirection: 'column', marginTop: 20,
     }, patient: {
-        flexDirection: 'row', margin: 10, borderColor: colors.default, borderWidth: 1, borderRadius: 15, padding: 10,
+        flexDirection: 'row', margin: 10, borderColor: '#D7DEEA', borderWidth: 1, borderRadius: 15, padding: 10,
     }, folder: {
-        borderColor: colors.default, borderWidth: 1, borderRadius: 15, padding: 30, backgroundColor: "lightblue",
+        borderRadius: 15, color: colors.textLight, opacity: 0.5,
     }, patientDetails: {
-        flexDirection: 'column', marginLeft: 10, justifyContent: 'space-around',
-    }
+        flexDirection: 'column', marginLeft: 10, justifyContent: 'space-around', color: colors.default,
+    },
+    patientID: {
+        fontSize: 20, fontWeight: 'bold', color: colors.default,
+    }, patientNumberFiles: {
+        fontSize: 15, color: colors.textLight,
+    },
 });
 export default SearchPatient;
