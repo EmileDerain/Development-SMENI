@@ -1,9 +1,9 @@
 {
-  "_id": "64ba1b50b1146dadcf8276fe",
   "modelName": "Default",
-  "__v": 0,
-  "accuracy": 0.6033994555473328,
-  "date": "21/07/2023",
-  "loss": 1.3803036212921143,
-  "path": "./CNN/models/Default.h5"
+  "accuracy": 95.67,
+  "loss": 0.01,
+  "date": "2023-05-31T22:00:00.000Z",
+  "path": "./CNN/models/DefaultModel.h5",
+  "_id": "64d666b2530bd4198b2ed0a9",
+  "__v": 0
 }

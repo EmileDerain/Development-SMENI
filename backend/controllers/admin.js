@@ -2,22 +2,6 @@ const Admin = require('../models/admin');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-exports.signup = (req, res) => {
-    bcrypt.hash(req.body.password, 10)
-        .then(
-            hash => {
-                const admin = new Admin({
-                    mail: req.body.mail,
-                    password: hash,
-                });
-                admin.save()
-                    .then(() => res.status(201).json({message: 'Admin created !'}))
-                    .catch(error => res.status(400).json({error, message: 'Email already used !'}));
-            }
-        )
-        .catch(error => res.status(500).json({error, message: 'Error while hashing password !'}));
-};
-
 exports.login = (req, res) => {
     Admin.findOne({mail: req.body.mail})
         .then(admin => {

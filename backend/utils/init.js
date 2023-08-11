@@ -1,44 +1,48 @@
-const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const Admin = require("../models/admin");
+const Model = require("../models/model");
+const fs = require("fs");
 
-exports.initUsers = () => {
-    User.find()
-        .then(users => {
-            if(users.length === 0) {
-                bcrypt.hash("mdp", 10)
-                    .then(hash => {
-                        const user = new User({
-                            firstName: "Tom", lastName: "Bevan", mail: "mail@mail.mail", password: hash,
-                        });
-                        user.save()
-                            .then(() => console.log('Tom created !'))
-                            .catch(error => console.log('Email is already used !'));
+exports.init = () => {
+    Admin.find()
+        .then(admin => {
+            if (admin.length === 0) {
+                bcrypt.hash("admin", 10)
+                    .then(
+                        hash => {
+                            const admin = new Admin({
+                                mail: "admin@admin.com",
+                                password: hash,
+                            });
+                            admin.save()
+                                .then(() => console.log("Admin created"))
+                                .catch(error => console.log("Error: ", error));
+                        }
+                    )
+                    .catch(error => console.log("Error: ", error));
+            }
+        })
+
+    Model.find()
+        .then(async model => {
+            if (model.length === 0) {
+
+                //Not accurate values
+                const model = new Model({
+                    modelName: "Default",
+                    path: './CNN/models/DefaultModel.h5',
+                    date: new Date(2023, 5, 1),
+                    loss: 0.01,
+                    accuracy:0.9567,
+                });
+
+                model.save()
+                    .then(defaultModel => {
+                        console.log("Default model created");
+                        const json = JSON.stringify(defaultModel, null, 2);
+                        fs.writeFileSync('./CNN/config/selectedModel.json', json);
                     })
-                    .catch(error => console.log('Error while hashing password !'));
-
-
-                bcrypt.hash("mdp", 10)
-                    .then(hash => {
-                        const user = new User({
-                            firstName: "Emile", lastName: "Derain", mail: "ed@gmail.com", password: hash,
-                        });
-                        user.save()
-                            .then(() => console.log('Emile created !'))
-                            .catch(error => console.log('Email is already used !'));
-                    })
-                .catch(error => console.log('Error while hashing password !'));
-
-            bcrypt.hash("mdp", 10)
-                .then(hash => {
-                    const user = new User({
-                        firstName: "Vinh", lastName: "Faucher", mail: "vinh@faucher.com", password: hash,
-                    });
-                    user.save()
-                        .then(() => console.log('Vinh created !'))
-                        .catch(error => console.log('Email is already used !'));
-                })
-                .catch(error => console.log('Error while hashing password !'));
-
-            }})
-        .catch(error => console.log('Error while retrieving all the users'));
+                    .catch(error => console.log("Error: ", error));
+            }
+        })
 }
