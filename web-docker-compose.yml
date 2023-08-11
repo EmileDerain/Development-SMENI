@@ -1,0 +1,47 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:7.0.0-rc2
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile-mongo
+    restart: always
+    container_name: mongo-SMENI
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${USERNAME_MONGO}
+      MONGO_INITDB_ROOT_PASSWORD: ${PASSWORD_MONGO}
+    volumes:
+      - data:/data/db
+  node-backend:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile-node
+    restart: always
+    container_name: back-SMENI
+    ports:
+      - "2834:2834"
+    env_file:
+      - ./env/backend.env
+      - ./env/mongo.env
+    depends_on:
+      - mongo
+    volumes:
+      - ./backend:/app/:ro
+      - ./backend/CNN:/app/CNN:rw
+      - ./backend/audioFiles:/app/audioFiles:rw
+  node-smeniweb:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile-smeniweb
+    restart: always
+    container_name: web-SMENI
+    ports:
+      - "80:80"
+    depends_on:
+      - node-backend
+    volumes:
+      - ./smeni-web:/app/:ro
+
+volumes:
+  data:
+    driver: local

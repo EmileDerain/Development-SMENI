@@ -1,0 +1,40 @@
+FROM node:20-slim
+
+EXPOSE 80
+
+WORKDIR /app
+
+COPY ../backend .
+
+RUN npm install
+
+WORKDIR /app/CNN
+
+RUN apt-get update
+RUN apt-get install zlib1g-dev -y
+RUN apt-get install build-essential -y
+RUN apt-get install libssl-dev -y
+RUN apt-get install libffi-dev -y
+
+ADD https://www.python.org/ftp/python/3.10.9/Python-3.10.9.tgz .
+
+RUN tar -xzf Python-3.10.9.tgz  \
+    && cd Python-3.10.9 \
+    && ./configure \
+    && make \
+    && make install
+
+#ENV VIRTUAL_ENV=/opt/venv
+#RUN python3 -m venv $VIRTUAL_ENV
+#ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+#
+#RUN echo $PATH
+
+RUN pip3 install --upgrade pip
+
+RUN pip3 install -r requirements.txt
+
+WORKDIR /app
+
+# Démarrer l'application
+CMD ["npm", "run", "dev"]

@@ -1,0 +1,42 @@
+.subMenuGlobalModels {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: min(0.5vw, 1vh);
+    background-color: var(--bleu_theme);
+}
+
+.menuRightTopTitreDateModels {
+    width: 10%;
+    height: 100%;
+}
+
+.menuRightTopTitreNameModels {
+    width: 60%;
+    height: 100%;
+}
+
+.menuRightTopTitreLossModels {
+    width: 10%;
+    height: 100%;
+}
+
+.menuRightTopTitreAccuracyModels {
+    width: 10%;
+    height: 100%;
+}
+
+.menuRightTopTitreActionModels {
+    width: 10%;
+    height: 100%;
+}
+
+.menuRightTopTitre100 {
+    width: 100%;
+    height: 100%;
+}

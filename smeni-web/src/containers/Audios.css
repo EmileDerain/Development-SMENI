@@ -1,0 +1,508 @@
+/*#########################*/
+.menuLeftTop {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    width: 100%;
+    height: 27%;
+
+    border-radius: min(0.5vw, 1vh);
+
+    background-color: var(--bleu_theme);
+}
+
+
+.menuLeftTopTitre {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 10%;
+
+    box-sizing: border-box;
+
+    font-size: var(--front_size);
+    color: white;
+
+    border-bottom: solid white 2px;
+}
+
+.menuLeftTopMenus {
+    width: 100%;
+    height: 90%;
+}
+
+.menuLeftTopMenusFilter {
+    width: 100%;
+    height: 100%;
+
+    overflow-y: scroll;
+}
+
+.menuLeftTopMenusResearch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 10%;
+}
+
+.menuLeftTopMenusResearchButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: min(0.5vw, 1vh);
+    background-color: #6BB2E6;
+
+    box-shadow: 0px 10px 6px #cccccc;
+
+    color: white;
+    /*opacity: 0.5;*/
+
+    padding: 0;
+    border: none;
+
+    cursor: pointer;
+}
+
+.buttonOrderBy {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 20%;
+    text-align: center;
+
+    box-sizing: border-box;
+    font-size: min(0.5vw, 1vh);
+
+    color: white;
+    /*background-color: red;*/
+    /*border: solid blueviolet 1px;*/
+}
+
+.chekboxOrder {
+    width: min(1vw, 2vh);
+    height: min(1vw, 2vh);
+}
+
+.buttonLabel {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    /*height: 20%;*/
+    text-align: center;
+
+    box-sizing: border-box;
+    font-size: min(0.5vw, 1vh);
+
+    color: white;
+    border-bottom: solid white 1px;
+}
+
+
+.menuLeft100 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    box-sizing: border-box;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: min(0.5vw, 1vh);
+    background-color: var(--bleu_theme);
+}
+
+.iconFolderOrderByDivPage {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    width: 95%;
+
+    font-size: var(--front_size_smaller_2);
+
+    color: white;
+
+    border-top: solid white 1px;
+    padding-left: 5%;
+
+    cursor: pointer;
+}
+
+.iconFolderOrderByDivPageSelected {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    width: 95%;
+
+    font-size: var(--front_size_smaller_2);
+
+    color: white;
+
+    border-top: solid white 1px;
+    background-color: #6BB2E6;
+    padding-left: 5%;
+
+    cursor: pointer;
+}
+
+.iconFolderOrderByDivPageSelected1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+
+    font-size: min(0.5vw, 1vh);
+
+    color: white;
+
+    border-bottom: solid white 1px;
+    background-color: #6BB2E6;
+
+    cursor: pointer;
+}
+
+/*######################### menuRightTop*/
+.menuRightTop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    width: 100%;
+    height: 45%;
+
+
+    border-radius: min(0.5vw, 1vh);
+
+    background-color: var(--bleu_theme);
+    /*opacity: 0.5;*/
+}
+
+.menuRightTopSmall {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    width: 100%;
+    height: 85%;
+
+
+    border-radius: min(0.5vw, 1vh);
+
+    background-color: var(--bleu_theme);
+    /*opacity: 0.5;*/
+}
+
+.menuRightTopFull {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    width: 100%;
+    height: 100%;
+
+
+    border-radius: min(0.5vw, 1vh);
+
+    background-color: var(--bleu_theme);
+    /*opacity: 0.5;*/
+}
+
+.menuRightTopTitre {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 10%;
+    width: 100%;
+
+    /*padding-bottom: 2%;*/
+
+    font-size: var(--front_size);
+    /*font-size: 3px;*/
+    /*font-size: 20px;*/
+
+    color: white;
+
+    box-sizing: border-box;
+    border-bottom: solid white 2px;
+}
+
+.menuRightTopTitreFull {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 12%;
+    width: 100%;
+
+
+    /*padding-bottom: 2%;*/
+
+    font-size: var(--front_size);
+    /*font-size: 3px;*/
+    /*font-size: 20px;*/
+
+    color: white;
+
+    box-sizing: border-box;
+    border-bottom: solid white 2px;
+}
+
+.menuRightTopTitreFullBig {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 25.4%;
+    width: 100%;
+
+
+    /*padding-bottom: 2%;*/
+
+    font-size: var(--front_size);
+    /*font-size: 3px;*/
+    /*font-size: 20px;*/
+
+    color: white;
+
+    box-sizing: border-box;
+    border-bottom: solid white 2px;
+}
+
+.menuRightTopTitreBorder {
+    border: solid white;
+    border-width: 0px 1px 0px 1px;
+}
+
+.menuRightTopTitreDateBorder {
+    border: solid white;
+    border-width: 0px 1px 0px 0px;
+}
+
+.menuRightTopTitreActionBorder {
+    border: solid white;
+    border-width: 0px 0px 0px 1px;
+}
+
+.menuRightTopTitreDate {
+    width: 10%;
+    height: 100%;
+}
+
+.menuRightTopTitreName {
+    width: 45%;
+    height: 100%;
+}
+
+.menuRightTopTitreDoctor {
+    width: 25%;
+    height: 100%;
+}
+
+.menuRightTopTitreTime {
+    width: 10%;
+    height: 100%;
+}
+
+.menuRightTopTitreAction {
+    width: 10%;
+    height: 100%;
+}
+
+
+.menuRightTopListAudio {
+    width: 100%;
+    height: 90%;
+
+    color: black;
+
+    overflow-y: scroll;
+}
+
+.audioDivPage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 6.5vh;
+
+    font-size: var(--front_size_smaller);
+    /*font-size: 2px;*/
+
+    color: white;
+
+    box-sizing: border-box;
+    border-bottom: solid white 1px;
+
+    cursor: pointer;
+}
+
+.audioDivPagFull {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 12%;
+
+    font-size: var(--front_size_smaller);
+    /*font-size: 2px;*/
+
+    color: white;
+
+    box-sizing: border-box;
+    border-bottom: solid white 1px;
+
+    cursor: pointer;
+}
+
+.wave {
+    width: 0.2%;
+    height: 70%;
+    background: linear-gradient(45deg, #6BB2E6, #fff);
+    margin: 0.2%;
+    animation: wave 1s linear infinite;
+    /*border-radius: 20px;*/
+}
+
+.wave:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.wave:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.wave:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+.wave:nth-child(5) {
+    animation-delay: 0.4s;
+}
+
+.wave:nth-child(6) {
+    animation-delay: 0.5s;
+}
+
+.wave:nth-child(7) {
+    animation-delay: 0.6s;
+}
+
+.wave:nth-child(8) {
+    animation-delay: 0.7s;
+}
+
+.wave:nth-child(9) {
+    animation-delay: 0.8s;
+}
+
+.wave:nth-child(10) {
+    animation-delay: 0.9s;
+}
+
+@keyframes wave {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(0);
+    }
+}
+
+.audioDivPageSelected {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 12%;
+
+    font-size: var(--front_size_smaller);
+
+    color: white;
+
+    border-bottom: solid white 1px;
+    box-sizing: border-box;
+
+    background-color: #6BB2E6;
+}
+
+
+.audioDivPageSelectedInfo {
+    display: flex;
+    justify-content: center;
+
+    width: 100%;
+    height: 12%;
+
+    background-color: #6BB2E6;
+    color: white;
+}
+
+.audioDivPageSelectedInfoFull {
+    display: flex;
+    justify-content: center;
+
+    width: 100%;
+    height: 25.5%;
+
+    background-color: #6BB2E6;
+    color: white;
+}
+
+.audioDivPageSelectedInfoSpace {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    font-size: var(--front_size_smaller);
+
+    width: 80%;
+    height: 100%;
+}
+
+.genderInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/*#########################*/
+.menuRightBot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 10%;
+
+    border-radius: min(0.5vw, 1vh);
+
+    background-color: var(--bleu_theme);
+    /*opacity: 0.5;*/
+}

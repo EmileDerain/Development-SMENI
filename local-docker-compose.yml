@@ -1,0 +1,20 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:7.0.0-rc2
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile-mongo
+    restart: always
+    container_name: mongo-SMENI
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${USERNAME_MONGO}
+      MONGO_INITDB_ROOT_PASSWORD: ${PASSWORD_MONGO}
+    ports:
+      - "27017:27017"
+    volumes:
+      - data:/data/db
+
+volumes:
+  data:
+    driver: local

@@ -1,0 +1,118 @@
+.menuRightGlobal{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    height: 100%;
+}
+
+.subMenuGlobalSearch{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 50%;
+    height: 10%;
+
+    border-radius: min(0.5vw, 1vh);
+
+    background-color: var(--bleu_theme);
+}
+
+.subMenuGlobalSearchIcon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: min(2vw, 4vh);
+    height: min(2vw, 4vh);
+
+    color: white;
+}
+
+.custom-input-doctor{
+    color: white;
+    text-align: left;
+    padding: 5px;
+    outline: none;
+
+    width: 90%;
+    height: 30%;
+
+    font-size: 100%;
+
+    background: transparent;
+
+    border-radius: min(0.5vw, 1vh);
+}
+
+.subMenuGlobal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    width: 100%;
+    height: 85%;
+
+
+    border-radius: min(0.5vw, 1vh);
+
+    background-color: var(--bleu_theme);
+    /*opacity: 0.5;*/
+}
+
+.subMenuGlobalTitre {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    box-sizing: border-box;
+
+
+    /*height: 7%;*/
+    width: 100%;
+    height: 10%;
+
+    /*padding-bottom: 2%;*/
+
+    font-size: var(--front_size);
+    /*font-size: 20px;*/
+
+    color: white;
+
+    border-bottom: solid white 2px;
+}
+
+.menuRightTopTitreNameDoctors {
+    width: 40%;
+    height: 100%;
+}
+
+.menuRightTopTitreEmailDoctors {
+    width: 40%;
+    height: 100%;
+}
+
+.menuRightTopTitreActionDoctors {
+    width: 20%;
+    height: 100%;
+}
+
+.doctorDivPage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 10%;
+
+    font-size: var(--front_size_smaller);
+    /*font-size: 2px;*/
+
+    color: white;
+
+    box-sizing: border-box;
+    border-bottom: solid white 1px;
+}

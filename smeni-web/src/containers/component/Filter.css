@@ -1,0 +1,85 @@
+.iconFolderOrderByDivPage1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    width: 100%;
+
+    font-size: var(--front_size_smaller);
+    color: white;
+
+    cursor: pointer;
+}
+
+.iconFolderOrderByDivPageInfoOpen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    margin-bottom: 0;
+}
+
+.iconFolderOrderByDivPageInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    border-bottom: solid white 2px;
+}
+
+.iconMenuLeftBot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: min(2vw, 4vh);
+    height: min(2vw, 4vh);
+}
+
+.iconFolderOrderByDivSearch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+
+    border-bottom: solid 1px white;
+
+    cursor: default;
+}
+
+.custom-input-filter {
+    color: #000000;
+    text-align: center;
+    padding: 5px;
+    outline: none;
+
+    width: 70%;
+
+    font-size: var(--front_size);
+
+    margin-bottom: 3%;
+
+    border-radius: min(0.5vw, 1vh);
+}
+
+.listOptionFilter{
+    width: 100%;
+    height: 40%;
+
+    overflow-y: scroll;
+    border-bottom: solid white 2px;
+}
+
+.listOptionFilterSmall{
+    width: 100%;
+
+    border-bottom: solid white 2px;
+}
