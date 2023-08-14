@@ -1,9 +1,9 @@
 {
   "modelName": "Default",
-  "accuracy": 95.67,
+  "accuracy": 0.9567,
   "loss": 0.01,
   "date": "2023-05-31T22:00:00.000Z",
   "path": "./CNN/models/DefaultModel.h5",
-  "_id": "64d666b2530bd4198b2ed0a9",
+  "_id": "64da3a7f2fb7a5fbefaf6b23",
   "__v": 0
 }

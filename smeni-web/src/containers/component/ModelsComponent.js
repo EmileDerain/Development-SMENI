@@ -48,7 +48,14 @@ const ModelsComponent = ({date, _id, modelName, loss, accuracy, modelSelected, s
                 :
                 <>
                     <h1 className={"menuRightTopTitreDateModels menuRightTopTitreCentre"}
-                        onClick={() => handleButtonClick("select")}>{date}</h1>
+                        onClick={() => handleButtonClick("select")}>{(() => {
+                        const dateConv = new Date(date);
+                        const day = String(dateConv.getDate()).padStart(2, '0');
+                        const month = String(dateConv.getMonth() + 1).padStart(2, '0');
+                        const year = dateConv.getFullYear();
+
+                        return `${day}/${month}/${year}`;
+                    })()}</h1>
                     <h1 className={"menuRightTopTitreNameModels menuRightTopTitreCentre"}
                         onClick={() => handleButtonClick("select")}>{modelName}</h1>
                     <h1 className={"menuRightTopTitreLossModels menuRightTopTitreCentre"}

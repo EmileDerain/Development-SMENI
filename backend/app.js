@@ -35,7 +35,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.get('/audioFiles/:dir/:filename', (req, res) => {
     const dir = req.params.dir;
     const filename = req.params.filename;
-    console.log("LET'S GOOOOO: ", dir + "/" + filename)
     const filePath = path.join(__dirname, '/CNN/dataStemoscope/Test/', dir, filename);
     res.sendFile(filePath);
 });

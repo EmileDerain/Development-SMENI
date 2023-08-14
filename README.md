@@ -16,7 +16,7 @@ In order to run the project, you need to have installed:
 3. Run `npm install` in the three folders: `backend`, `SMENI` and `smeni-web`
 4. Run `runLocal.bat` in the root folder to launch the database 
 (the first time you run the script, use a terminal as an administrator to allow the writing of necessary environment variables. Then, for the variables to take effect, simply close all terminals and re-run the script.)
-or run `run.bat` in the root folder to launch the container and the database
+or run `run.bat` in the root folder to launch the backend and the database (it's not working)
 5. Run `npm run android` in the `SMENI` folder to use the mobile app
 6. Run `npm start` in the `smeni-web` folder to use the web app
 
