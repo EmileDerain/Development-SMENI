@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 var cors = require('cors');
 
-const {initUsers} = require("./utils/init");
+const {init} = require("./utils/init");
 
 
 const audioRoutes = require("./routes/audio")
@@ -35,7 +35,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.get('/audioFiles/:dir/:filename', (req, res) => {
     const dir = req.params.dir;
     const filename = req.params.filename;
-    console.log("LET'S GOOOOO: ", dir + "/" + filename)
     const filePath = path.join(__dirname, '/CNN/dataStemoscope/Test/', dir, filename);
     res.sendFile(filePath);
 });
@@ -45,6 +44,6 @@ app.use("/api/cnn", cnnRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/patient", patientRoutes);
 app.use("/api/admin", adminRoutes);
-initUsers();
+init();
 
 module.exports = app;

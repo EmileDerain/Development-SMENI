@@ -5,7 +5,7 @@ const modelSchema = mongoose.Schema({
     modelName: {type: String, required: true, unique: true},
     accuracy: {type: Number},
     loss: {type: Number},
-    date: {type: String},
+    date: {type: Date},
     path: {type: String},
 });
 
